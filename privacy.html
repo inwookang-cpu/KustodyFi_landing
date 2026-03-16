@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>개인정보처리방침 — KustodyFi</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  :root {
+    --primary: #0891b2;
+    --dark: #0f172a;
+    --gray-900: #1e293b;
+    --gray-700: #334155;
+    --gray-600: #475569;
+    --gray-500: #64748b;
+    --gray-400: #94a3b8;
+    --gray-300: #cbd5e1;
+    --gray-200: #e2e8f0;
+    --gray-100: #f1f5f9;
+    --gray-50: #f8fafc;
+    --white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Noto Sans KR', 'Inter', -apple-system, sans-serif;
+    color: var(--gray-700); background: var(--gray-50); line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Nav */
+  .nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(255,255,255,.9); backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--gray-200); height: 64px;
+    display: flex; align-items: center; padding: 0 40px;
+  }
+  .nav-inner {
+    max-width: 1200px; margin: 0 auto; width: 100%;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav a.logo {
+    font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 800;
+    color: var(--dark); text-decoration: none;
+  }
+  .nav a.logo span { color: var(--primary); }
+  .nav a.back {
+    font-size: 13px; font-weight: 600; color: var(--gray-500);
+    text-decoration: none; transition: color .2s;
+  }
+  .nav a.back:hover { color: var(--primary); }
+
+  /* Hero */
+  .privacy-hero {
+    background: linear-gradient(135deg, var(--dark) 0%, var(--gray-900) 100%);
+    padding: 80px 40px 60px; color: var(--white);
+  }
+  .privacy-hero-inner { max-width: 1200px; margin: 0 auto; }
+  .privacy-hero h1 {
+    font-size: 36px; font-weight: 900; margin-bottom: 12px; letter-spacing: -0.5px;
+  }
+  .privacy-hero-meta {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .privacy-hero-badge {
+    display: inline-block; padding: 5px 14px; border-radius: 20px;
+    font-size: 12px; font-weight: 600;
+    background: rgba(8,145,178,.15); color: var(--primary);
+    border: 1px solid rgba(8,145,178,.25);
+  }
+  .privacy-hero-date {
+    font-size: 13px; color: var(--gray-400);
+  }
+  .privacy-hero-desc {
+    margin-top: 20px; font-size: 15px; color: var(--gray-400);
+    line-height: 1.8; max-width: 700px;
+  }
+
+  /* Layout */
+  .privacy-layout {
+    max-width: 1200px; margin: 0 auto; padding: 40px 40px 120px;
+    display: grid; grid-template-columns: 240px 1fr; gap: 40px;
+  }
+
+  /* TOC Sidebar */
+  .toc {
+    position: sticky; top: 104px; align-self: start;
+    max-height: calc(100vh - 124px); overflow-y: auto;
+    scrollbar-width: thin; scrollbar-color: var(--gray-200) transparent;
+  }
+  .toc-title {
+    font-size: 11px; font-weight: 700; letter-spacing: 2px;
+    color: var(--gray-400); text-transform: uppercase; margin-bottom: 16px;
+  }
+  .toc-list { list-style: none; }
+  .toc-list li { margin-bottom: 2px; }
+  .toc-list a {
+    display: block; padding: 8px 14px; border-radius: 8px;
+    font-size: 13px; font-weight: 500; color: var(--gray-500);
+    text-decoration: none; transition: all .2s;
+    border-left: 2px solid transparent;
+  }
+  .toc-list a:hover { color: var(--dark); background: var(--white); }
+  .toc-list a.active {
+    color: var(--primary); font-weight: 700;
+    background: rgba(8,145,178,.04);
+    border-left-color: var(--primary);
+  }
+
+  /* Mobile TOC */
+  .toc-mobile {
+    display: none; margin-bottom: 24px;
+  }
+  .toc-mobile-toggle {
+    width: 100%; padding: 14px 18px; border-radius: 12px;
+    background: var(--white); border: 1px solid var(--gray-200);
+    font-size: 14px; font-weight: 700; color: var(--dark);
+    cursor: pointer; text-align: left;
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .toc-mobile-toggle .arrow { transition: transform .2s; }
+  .toc-mobile-toggle.open .arrow { transform: rotate(180deg); }
+  .toc-mobile-list {
+    display: none; list-style: none;
+    background: var(--white); border: 1px solid var(--gray-200);
+    border-top: none; border-radius: 0 0 12px 12px;
+    padding: 8px;
+  }
+  .toc-mobile-list.open { display: block; }
+  .toc-mobile-list a {
+    display: block; padding: 10px 14px; border-radius: 8px;
+    font-size: 13px; color: var(--gray-600); text-decoration: none;
+    transition: all .2s;
+  }
+  .toc-mobile-list a:hover { background: var(--gray-50); color: var(--primary); }
+
+  /* Article Cards */
+  .article-section {
+    background: var(--white); border-radius: 10px;
+    border: 1px solid var(--gray-200);
+    padding: 32px; margin-bottom: 16px;
+    scroll-margin-top: 84px;
+  }
+  .article-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+  }
+  .article-num {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--dark); color: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800; font-family: 'Inter', sans-serif;
+    flex-shrink: 0;
+  }
+  .article-title {
+    font-size: 18px; font-weight: 800; color: var(--dark); line-height: 1.3;
+  }
+
+  .article-section p { font-size: 14px; color: var(--gray-600); margin-bottom: 12px; }
+  .article-section ul, .article-section ol { padding-left: 20px; margin-bottom: 12px; }
+  .article-section li { font-size: 14px; color: var(--gray-600); margin-bottom: 4px; }
+  .article-section li strong { color: var(--gray-700); }
+
+  /* Tables */
+  .p-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+  .p-table th {
+    background: var(--dark); color: var(--white);
+    padding: 10px 14px; text-align: left; font-weight: 700;
+  }
+  .p-table th:first-child { border-radius: 8px 0 0 0; }
+  .p-table th:last-child { border-radius: 0 8px 0 0; }
+  .p-table td {
+    border: 1px solid var(--gray-200); padding: 10px 14px;
+    color: var(--gray-600); background: var(--white);
+  }
+  .p-table tr:last-child td:first-child { border-radius: 0 0 0 8px; }
+  .p-table tr:last-child td:last-child { border-radius: 0 0 8px 0; }
+
+  /* Callout */
+  .callout {
+    border-left: 3px solid var(--primary);
+    background: rgba(8,145,178,.03);
+    padding: 14px 18px; border-radius: 0 8px 8px 0;
+    margin: 16px 0; font-size: 13px; color: var(--gray-600); line-height: 1.7;
+  }
+  .callout strong { color: var(--dark); }
+  .callout.warning {
+    border-left-color: #d97706;
+    background: rgba(217,119,6,.03);
+  }
+
+  /* Contact card */
+  .contact-card {
+    background: var(--gray-50); border: 1px solid var(--gray-200);
+    border-radius: 10px; padding: 20px; margin: 16px 0;
+  }
+  .contact-card-title {
+    font-size: 12px; font-weight: 700; letter-spacing: 1px;
+    color: var(--gray-400); text-transform: uppercase; margin-bottom: 12px;
+  }
+  .contact-row {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 14px; color: var(--gray-600); padding: 4px 0;
+  }
+  .contact-row strong { color: var(--dark); min-width: 100px; }
+  .contact-row a { color: var(--primary); text-decoration: none; }
+  .contact-row a:hover { text-decoration: underline; }
+
+  /* Footer */
+  .privacy-footer {
+    max-width: 1200px; margin: 0 auto; padding: 24px 40px 60px;
+    border-top: 1px solid var(--gray-200);
+    font-size: 12px; color: var(--gray-400); line-height: 1.8;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .privacy-layout { grid-template-columns: 1fr; gap: 0; padding: 20px 16px 80px; }
+    .toc { display: none; }
+    .toc-mobile { display: block; }
+    .privacy-hero { padding: 60px 16px 40px; }
+    .privacy-hero h1 { font-size: 26px; }
+    .privacy-hero-desc { font-size: 13px; }
+    .nav { padding: 0 16px; height: 56px; }
+    .nav a.logo { font-size: 18px; }
+    .article-section { padding: 24px 20px; margin-bottom: 12px; }
+    .article-title { font-size: 16px; }
+    .article-num { width: 28px; height: 28px; font-size: 12px; }
+    .p-table { font-size: 12px; }
+    .p-table th, .p-table td { padding: 8px 10px; }
+    .privacy-footer { padding: 20px 16px 40px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<div class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">Kustody<span>Fi</span></a>
+    <a href="index.html" class="back">&larr; 홈으로 돌아가기</a>
+  </div>
+</div>
+
+<!-- Hero -->
+<div class="privacy-hero">
+  <div class="privacy-hero-inner">
+    <h1>개인정보처리방침</h1>
+    <div class="privacy-hero-meta">
+      <span class="privacy-hero-badge">v1.0</span>
+      <span class="privacy-hero-date">시행일: 2026년 3월 16일</span>
+    </div>
+    <p class="privacy-hero-desc">
+      주식회사 커스터디파이(KustodyFi Co., Ltd., 이하 "회사")는 「개인정보 보호법」 제30조에 따라
+      이용자의 개인정보를 보호하고, 이와 관련한 고충을 원활하게 처리할 수 있도록 다음과 같이 개인정보처리방침을 수립하여 공개합니다.
+    </p>
+  </div>
+</div>
+
+<!-- Layout -->
+<div class="privacy-layout">
+
+  <!-- Desktop TOC -->
+  <aside class="toc">
+    <div class="toc-title">목차</div>
+    <ul class="toc-list">
+      <li><a href="#s1" data-section="s1">제1조. 총칙</a></li>
+      <li><a href="#s2" data-section="s2">제2조. 수집 항목</a></li>
+      <li><a href="#s3" data-section="s3">제3조. 수집·이용 목적</a></li>
+      <li><a href="#s4" data-section="s4">제4조. 보유 및 이용기간</a></li>
+      <li><a href="#s5" data-section="s5">제5조. 제3자 제공</a></li>
+      <li><a href="#s6" data-section="s6">제6조. 처리 위탁</a></li>
+      <li><a href="#s7" data-section="s7">제7조. 파기 절차 및 방법</a></li>
+      <li><a href="#s8" data-section="s8">제8조. 정보주체의 권리</a></li>
+      <li><a href="#s9" data-section="s9">제9조. 쿠키</a></li>
+      <li><a href="#s10" data-section="s10">제10조. 안전성 확보</a></li>
+      <li><a href="#s11" data-section="s11">제11조. 보호책임자</a></li>
+      <li><a href="#s12" data-section="s12">제12조. 고지의무</a></li>
+    </ul>
+  </aside>
+
+  <!-- Content -->
+  <main>
+
+    <!-- Mobile TOC -->
+    <div class="toc-mobile">
+      <button class="toc-mobile-toggle" onclick="toggleMobileToc()">
+        목차 보기 <span class="arrow">&#9660;</span>
+      </button>
+      <ul class="toc-mobile-list" id="mobileTocList">
+        <li><a href="#s1" onclick="closeMobileToc()">제1조. 총칙</a></li>
+        <li><a href="#s2" onclick="closeMobileToc()">제2조. 수집 항목</a></li>
+        <li><a href="#s3" onclick="closeMobileToc()">제3조. 수집·이용 목적</a></li>
+        <li><a href="#s4" onclick="closeMobileToc()">제4조. 보유 및 이용기간</a></li>
+        <li><a href="#s5" onclick="closeMobileToc()">제5조. 제3자 제공</a></li>
+        <li><a href="#s6" onclick="closeMobileToc()">제6조. 처리 위탁</a></li>
+        <li><a href="#s7" onclick="closeMobileToc()">제7조. 파기 절차 및 방법</a></li>
+        <li><a href="#s8" onclick="closeMobileToc()">제8조. 정보주체의 권리</a></li>
+        <li><a href="#s9" onclick="closeMobileToc()">제9조. 쿠키</a></li>
+        <li><a href="#s10" onclick="closeMobileToc()">제10조. 안전성 확보</a></li>
+        <li><a href="#s11" onclick="closeMobileToc()">제11조. 보호책임자</a></li>
+        <li><a href="#s12" onclick="closeMobileToc()">제12조. 고지의무</a></li>
+      </ul>
+    </div>
+
+    <!-- 제1조 -->
+    <section class="article-section" id="s1">
+      <div class="article-header">
+        <div class="article-num">1</div>
+        <h2 class="article-title">총칙</h2>
+      </div>
+      <p>주식회사 커스터디파이(KustodyFi Co., Ltd., 이하 "회사")는 「개인정보 보호법」 제30조에 따라 정보주체의 개인정보를 보호하고 이와 관련한 고충을 신속하고 원활하게 처리할 수 있도록 하기 위하여 다음과 같이 개인정보처리방침을 수립·공개합니다.</p>
+      <p><strong>적용 범위:</strong> 본 방침은 회사가 제공하는 외환 파생상품 이론가 계산 서비스(StableFX), 웹사이트, 서비스 데모 신청 및 이에 부수하는 일체의 서비스에 적용됩니다.</p>
+    </section>
+
+    <!-- 제2조 -->
+    <section class="article-section" id="s2">
+      <div class="article-header">
+        <div class="article-num">2</div>
+        <h2 class="article-title">수집하는 개인정보 항목</h2>
+      </div>
+      <p>회사는 서비스 제공을 위해 다음과 같은 개인정보를 수집합니다.</p>
+      <table class="p-table">
+        <thead>
+          <tr><th>구분</th><th>필수 항목</th><th>선택 항목</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>웹사이트 / StableFX (무료)</strong></td>
+            <td>이메일 주소</td>
+            <td>이름, 회사명, 직위</td>
+          </tr>
+          <tr>
+            <td><strong>데모 신청</strong></td>
+            <td>성명, 회사명, 업무 이메일</td>
+            <td>월 거래 규모</td>
+          </tr>
+        </tbody>
+      </table>
+      <p><strong>자동 수집 항목:</strong></p>
+      <ul>
+        <li>IP 주소, 쿠키, 방문 일시, 서비스 이용 기록</li>
+        <li>기기 정보 (OS, 브라우저, 화면 해상도)</li>
+        <li>접속 로그</li>
+      </ul>
+    </section>
+
+    <!-- 제3조 -->
+    <section class="article-section" id="s3">
+      <div class="article-header">
+        <div class="article-num">3</div>
+        <h2 class="article-title">수집·이용 목적</h2>
+      </div>
+      <p>수집한 개인정보는 다음의 목적으로만 이용되며, 목적 외 이용 시 별도 동의를 받습니다.</p>
+      <table class="p-table">
+        <thead>
+          <tr><th>목적 구분</th><th>세부 내용</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>회원 관리</strong></td>
+            <td>회원제 서비스 이용에 따른 본인 확인, 가입 의사 확인, 불량 회원 부정 이용 방지, 고지·통지, 고충 처리</td>
+          </tr>
+          <tr>
+            <td><strong>서비스 제공</strong></td>
+            <td>StableFX 이론가 계산 서비스 제공, 데모 신청 접수 및 상담 회신</td>
+          </tr>
+          <tr>
+            <td><strong>마케팅 및 서비스 개선</strong></td>
+            <td>신규 서비스 개발, 이벤트 및 광고성 정보 제공(별도 동의 시), 접속 빈도 파악, 이용 통계</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 제4조 -->
+    <section class="article-section" id="s4">
+      <div class="article-header">
+        <div class="article-num">4</div>
+        <h2 class="article-title">보유 및 이용기간</h2>
+      </div>
+      <p>회사는 법령에 따른 보유 기간 또는 이용자로부터 동의받은 기간 내에서 개인정보를 처리·보유합니다.</p>
+      <ul>
+        <li><strong>원칙:</strong> 회원 탈퇴 시 지체 없이 파기</li>
+        <li><strong>데모 신청 정보:</strong> 신청일로부터 <strong>1년</strong> (목적 달성 후 지체 없이 파기)</li>
+      </ul>
+      <p style="margin-top:16px"><strong>관계 법령에 따른 보존:</strong></p>
+      <table class="p-table">
+        <thead>
+          <tr><th>보존 항목</th><th>보존 기간</th><th>근거 법령</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>계약 또는 청약 철회 등에 관한 기록</td><td>5년</td><td>전자상거래법</td></tr>
+          <tr><td>대금결제 및 재화 등의 공급에 관한 기록</td><td>5년</td><td>전자상거래법</td></tr>
+          <tr><td>소비자의 불만 또는 분쟁처리에 관한 기록</td><td>3년</td><td>전자상거래법</td></tr>
+          <tr><td>웹사이트 방문 기록</td><td>3개월</td><td>통신비밀보호법</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 제5조 -->
+    <section class="article-section" id="s5">
+      <div class="article-header">
+        <div class="article-num">5</div>
+        <h2 class="article-title">개인정보의 제3자 제공</h2>
+      </div>
+      <p>회사는 이용자의 개인정보를 원칙적으로 외부에 제공하지 않습니다. 다만 아래의 경우에는 예외로 합니다.</p>
+      <ol>
+        <li>이용자가 사전에 동의한 경우</li>
+        <li>법령의 규정에 의하거나, 수사 목적으로 법령에 정해진 절차와 방법에 따라 수사기관의 요구가 있는 경우</li>
+        <li>이용자 또는 그 법정대리인이 의사표시를 할 수 없는 상태에 있거나 주소불명 등으로 사전 동의를 받을 수 없는 경우로서 명백히 정보주체 또는 제3자의 급박한 생명, 신체, 재산의 이익을 위하여 필요하다고 인정되는 경우</li>
+      </ol>
+    </section>
+
+    <!-- 제6조 -->
+    <section class="article-section" id="s6">
+      <div class="article-header">
+        <div class="article-num">6</div>
+        <h2 class="article-title">개인정보 처리 위탁</h2>
+      </div>
+      <p>회사는 현재 개인정보 처리 업무를 외부에 위탁하고 있지 않습니다.</p>
+      <div class="callout">
+        향후 서비스 확대에 따라 처리 위탁이 발생할 경우, 본 방침을 통해 수탁 업체·위탁 업무·보유 기간을 지체 없이 공개합니다.
+      </div>
+    </section>
+
+    <!-- 제7조 -->
+    <section class="article-section" id="s7">
+      <div class="article-header">
+        <div class="article-num">7</div>
+        <h2 class="article-title">개인정보의 파기 절차 및 방법</h2>
+      </div>
+      <p>회사는 개인정보 보유 기간의 경과, 처리 목적 달성 등 개인정보가 불필요하게 되었을 때에는 지체 없이 해당 개인정보를 파기합니다.</p>
+      <ul>
+        <li><strong>전자적 파일:</strong> 복원이 불가능한 방법으로 영구 삭제</li>
+        <li><strong>종이 문서:</strong> 분쇄기로 분쇄하거나 소각</li>
+      </ul>
+    </section>
+
+    <!-- 제8조 -->
+    <section class="article-section" id="s8">
+      <div class="article-header">
+        <div class="article-num">8</div>
+        <h2 class="article-title">정보주체의 권리·의무 및 행사 방법</h2>
+      </div>
+      <p>이용자는 개인정보 주체로서 다음과 같은 권리를 행사할 수 있습니다.</p>
+      <ol>
+        <li><strong>개인정보 열람 요구</strong></li>
+        <li><strong>오류 등이 있을 경우 정정 요구</strong></li>
+        <li><strong>삭제 요구</strong></li>
+        <li><strong>처리정지 요구</strong></li>
+      </ol>
+      <p>위 권리 행사는 서면, 이메일, 고객센터를 통해 하실 수 있으며, 회사는 이에 대해 지체 없이 조치하겠습니다.</p>
+      <div class="callout warning">
+        <strong>중요:</strong> 오류 정정 또는 삭제를 요구한 경우, 해당 정보의 정정·삭제가 완료될 때까지 해당 개인정보를 이용하거나 제공하지 않습니다.
+      </div>
+    </section>
+
+    <!-- 제9조 -->
+    <section class="article-section" id="s9">
+      <div class="article-header">
+        <div class="article-num">9</div>
+        <h2 class="article-title">자동 수집 장치(쿠키) 설치·운영 및 거부</h2>
+      </div>
+      <p><strong>쿠키 사용 목적:</strong></p>
+      <ul>
+        <li>접속 빈도 및 방문 시간 분석</li>
+        <li>이용자의 관심 분야 파악</li>
+        <li>서비스 개선 및 맞춤형 정보 제공</li>
+      </ul>
+      <p style="margin-top:16px"><strong>쿠키 거부 방법:</strong> 웹 브라우저 설정을 통해 쿠키 저장을 거부할 수 있습니다.</p>
+      <table class="p-table">
+        <thead>
+          <tr><th>브라우저</th><th>설정 경로</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Chrome</td><td>설정 &rarr; 개인정보 및 보안 &rarr; 쿠키 및 기타 사이트 데이터</td></tr>
+          <tr><td>Safari</td><td>환경설정 &rarr; 개인정보 보호</td></tr>
+          <tr><td>Edge</td><td>설정 &rarr; 쿠키 및 사이트 권한</td></tr>
+        </tbody>
+      </table>
+      <div class="callout">
+        쿠키 저장을 거부할 경우, 맞춤형 서비스 이용에 어려움이 발생할 수 있습니다.
+      </div>
+    </section>
+
+    <!-- 제10조 -->
+    <section class="article-section" id="s10">
+      <div class="article-header">
+        <div class="article-num">10</div>
+        <h2 class="article-title">개인정보의 안전성 확보 조치</h2>
+      </div>
+      <p>회사는 개인정보의 안전성 확보를 위해 다음과 같은 조치를 취하고 있습니다.</p>
+      <p><strong>관리적 조치</strong></p>
+      <ul>
+        <li>내부 관리 계획 수립 및 시행</li>
+        <li>개인정보 취급 직원 최소화 및 정기 교육</li>
+        <li>개인정보보호책임자 지정</li>
+      </ul>
+      <p><strong>기술적 조치</strong></p>
+      <ul>
+        <li>개인정보 접근 권한 관리</li>
+        <li>접근 통제 시스템 운영</li>
+        <li>고유 식별 정보 등의 암호화</li>
+        <li>보안 프로그램 설치 및 주기적 갱신</li>
+      </ul>
+      <p><strong>물리적 조치</strong></p>
+      <ul>
+        <li>전산실 및 자료보관실 접근 통제</li>
+      </ul>
+    </section>
+
+    <!-- 제11조 -->
+    <section class="article-section" id="s11">
+      <div class="article-header">
+        <div class="article-num">11</div>
+        <h2 class="article-title">개인정보 보호책임자</h2>
+      </div>
+      <p>회사는 개인정보 처리에 관한 업무를 총괄해서 책임지고, 개인정보 처리와 관련한 정보주체의 불만 처리 및 피해구제 등을 위하여 아래와 같이 개인정보 보호책임자를 지정하고 있습니다.</p>
+      <div class="contact-card">
+        <div class="contact-card-title">개인정보 보호책임자</div>
+        <div class="contact-row"><strong>성명</strong> 강인우</div>
+        <div class="contact-row"><strong>소속 / 직위</strong> KustodyFi Co., Ltd. / CEO</div>
+        <div class="contact-row"><strong>이메일</strong> <a href="mailto:inwoo.kang@kustodyfi.com">inwoo.kang@kustodyfi.com</a></div>
+      </div>
+      <p style="margin-top:20px">개인정보 처리에 관한 불만, 피해구제, 권익침해 등은 아래 기관에 문의하실 수 있습니다.</p>
+      <table class="p-table">
+        <thead>
+          <tr><th>기관</th><th>연락처</th><th>웹사이트</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>개인정보침해신고센터 (한국인터넷진흥원)</td><td>(국번없이) 118</td><td><a href="https://privacy.kisa.or.kr" style="color:var(--primary)">privacy.kisa.or.kr</a></td></tr>
+          <tr><td>개인정보 분쟁조정위원회</td><td>1833-6972</td><td><a href="https://www.kopico.go.kr" style="color:var(--primary)">kopico.go.kr</a></td></tr>
+          <tr><td>대검찰청 사이버수사과</td><td>(국번없이) 1301</td><td><a href="https://www.spo.go.kr" style="color:var(--primary)">spo.go.kr</a></td></tr>
+          <tr><td>경찰청 사이버수사국</td><td>(국번없이) 182</td><td><a href="https://ecrm.cyber.go.kr" style="color:var(--primary)">ecrm.cyber.go.kr</a></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 제12조 -->
+    <section class="article-section" id="s12">
+      <div class="article-header">
+        <div class="article-num">12</div>
+        <h2 class="article-title">고지의무</h2>
+      </div>
+      <p>이 개인정보처리방침은 <strong>2026년 3월 16일</strong>부터 적용됩니다.</p>
+      <p>개인정보처리방침의 내용 추가, 삭제 및 수정이 있을 경우에는 시행일 <strong>7일 전</strong>부터 웹사이트 공지사항을 통해 고지합니다.</p>
+      <div class="callout">
+        <strong>버전:</strong> v1.0 (2026년 3월 16일 시행)
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Footer -->
+<div class="privacy-footer">
+  주식회사 커스터디파이 | 대표 강인우 | 서울시 서초구 서초중앙로 123, 지하1층 46호 | 사업자등록번호 382-86-03882<br>
+  &copy; 2025&ndash;2026 KustodyFi Co., Ltd. All rights reserved.
+</div>
+
+<script>
+  // TOC active highlight with IntersectionObserver
+  const sections = document.querySelectorAll('.article-section');
+  const tocLinks = document.querySelectorAll('.toc-list a');
+
+  const tocObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        tocLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('data-section') === id);
+        });
+      }
+    });
+  }, { rootMargin: '-80px 0px -60% 0px', threshold: 0 });
+
+  sections.forEach(section => tocObserver.observe(section));
+
+  // Mobile TOC toggle
+  function toggleMobileToc() {
+    const btn = document.querySelector('.toc-mobile-toggle');
+    const list = document.getElementById('mobileTocList');
+    btn.classList.toggle('open');
+    list.classList.toggle('open');
+  }
+  function closeMobileToc() {
+    document.querySelector('.toc-mobile-toggle').classList.remove('open');
+    document.getElementById('mobileTocList').classList.remove('open');
+  }
+</script>
+</body>
+</html>
