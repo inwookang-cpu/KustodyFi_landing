@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KustodyFi — AI Agent Architecture</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  :root {
+    --primary: #0891b2;
+    --primary-dark: #0e7490;
+    --primary-light: #67e8f9;
+    --accent: #2563eb;
+    --success: #059669;
+    --success-light: #6ee7b7;
+    --warning: #d97706;
+    --warning-light: #fcd34d;
+    --danger: #dc2626;
+    --violet: #7c3aed;
+    --violet-light: #c4b5fd;
+    --dark: #0f172a;
+    --gray-900: #1e293b;
+    --gray-700: #334155;
+    --gray-600: #475569;
+    --gray-500: #64748b;
+    --gray-400: #94a3b8;
+    --gray-300: #cbd5e1;
+    --gray-200: #e2e8f0;
+    --gray-100: #f1f5f9;
+    --gray-50: #f8fafc;
+    --white: #ffffff;
+    --max-w: 1200px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Noto Sans KR', 'Inter', -apple-system, sans-serif;
+    color: var(--gray-900); background: var(--white); line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Nav */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: rgba(255,255,255,.9); backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0,0,0,.06); height: 64px; transition: all .3s;
+  }
+  .nav-inner {
+    max-width: var(--max-w); margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 100%; padding: 0 40px;
+  }
+  .nav-logo {
+    font-family: 'Inter', sans-serif; font-size: 22px; font-weight: 800;
+    color: var(--dark); text-decoration: none;
+  }
+  .nav-logo span { color: var(--primary); }
+  .nav-links { display: flex; gap: 28px; align-items: center; }
+  .nav-links a {
+    font-size: 14px; font-weight: 500; color: var(--gray-600);
+    text-decoration: none; transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--primary); }
+  .nav-cta {
+    padding: 8px 20px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    color: var(--white) !important; background: linear-gradient(135deg, #0891b2, #2563eb);
+    border: none; cursor: pointer; transition: transform .2s;
+  }
+  .nav-cta:hover { transform: translateY(-1px); }
+  .nav-hamburger {
+    display: none; width: 32px; height: 32px; border: none; background: none;
+    cursor: pointer; position: relative;
+  }
+  .nav-hamburger span {
+    display: block; width: 20px; height: 2px; background: var(--gray-700);
+    position: absolute; left: 6px; transition: all .3s;
+  }
+  .nav-hamburger span:nth-child(1) { top: 9px; }
+  .nav-hamburger span:nth-child(2) { top: 15px; }
+  .nav-hamburger span:nth-child(3) { top: 21px; }
+
+  /* Hero */
+  .hero {
+    padding: 140px 40px 80px; text-align: center;
+    background: linear-gradient(180deg, var(--gray-50) 0%, var(--white) 100%);
+  }
+  .hero-inner { max-width: 800px; margin: 0 auto; }
+  .hero-tag {
+    display: inline-block; padding: 6px 16px; border-radius: 20px;
+    font-size: 12px; font-weight: 700; letter-spacing: 1px;
+    background: rgba(8,145,178,.08); color: var(--primary);
+    border: 1px solid rgba(8,145,178,.15); margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-size: 44px; font-weight: 900; line-height: 1.25;
+    color: var(--dark); margin-bottom: 20px; letter-spacing: -1px;
+  }
+  .hero h1 .hl { color: var(--primary); }
+  .hero-desc {
+    font-size: 17px; color: var(--gray-600); line-height: 1.8;
+    max-width: 640px; margin: 0 auto;
+  }
+
+  /* Cycle Flow */
+  .cycle {
+    padding: 60px 40px 40px; background: var(--white);
+  }
+  .cycle-inner {
+    max-width: var(--max-w); margin: 0 auto;
+  }
+  .cycle-flow {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; flex-wrap: wrap; padding: 32px 0;
+  }
+  .cycle-step {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .cycle-chip {
+    padding: 10px 20px; border-radius: 10px;
+    font-size: 13px; font-weight: 700; color: var(--white);
+    cursor: pointer; transition: transform .2s, box-shadow .2s;
+    text-decoration: none; white-space: nowrap;
+  }
+  .cycle-chip:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,.15); }
+  .cycle-chip.l0 { background: var(--dark); }
+  .cycle-chip.l1 { background: var(--accent); }
+  .cycle-chip.l2 { background: var(--primary); }
+  .cycle-chip.l3 { background: var(--success); }
+  .cycle-chip.l4 { background: var(--warning); }
+  .cycle-chip.l5 { background: var(--violet); }
+  .cycle-arrow { font-size: 18px; color: var(--gray-300); font-weight: 300; }
+  .cycle-return {
+    display: block; text-align: center; padding: 8px 0;
+    font-size: 12px; color: var(--gray-400); font-weight: 500;
+  }
+
+  /* Section */
+  .layer-section {
+    padding: 80px 40px;
+  }
+  .layer-section:nth-child(even) { background: var(--gray-50); }
+  .layer-inner { max-width: var(--max-w); margin: 0 auto; }
+
+  .layer-header {
+    display: flex; align-items: center; gap: 16px; margin-bottom: 16px;
+  }
+  .layer-badge {
+    padding: 6px 14px; border-radius: 8px;
+    font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 800;
+    color: var(--white); letter-spacing: 1px; flex-shrink: 0;
+  }
+  .layer-badge.l0 { background: var(--dark); }
+  .layer-badge.l1 { background: var(--accent); }
+  .layer-badge.l2 { background: var(--primary); }
+  .layer-badge.l3 { background: var(--success); }
+  .layer-badge.l4 { background: var(--warning); }
+  .layer-badge.l5 { background: var(--violet); }
+
+  .layer-title {
+    font-size: 28px; font-weight: 900; color: var(--dark); line-height: 1.3;
+  }
+  .layer-desc {
+    font-size: 15px; color: var(--gray-500); line-height: 1.8;
+    margin-bottom: 40px; max-width: 700px;
+  }
+
+  /* Agent Cards */
+  .agent-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+  }
+  .agent-grid.three { grid-template-columns: repeat(3, 1fr); }
+
+  .agent-card {
+    background: var(--white); border: 1px solid var(--gray-200);
+    border-radius: 16px; padding: 28px; transition: all .3s;
+    position: relative; overflow: hidden;
+  }
+  .layer-section:nth-child(even) .agent-card { background: var(--white); }
+  .agent-card:hover {
+    border-color: var(--gray-300);
+    box-shadow: 0 8px 32px rgba(0,0,0,.06);
+    transform: translateY(-2px);
+  }
+
+  .agent-card-top {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+  }
+  .agent-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .agent-icon.l0 { background: rgba(15,23,42,.08); }
+  .agent-icon.l1 { background: rgba(37,99,235,.08); }
+  .agent-icon.l2 { background: rgba(8,145,178,.08); }
+  .agent-icon.l3 { background: rgba(5,150,105,.08); }
+  .agent-icon.l4 { background: rgba(217,119,6,.08); }
+  .agent-icon.l5 { background: rgba(124,58,237,.08); }
+
+  .agent-name {
+    font-size: 16px; font-weight: 800; color: var(--dark); line-height: 1.3;
+  }
+  .agent-name-en {
+    font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
+    color: var(--gray-400); letter-spacing: 0.5px; margin-top: 2px;
+  }
+
+  .agent-desc {
+    font-size: 14px; color: var(--gray-600); line-height: 1.7;
+    margin-bottom: 16px;
+  }
+
+  .agent-features { list-style: none; }
+  .agent-features li {
+    font-size: 13px; color: var(--gray-500); padding: 4px 0;
+    padding-left: 20px; position: relative;
+  }
+  .agent-features li::before {
+    content: ''; position: absolute; left: 0; top: 11px;
+    width: 6px; height: 6px; border-radius: 50%;
+  }
+  .l0 .agent-features li::before { background: var(--dark); }
+  .l1 .agent-features li::before { background: var(--accent); }
+  .l2 .agent-features li::before { background: var(--primary); }
+  .l3 .agent-features li::before { background: var(--success); }
+  .l4 .agent-features li::before { background: var(--warning); }
+  .l5 .agent-features li::before { background: var(--violet); }
+
+  .agent-card.featured {
+    border: 2px solid var(--primary);
+    background: linear-gradient(135deg, rgba(8,145,178,.02), rgba(37,99,235,.02));
+  }
+  .agent-card.featured .agent-star {
+    position: absolute; top: 16px; right: 16px;
+    font-size: 10px; font-weight: 700; color: var(--primary);
+    background: rgba(8,145,178,.08); padding: 3px 8px; border-radius: 6px;
+  }
+
+  /* SEAL Strip */
+  .seal-strip {
+    padding: 60px 40px;
+    background: var(--dark); color: var(--white);
+  }
+  .seal-inner { max-width: var(--max-w); margin: 0 auto; }
+  .seal-title {
+    font-size: 13px; font-weight: 800; letter-spacing: 2px;
+    color: var(--primary-light); margin-bottom: 8px;
+  }
+  .seal-heading {
+    font-size: 24px; font-weight: 900; margin-bottom: 8px;
+  }
+  .seal-desc {
+    font-size: 14px; color: var(--gray-400); margin-bottom: 32px; max-width: 600px;
+  }
+  .seal-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  }
+  .seal-card {
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
+    border-radius: 12px; padding: 24px;
+  }
+  .seal-card-icon { font-size: 20px; margin-bottom: 12px; }
+  .seal-card-name {
+    font-size: 14px; font-weight: 800; margin-bottom: 8px;
+  }
+  .seal-card-desc {
+    font-size: 13px; color: var(--gray-400); line-height: 1.6;
+  }
+
+  /* Summary */
+  .summary {
+    padding: 80px 40px; background: var(--gray-50);
+  }
+  .summary-inner { max-width: var(--max-w); margin: 0 auto; text-align: center; }
+  .summary-title {
+    font-size: 28px; font-weight: 900; color: var(--dark); margin-bottom: 12px;
+  }
+  .summary-desc {
+    font-size: 15px; color: var(--gray-500); margin-bottom: 48px;
+  }
+  .summary-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+  }
+  .stat-card {
+    background: var(--white); border: 1px solid var(--gray-200);
+    border-radius: 16px; padding: 32px 20px;
+  }
+  .stat-num {
+    font-family: 'Inter', sans-serif; font-size: 40px; font-weight: 900;
+    color: var(--primary); margin-bottom: 4px;
+  }
+  .stat-label {
+    font-size: 14px; font-weight: 600; color: var(--gray-600);
+  }
+
+  /* CTA */
+  .cta {
+    padding: 80px 40px; text-align: center;
+    background: var(--dark); color: var(--white);
+  }
+  .cta-title {
+    font-size: 28px; font-weight: 900; margin-bottom: 12px;
+  }
+  .cta-desc {
+    font-size: 15px; color: var(--gray-400); margin-bottom: 32px;
+  }
+  .cta-btn {
+    display: inline-block; padding: 14px 36px; border-radius: 10px;
+    font-size: 15px; font-weight: 700; color: var(--white);
+    background: linear-gradient(135deg, #0891b2, #2563eb);
+    text-decoration: none; transition: transform .2s;
+  }
+  .cta-btn:hover { transform: translateY(-2px); }
+
+  /* Footer */
+  .footer {
+    padding: 24px 40px; border-top: 1px solid var(--gray-200);
+    font-size: 12px; color: var(--gray-400); text-align: center;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .nav-inner { padding: 0 16px; }
+    .nav-links { display: none; }
+    .nav-hamburger { display: block; }
+    .hero { padding: 100px 16px 60px; }
+    .hero h1 { font-size: 28px; }
+    .hero-desc { font-size: 15px; }
+    .cycle { padding: 40px 16px 20px; }
+    .cycle-flow { gap: 6px; }
+    .cycle-chip { padding: 8px 12px; font-size: 11px; }
+    .cycle-arrow { font-size: 14px; }
+    .layer-section { padding: 60px 16px; }
+    .layer-title { font-size: 22px; }
+    .agent-grid, .agent-grid.three { grid-template-columns: 1fr; }
+    .seal-strip { padding: 40px 16px; }
+    .seal-grid { grid-template-columns: 1fr; }
+    .summary { padding: 60px 16px; }
+    .summary-stats { grid-template-columns: repeat(2, 1fr); }
+    .cta { padding: 60px 16px; }
+    .footer { padding: 20px 16px; }
+  }
+
+  /* Animations */
+  .fade-up {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity .6s, transform .6s;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">Kustody<span>Fi</span></a>
+    <div class="nav-links">
+      <a href="#cycle">Architecture</a>
+      <a href="#l0">Policy</a>
+      <a href="#l1">Diagnosis</a>
+      <a href="#l3">Execution</a>
+      <a href="#l5">Learning</a>
+      <a href="index.html" style="color:var(--primary);font-weight:600">For Corporates</a>
+      <a href="for-institutions.html" style="color:var(--primary);font-weight:600">For Institutions</a>
+    </div>
+    <button class="nav-hamburger" id="hamburgerBtn" aria-label="menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">AI AGENT ARCHITECTURE</div>
+    <h1>정책 수립부터 사후 분석까지.<br><span class="hl">44개 AI Agent</span>가 움직입니다.</h1>
+    <p class="hero-desc">
+      Investment Committee에서 사람이 정책을 정하면,<br>
+      AI Agent가 진단 &rarr; 감시 &rarr; 실행 &rarr; 분석 &rarr; 개선까지 전체 사이클을 운영합니다.
+    </p>
+  </div>
+</section>
+
+<!-- Cycle Flow -->
+<section class="cycle" id="cycle">
+  <div class="cycle-inner">
+    <div class="cycle-flow">
+      <div class="cycle-step">
+        <a href="#l0" class="cycle-chip l0">Policy</a>
+        <span class="cycle-arrow">&rarr;</span>
+      </div>
+      <div class="cycle-step">
+        <a href="#l1" class="cycle-chip l1">Diagnosis</a>
+        <span class="cycle-arrow">&rarr;</span>
+      </div>
+      <div class="cycle-step">
+        <a href="#l2" class="cycle-chip l2">Market Intel</a>
+        <span class="cycle-arrow">&rarr;</span>
+      </div>
+      <div class="cycle-step">
+        <a href="#l3" class="cycle-chip l3">Execution</a>
+        <span class="cycle-arrow">&rarr;</span>
+      </div>
+      <div class="cycle-step">
+        <a href="#l4" class="cycle-chip l4">Post-Trade</a>
+        <span class="cycle-arrow">&rarr;</span>
+      </div>
+      <div class="cycle-step">
+        <a href="#l5" class="cycle-chip l5">Learning</a>
+      </div>
+    </div>
+    <div class="cycle-return">&larr; 개선 결과가 다시 Investment Committee로 피드백됩니다</div>
+  </div>
+</section>
+
+<!-- Layer 0: Policy & Governance -->
+<section class="layer-section" id="l0">
+  <div class="layer-inner">
+    <div class="layer-header fade-up">
+      <span class="layer-badge l0">LAYER 0</span>
+      <h2 class="layer-title">Policy & Governance</h2>
+    </div>
+    <p class="layer-desc fade-up">
+      사람이 방향을 정하고, AI가 정량화합니다.<br>
+      Investment Committee에서 논의된 정책이 시스템 전체를 움직이는 기준이 됩니다.
+    </p>
+    <div class="agent-grid three fade-up">
+      <div class="agent-card featured l0">
+        <span class="agent-star">CORE</span>
+        <div class="agent-card-top">
+          <div class="agent-icon l0">&#9878;</div>
+          <div>
+            <div class="agent-name">Investment Committee</div>
+            <div class="agent-name-en">IC WORKSPACE</div>
+          </div>
+        </div>
+        <p class="agent-desc">사람과 AI가 정책을 논의하는 공간. AI가 데이터와 시나리오를 제시하고, 사람이 최종 결정합니다.</p>
+        <ul class="agent-features">
+          <li>리스크 성향(보수적/공격적) 설정</li>
+          <li>헷지 비율, 한도, stop-loss 기준 논의</li>
+          <li>시나리오별 시뮬레이션 결과 비교</li>
+          <li>정책 변경 이력 및 근거 기록</li>
+        </ul>
+      </div>
+      <div class="agent-card l0">
+        <div class="agent-card-top">
+          <div class="agent-icon l0">&#9881;</div>
+          <div>
+            <div class="agent-name">Policy Analyzer</div>
+            <div class="agent-name-en">POLICY QUANTIFIER</div>
+          </div>
+        </div>
+        <p class="agent-desc">IC의 정성적 결정을 정량적 파라미터로 변환. "보수적으로 가자"를 구체적 수치로 번역합니다.</p>
+        <ul class="agent-features">
+          <li>Risk appetite &rarr; hedge ratio, VaR 한도 변환</li>
+          <li>Expected return 목표 산출</li>
+          <li>공격성 수준 정량화 (1~10 스케일)</li>
+          <li>과거 정책 대비 변경점 분석</li>
+        </ul>
+      </div>
+      <div class="agent-card featured l0">
+        <span class="agent-star">ADVISOR</span>
+        <div class="agent-card-top">
+          <div class="agent-icon l0">&#9878;</div>
+          <div>
+            <div class="agent-name">Best Interest Advisor</div>
+            <div class="agent-name-en">FIDUCIARY CHECK</div>
+          </div>
+        </div>
+        <p class="agent-desc">모든 주요 결정 전, "이게 진짜 우리 회사에 최선인가?"를 판단하는 내부 자문역.</p>
+        <ul class="agent-features">
+          <li>단기 이익 vs 장기 전략 충돌 감지</li>
+          <li>전사 포트폴리오 관점 영향 분석</li>
+          <li>숨겨진 비용/리스크 사전 경고</li>
+          <li>대안 시나리오 자동 제시</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Layer 1: Diagnosis -->
+<section class="layer-section" id="l1">
+  <div class="layer-inner">
+    <div class="layer-header fade-up">
+      <span class="layer-badge l1">LAYER 1</span>
+      <h2 class="layer-title">Diagnosis</h2>
+    </div>
+    <p class="layer-desc fade-up">
+      지금 우리 포지션이 어디에 있는지, 정책 대비 얼마나 벗어났는지, 우리 회사만의 거래 패턴은 무엇인지 진단합니다.
+    </p>
+    <div class="agent-grid three fade-up">
+      <div class="agent-card l1">
+        <div class="agent-card-top">
+          <div class="agent-icon l1">&#128200;</div>
+          <div>
+            <div class="agent-name">Exposure Monitor</div>
+            <div class="agent-name-en">POSITION TRACKER</div>
+          </div>
+        </div>
+        <p class="agent-desc">통화별, 상품별, 만기별 노출도를 실시간으로 보여줍니다.</p>
+        <ul class="agent-features">
+          <li>Spot delta, Forward delta, Swap delta 분해</li>
+          <li>통화별 순노출(net exposure) 산출</li>
+          <li>만기 구간별(tenor bucket) breakdown</li>
+          <li>상품별 Greeks 모니터링</li>
+        </ul>
+      </div>
+      <div class="agent-card l1">
+        <div class="agent-card-top">
+          <div class="agent-icon l1">&#128201;</div>
+          <div>
+            <div class="agent-name">Health Check</div>
+            <div class="agent-name-en">POLICY GAP ANALYZER</div>
+          </div>
+        </div>
+        <p class="agent-desc">현재 포지션이 IC 정책 대비 어디에 있는지 진단하고, gap을 시각화합니다.</p>
+        <ul class="agent-features">
+          <li>정책 hedge ratio vs 현재 ratio 비교</li>
+          <li>한도 소진율 모니터링</li>
+          <li>이탈 시 자동 알림 + 조치 제안</li>
+          <li>정책 준수 스코어카드</li>
+        </ul>
+      </div>
+      <div class="agent-card featured l1">
+        <span class="agent-star">DNA</span>
+        <div class="agent-card-top">
+          <div class="agent-icon l1">&#129516;</div>
+          <div>
+            <div class="agent-name">Trade DNA</div>
+            <div class="agent-name-en">BEHAVIORAL ONTOLOGY</div>
+          </div>
+        </div>
+        <p class="agent-desc">우리 회사만의 거래 방식 특이성을 파악합니다. 모든 Agent가 회사에 맞는 추천을 하기 위한 기반.</p>
+        <ul class="agent-features">
+          <li>거래 시간대, 금액 패턴, 계절성 분석</li>
+          <li>선호 은행/상품/만기 구조 매핑</li>
+          <li>평소 패턴 이탈 시 이상 탐지</li>
+          <li>신규 직원 온보딩 시 회사 관행 안내</li>
+        </ul>
+      </div>
+      <div class="agent-card l1">
+        <div class="agent-card-top">
+          <div class="agent-icon l1">&#128179;</div>
+          <div>
+            <div class="agent-name">Account Onboarding</div>
+            <div class="agent-name-en">SETUP WIZARD</div>
+          </div>
+        </div>
+        <p class="agent-desc">계좌 등록, 은행 연동, 초기 설정을 쉽게 안내합니다.</p>
+        <ul class="agent-features">
+          <li>계좌 정보 입력 가이드</li>
+          <li>은행 API 연동 상태 확인</li>
+          <li>통화별 계좌 매핑</li>
+          <li>초기 잔고 동기화</li>
+        </ul>
+      </div>
+      <div class="agent-card featured l1">
+        <span class="agent-star">KEY</span>
+        <div class="agent-card-top">
+          <div class="agent-icon l1">&#128176;</div>
+          <div>
+            <div class="agent-name">Liquidity Manager</div>
+            <div class="agent-name-en">CASH OPTIMIZER</div>
+          </div>
+        </div>
+        <p class="agent-desc">계좌별 잔고를 효율적으로 배분하고, 주기적으로 금리를 조회하여 최적 수익을 확보합니다.</p>
+        <ul class="agent-features">
+          <li>통화별/계좌별 잔고 현황 통합</li>
+          <li>유휴 자금 자동 재배치 제안</li>
+          <li>금융기관 금리 주기적 조회 &rarr; 더 좋은 금리 확보</li>
+          <li>통화별 effective rate 산출</li>
+        </ul>
+      </div>
+      <div class="agent-card l1">
+        <div class="agent-card-top">
+          <div class="agent-icon l1">&#128197;</div>
+          <div>
+            <div class="agent-name">Calendar & Timezone</div>
+            <div class="agent-name-en">GLOBAL SCHEDULE ENGINE</div>
+          </div>
+        </div>
+        <p class="agent-desc">글로벌 시간대, 공휴일, settlement date를 관리합니다. 다른 Agent가 "오늘 거래 가능한가?"를 이 Agent에게 묻습니다.</p>
+        <ul class="agent-features">
+          <li>국가별 공휴일 &rarr; value date 자동 계산</li>
+          <li>은행별 cut-off time 관리</li>
+          <li>Daylight saving time 전환 대응</li>
+          <li>Stablecoin 24/7 vs 은행 영업시간 매핑</li>
+        </ul>
+      </div>
+      <div class="agent-card l1">
+        <div class="agent-card-top">
+          <div class="agent-icon l1">&#128178;</div>
+          <div>
+            <div class="agent-name">Bank Fee Manager</div>
+            <div class="agent-name-en">COST STRUCTURE TRACKER</div>
+          </div>
+        </div>
+        <p class="agent-desc">은행별 수수료 구조를 관리합니다. 방향(지급/수취), 통화, 은행에 따라 달라지는 비용을 가시화하고 최적화합니다.</p>
+        <ul class="agent-features">
+          <li>은행별 펌뱅킹/송금/환전 수수료 매핑</li>
+          <li>원화 방향(지급 vs 수취)별 수수료 차이 관리</li>
+          <li>통화별 수수료 구조 비교</li>
+          <li>숨은 비용 가시화 &rarr; 최저 비용 경로 추천</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Layer 2: Market Intelligence -->
+<section class="layer-section" id="l2">
+  <div class="layer-inner">
+    <div class="layer-header fade-up">
+      <span class="layer-badge l2">LAYER 2</span>
+      <h2 class="layer-title">Market Intelligence</h2>
+    </div>
+    <p class="layer-desc fade-up">
+      시장을 24시간 감시하고, 데이터의 의미를 해석합니다. 이론가 산출부터 실효 금리 분석까지.
+    </p>
+    <div class="agent-grid three fade-up">
+      <div class="agent-card featured l2">
+        <span class="agent-star">DATA HUB</span>
+        <div class="agent-card-top">
+          <div class="agent-icon l2">&#128268;</div>
+          <div>
+            <div class="agent-name">Market Data Gateway</div>
+            <div class="agent-name-en">EXTERNAL DATA CONNECTOR</div>
+          </div>
+        </div>
+        <p class="agent-desc">Bloomberg, Reuters, 인포맥스, 브로커 등 외부 데이터 소스를 통합 연동합니다. bid/ask 출처별 Tier를 관리합니다.</p>
+        <ul class="agent-features">
+          <li><strong>Tier 1</strong> — 브로커/Bloomberg/Reuters/인포맥스 실제 시장 bid/ask</li>
+          <li><strong>Tier 2</strong> — 은행이 제시하는 bid/ask (은행 마진 포함)</li>
+          <li><strong>Tier 3</strong> — mid만 있고 bid/ask 없는 경우, 스프레드 가정 역산</li>
+          <li>데이터 소스별 Tier 태깅 &amp; 품질 관리</li>
+        </ul>
+      </div>
+      <div class="agent-card l2">
+        <div class="agent-card-top">
+          <div class="agent-icon l2">&#128225;</div>
+          <div>
+            <div class="agent-name">Market Watch</div>
+            <div class="agent-name-en">REAL-TIME DATA FEED</div>
+          </div>
+        </div>
+        <p class="agent-desc">Market Data Gateway에서 받은 데이터를 실시간 파이프라인으로 가공·배포합니다.</p>
+        <ul class="agent-features">
+          <li>Spot rate, Forward points 실시간 수집</li>
+          <li>금리 커브(IRS, CRS) 모니터링</li>
+          <li>Implied volatility surface 추적</li>
+          <li>뉴스/이벤트 피드 수집</li>
+        </ul>
+      </div>
+      <div class="agent-card l2">
+        <div class="agent-card-top">
+          <div class="agent-icon l2">&#128300;</div>
+          <div>
+            <div class="agent-name">Market Analyst</div>
+            <div class="agent-name-en">SIGNAL INTERPRETER</div>
+          </div>
+        </div>
+        <p class="agent-desc">수집된 데이터의 의미를 해석합니다. 트렌드, 이상 징후, 이벤트 영향을 분석합니다.</p>
+        <ul class="agent-features">
+          <li>환율 추세 및 변곡점 감지</li>
+          <li>뉴스 &rarr; FX 영향 분석</li>
+          <li>유사 과거 이벤트 매칭</li>
+          <li>실행 적기(timing) 시그널 생성</li>
+        </ul>
+      </div>
+      <div class="agent-card l2">
+        <div class="agent-card-top">
+          <div class="agent-icon l2">&#128202;</div>
+          <div>
+            <div class="agent-name">Quant Analyst</div>
+            <div class="agent-name-en">STATISTICAL ENGINE</div>
+          </div>
+        </div>
+        <p class="agent-desc">통계/기술 지표 기반 정량 분석. 수치로 시장을 읽습니다.</p>
+        <ul class="agent-features">
+          <li>이동평균, 볼린저, RSI 등 기술 지표</li>
+          <li>통화쌍 간 상관관계 분석</li>
+          <li>변동성 regime 분류</li>
+          <li>통계적 이상치 탐지</li>
+        </ul>
+      </div>
+      <div class="agent-card l2">
+        <div class="agent-card-top">
+          <div class="agent-icon l2">&#127758;</div>
+          <div>
+            <div class="agent-name">Macro Watcher</div>
+            <div class="agent-name-en">GLOBAL MACRO MONITOR</div>
+          </div>
+        </div>
+        <p class="agent-desc">거시경제 전담. 금리 결정, CPI, 고용지표, 중앙은행 발언 등 매크로 이벤트를 추적합니다.</p>
+        <ul class="agent-features">
+          <li>주요국 금리 결정 일정 관리</li>
+          <li>경제지표 발표 &rarr; FX 영향 예측</li>
+          <li>중앙은행 발언 톤 분석</li>
+          <li>글로벌 리스크 이벤트 모니터링</li>
+        </ul>
+      </div>
+      <div class="agent-card l2">
+        <div class="agent-card-top">
+          <div class="agent-icon l2">&#128178;</div>
+          <div>
+            <div class="agent-name">StableFX Pricing Engine</div>
+            <div class="agent-name-en">THEORETICAL PRICE CALCULATOR</div>
+          </div>
+        </div>
+        <p class="agent-desc">StableFX 이론가/공정가 계산 엔진. 실행 전 기준 가격을 산출하고, 은행 호가의 마진을 역산합니다.</p>
+        <ul class="agent-features">
+          <li>통화쌍별 이론가(mid) 실시간 계산</li>
+          <li>은행 호가 vs 이론가 스프레드 분석</li>
+          <li>Forward point 기반 공정가 산출</li>
+          <li>Execution Orchestrator에 기준가 제공</li>
+        </ul>
+      </div>
+      <div class="agent-card l2">
+        <div class="agent-card-top">
+          <div class="agent-icon l2">&#128202;</div>
+          <div>
+            <div class="agent-name">StableFX Visualizer</div>
+            <div class="agent-name-en">PRICING DASHBOARD</div>
+          </div>
+        </div>
+        <p class="agent-desc">이론가 대비 실제 호가를 시각화하여, 사람이 한눈에 은행 마진과 스프레드를 파악할 수 있게 합니다.</p>
+        <ul class="agent-features">
+          <li>은행별 마진 비교 차트</li>
+          <li>스프레드 히트맵 (통화별/시간대별)</li>
+          <li>이론가 vs 체결가 갭 시각화</li>
+          <li>IC/CFO 대시보드 연동</li>
+        </ul>
+      </div>
+      <div class="agent-card l2">
+        <div class="agent-card-top">
+          <div class="agent-icon l2">&#128176;</div>
+          <div>
+            <div class="agent-name">Funding Cost Analyzer</div>
+            <div class="agent-name-en">EFFECTIVE RATE ENGINE</div>
+          </div>
+        </div>
+        <p class="agent-desc">기업별/통화별 실효 금리를 역산합니다. 숨겨진 조달 비용을 밝혀 최적 펀딩 경로를 찾습니다.</p>
+        <ul class="agent-features">
+          <li>통화별 실효 조달 금리 계산</li>
+          <li>은행별 implied funding cost 비교</li>
+          <li>스왑포인트 내재 금리 역산</li>
+          <li>Liquidity Manager에 최적 경로 제안</li>
+        </ul>
+      </div>
+      <div class="agent-card l2">
+        <div class="agent-card-top">
+          <div class="agent-icon l2">&#128200;</div>
+          <div>
+            <div class="agent-name">Implied Yield Engine</div>
+            <div class="agent-name-en">YIELD CURVE BUILDER</div>
+          </div>
+        </div>
+        <p class="agent-desc">USD curve를 구축하고, 스왑포인트에서 implied yield를 실시간 역산합니다. Tier별 가격 차이를 추적합니다.</p>
+        <ul class="agent-features">
+          <li>USD IR curve (SOFR 기반) 실시간 구축</li>
+          <li>Tier 1 (시장 bid/ask) 기반 implied yield 계산</li>
+          <li>Tier 2 (은행 bid/ask) implied yield 역산 &rarr; 은행 마진 추정</li>
+          <li>Tier 간 괴리 탐지 &amp; 은행 가격 경쟁력 비교</li>
+        </ul>
+      </div>
+      <div class="agent-card l2">
+        <div class="agent-card-top">
+          <div class="agent-icon l2">&#127970;</div>
+          <div>
+            <div class="agent-name">Interbank Curve Engine</div>
+            <div class="agent-name-en">STABLEFX — MARKET CURVE</div>
+          </div>
+        </div>
+        <p class="agent-desc">StableFX 로직으로 커브 구축. mid + 브로커/시장 실제 bid/ask를 사용합니다. 시장이 보는 가격의 기준선입니다.</p>
+        <ul class="agent-features">
+          <li>StableFX 엔진 기반, 입력 = 시장 실거래 bid/ask</li>
+          <li>주요 통화쌍 FX forward curve 구축</li>
+          <li>공정가 평가(mark-to-market) 기준 제공</li>
+          <li>Proprietary Curve에 mid 기준선 공급</li>
+        </ul>
+      </div>
+      <div class="agent-card l2">
+        <div class="agent-card-top">
+          <div class="agent-icon l2">&#127971;</div>
+          <div>
+            <div class="agent-name">Proprietary Curve Engine</div>
+            <div class="agent-name-en">STABLEFX — CORPORATE CURVE</div>
+          </div>
+        </div>
+        <p class="agent-desc">StableFX 로직으로 커브 구축. mid는 Interbank와 동일, bid/ask는 은행 호가 중 best 가격을 사용합니다.</p>
+        <ul class="agent-features">
+          <li>StableFX 엔진 기반, mid = interbank mid 공유</li>
+          <li>bid/ask = 은행 호가 중 best bid / best ask</li>
+          <li>Interbank bid/ask 대비 갭 = 은행 마진 실시간 산출</li>
+          <li>Execution Orchestrator에 최적 은행 추천</li>
+        </ul>
+      </div>
+      <div class="agent-card l2">
+        <div class="agent-card-top">
+          <div class="agent-icon l2">&#128256;</div>
+          <div>
+            <div class="agent-name">Contrarian Signal Engine</div>
+            <div class="agent-name-en">INVERSE ENSEMBLE</div>
+          </div>
+        </div>
+        <p class="agent-desc">일부러 단순한 룰 기반 Agent 여러 개를 돌려, 체계적으로 틀리는 시그널의 반대를 취합니다.</p>
+        <ul class="agent-features">
+          <li>다수의 weak learner (추세추종, 평균회귀 등) 병렬 운영</li>
+          <li>각 Agent hit rate rolling window 모니터링</li>
+          <li>hit rate 40% 미만 &rarr; 반대 시그널로 자동 전환</li>
+          <li>regime 변화 감지 시 전환 로직 리셋</li>
+        </ul>
+      </div>
+      <div class="agent-card l2">
+        <div class="agent-card-top">
+          <div class="agent-icon l2">&#128203;</div>
+          <div>
+            <div class="agent-name">Contrarian Monitor</div>
+            <div class="agent-name-en">HIT RATE TRACKER</div>
+          </div>
+        </div>
+        <p class="agent-desc">Contrarian Agent들의 적중률을 실시간 추적하고, regime 전환 시 경고합니다.</p>
+        <ul class="agent-features">
+          <li>Agent별 hit rate 실시간 대시보드</li>
+          <li>Rolling window (7일/30일/90일) 비교</li>
+          <li>"잘 틀리던 놈이 맞기 시작" &rarr; regime 전환 알림</li>
+          <li>전체 ensemble 수익률 vs 단일 모델 비교</li>
+        </ul>
+      </div>
+      <div class="agent-card featured l2">
+        <span class="agent-star">INSIGHT</span>
+        <div class="agent-card-top">
+          <div class="agent-icon l2">&#128214;</div>
+          <div>
+            <div class="agent-name">Event Replay</div>
+            <div class="agent-name-en">HISTORICAL PATTERN MATCHER</div>
+          </div>
+        </div>
+        <p class="agent-desc">과거 데이터에서 유사한 이벤트를 찾아, 당시 시장이 어떻게 움직였는지 제안합니다.</p>
+        <ul class="agent-features">
+          <li>"트럼프 관세 발언" &rarr; 과거 유사 사례 3건 매칭</li>
+          <li>키워드 + 액션 &rarr; 시장 반응 패턴 분석</li>
+          <li>유사도 기반 시나리오 확률 산출</li>
+          <li>IC 논의용 레퍼런스 자동 제공</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Layer 3: Execution -->
+<section class="layer-section" id="l3">
+  <div class="layer-inner">
+    <div class="layer-header fade-up">
+      <span class="layer-badge l3">LAYER 3</span>
+      <h2 class="layer-title">Execution</h2>
+    </div>
+    <p class="layer-desc fade-up">
+      분석 결과를 행동으로 옮깁니다. 정책 검증 &rarr; 최적 경로 &rarr; 체결 &rarr; 지급결제까지.
+    </p>
+    <div class="agent-grid three fade-up">
+      <div class="agent-card l3">
+        <div class="agent-card-top">
+          <div class="agent-icon l3">&#9989;</div>
+          <div>
+            <div class="agent-name">Pre-Trade Compliance</div>
+            <div class="agent-name-en">STRATEGY VALIDATOR</div>
+          </div>
+        </div>
+        <p class="agent-desc">실행 전, 이 거래가 IC 정책에 부합하는지 자동 검증합니다.</p>
+        <ul class="agent-features">
+          <li>정책 기준 적합성 판단</li>
+          <li>한도 초과 사전 차단</li>
+          <li>비정상 패턴 탐지</li>
+          <li>승인 필요 시 담당자에게 알림</li>
+        </ul>
+      </div>
+      <div class="agent-card l3">
+        <div class="agent-card-top">
+          <div class="agent-icon l3">&#128640;</div>
+          <div>
+            <div class="agent-name">Execution Orchestrator</div>
+            <div class="agent-name-en">BEST EXECUTION ENGINE</div>
+          </div>
+        </div>
+        <p class="agent-desc">어떤 은행에, 어떤 타이밍에, 어떻게 분할해서 실행할지 결정합니다.</p>
+        <ul class="agent-features">
+          <li>Multi-RFQ 최적 가격 비교</li>
+          <li>분할 실행(slicing) 전략</li>
+          <li>시장 영향(market impact) 최소화</li>
+          <li>실행 경로 추천</li>
+        </ul>
+      </div>
+      <div class="agent-card l3">
+        <div class="agent-card-top">
+          <div class="agent-icon l3">&#9889;</div>
+          <div>
+            <div class="agent-name">Execution Bot</div>
+            <div class="agent-name-en">AUTO TRADER</div>
+          </div>
+        </div>
+        <p class="agent-desc">Orchestrator의 지시에 따라 실제 주문을 집행합니다.</p>
+        <ul class="agent-features">
+          <li>자동 주문 생성 및 전송</li>
+          <li>체결 확인 및 상태 추적</li>
+          <li>부분 체결 처리</li>
+          <li>실행 로그 기록</li>
+        </ul>
+      </div>
+      <div class="agent-card l3">
+        <div class="agent-card-top">
+          <div class="agent-icon l3">&#128275;</div>
+          <div>
+            <div class="agent-name">Payment Authorizer</div>
+            <div class="agent-name-en">PAYMENT APPROVAL</div>
+          </div>
+        </div>
+        <p class="agent-desc">지급결제 전 승인 워크플로우를 관리합니다. 금액별/직급별 승인 라우팅.</p>
+        <ul class="agent-features">
+          <li>금액 구간별 승인 레벨 자동 적용</li>
+          <li>이중 승인(dual authorization) 관리</li>
+          <li>긴급 결제 에스컬레이션</li>
+          <li>승인 이력 감사 로그</li>
+        </ul>
+      </div>
+      <div class="agent-card l3">
+        <div class="agent-card-top">
+          <div class="agent-icon l3">&#128181;</div>
+          <div>
+            <div class="agent-name">Payment Executor</div>
+            <div class="agent-name-en">SETTLEMENT ENGINE</div>
+          </div>
+        </div>
+        <p class="agent-desc">승인된 지급결제를 실행합니다. 결제 상태 추적 및 실패 시 재처리.</p>
+        <ul class="agent-features">
+          <li>결제 지시 생성 및 전송</li>
+          <li>결제 상태 실시간 추적</li>
+          <li>실패 시 자동 재처리 + 알림</li>
+          <li>결제 일정 관리</li>
+        </ul>
+      </div>
+      <div class="agent-card l3">
+        <div class="agent-card-top">
+          <div class="agent-icon l3">&#128268;</div>
+          <div>
+            <div class="agent-name">Bank Gateway</div>
+            <div class="agent-name-en">API CONNECTOR</div>
+          </div>
+        </div>
+        <p class="agent-desc">은행별 API 연동을 관리합니다. 프로토콜, 메시지 포맷, 연결 상태를 통합 관리.</p>
+        <ul class="agent-features">
+          <li>은행별 API 프로토콜 변환</li>
+          <li>연결 상태 모니터링 + 자동 재연결</li>
+          <li>메시지 포맷 표준화</li>
+          <li>은행 추가 시 플러그인 방식 확장</li>
+        </ul>
+      </div>
+      <div class="agent-card l3">
+        <div class="agent-card-top">
+          <div class="agent-icon l3">&#128220;</div>
+          <div>
+            <div class="agent-name">Venue Compliance</div>
+            <div class="agent-name-en">RULEBOOK ENFORCER</div>
+          </div>
+        </div>
+        <p class="agent-desc">거래소/플랫폼별 rulebook을 준수하여 주문합니다. 규칙 위반으로 인한 ban을 방지.</p>
+        <ul class="agent-features">
+          <li>거래소별 주문 규칙 자동 적용</li>
+          <li>호가 단위, 수량 제한, 시간 규칙 준수</li>
+          <li>주문 빈도/패턴 규제 모니터링</li>
+          <li>규칙 변경 시 자동 업데이트</li>
+        </ul>
+      </div>
+      <div class="agent-card l3">
+        <div class="agent-card-top">
+          <div class="agent-icon l3">&#128256;</div>
+          <div>
+            <div class="agent-name">Netting Engine</div>
+            <div class="agent-name-en">EXPOSURE OFFSET</div>
+          </div>
+        </div>
+        <p class="agent-desc">통화별 수입/지출을 상계하여 순노출만 거래합니다. 거래 건수와 비용을 줄입니다.</p>
+        <ul class="agent-features">
+          <li>통화별 수입 vs 지출 자동 상계</li>
+          <li>그룹사 간 내부 네팅</li>
+          <li>네팅 후 순노출 금액만 시장 실행</li>
+          <li>네팅 절감 효과 리포트</li>
+        </ul>
+      </div>
+      <div class="agent-card l3">
+        <div class="agent-card-top">
+          <div class="agent-icon l3">&#9981;</div>
+          <div>
+            <div class="agent-name">Gas Fee Optimizer</div>
+            <div class="agent-name-en">ON-CHAIN COST ENGINE</div>
+          </div>
+        </div>
+        <p class="agent-desc">블록체인 결제 시 gas fee를 최적화합니다. 네트워크 혼잡도를 예측하여 최적 타이밍에 실행.</p>
+        <ul class="agent-features">
+          <li>네트워크별 gas fee 실시간 모니터링</li>
+          <li>혼잡도 예측 &rarr; 저비용 타이밍 추천</li>
+          <li>긴급도 vs 비용 trade-off 판단</li>
+          <li>일별/주별 gas 비용 리포트</li>
+        </ul>
+      </div>
+      <div class="agent-card l3">
+        <div class="agent-card-top">
+          <div class="agent-icon l3">&#128752;</div>
+          <div>
+            <div class="agent-name">Network Router</div>
+            <div class="agent-name-en">SETTLEMENT PATH SELECTOR</div>
+          </div>
+        </div>
+        <p class="agent-desc">어떤 네트워크/레일을 통해 결제하는 게 가장 효율적인지 판단합니다.</p>
+        <ul class="agent-features">
+          <li>은행 송금 vs 블록체인 vs SWIFT 비교</li>
+          <li>속도/비용/안정성 기준 최적 경로 추천</li>
+          <li>네트워크 상태 실시간 반영</li>
+          <li>결제 경로별 성과 데이터 축적</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SEAL Strip -->
+<section class="seal-strip" id="seal">
+  <div class="seal-inner">
+    <div class="seal-title fade-up">SEAL LAYER</div>
+    <h2 class="seal-heading fade-up">모든 Layer를 관통하는 보안 &middot; 통제 &middot; 감사</h2>
+    <p class="seal-desc fade-up">정책 수립부터 실행까지, 모든 단계에서 권한 분리, 승인 워크플로우, 감사 추적이 작동합니다.</p>
+    <div class="seal-grid fade-up">
+      <div class="seal-card">
+        <div class="seal-card-icon">&#128274;</div>
+        <div class="seal-card-name">Policy & Approval</div>
+        <p class="seal-card-desc">RBAC 기반 권한 분리. 2인 승인 구조. 직급/금액별 자동 라우팅.</p>
+      </div>
+      <div class="seal-card">
+        <div class="seal-card-icon">&#128220;</div>
+        <div class="seal-card-name">Audit Trail</div>
+        <p class="seal-card-desc">누가, 언제, 왜 실행했는지 변경 불가능한 로그로 기록. 감사 대응 원클릭.</p>
+      </div>
+      <div class="seal-card">
+        <div class="seal-card-icon">&#128737;</div>
+        <div class="seal-card-name">Risk Guardrail</div>
+        <p class="seal-card-desc">한도 초과 자동 차단. 이상 거래 실시간 탐지. 정책 위반 즉시 알림.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Layer 4: Post-Trade -->
+<section class="layer-section" id="l4">
+  <div class="layer-inner">
+    <div class="layer-header fade-up">
+      <span class="layer-badge l4">LAYER 4</span>
+      <h2 class="layer-title">Post-Trade</h2>
+    </div>
+    <p class="layer-desc fade-up">
+      체결 후가 끝이 아닙니다. 당시 시장 상황을 기록하고, 실행 품질을 측정하고, 성과를 분해합니다.
+    </p>
+    <div class="agent-grid three fade-up">
+      <div class="agent-card l4">
+        <div class="agent-card-top">
+          <div class="agent-icon l4">&#128218;</div>
+          <div>
+            <div class="agent-name">Trade Recorder</div>
+            <div class="agent-name-en">CONTEXT LOGGER</div>
+          </div>
+        </div>
+        <p class="agent-desc">거래 기록 + 체결 당시 시장 상황을 함께 저장합니다. "왜 그때 그 가격에 했지?"에 답합니다.</p>
+        <ul class="agent-features">
+          <li>체결 시점 환율/변동성/스프레드 기록</li>
+          <li>당시 뉴스/이벤트 컨텍스트 저장</li>
+          <li>의사결정 근거 자동 문서화</li>
+        </ul>
+      </div>
+      <div class="agent-card l4">
+        <div class="agent-card-top">
+          <div class="agent-icon l4">&#128202;</div>
+          <div>
+            <div class="agent-name">TCA</div>
+            <div class="agent-name-en">TRANSACTION COST ANALYSIS</div>
+          </div>
+        </div>
+        <p class="agent-desc">벤치마크 대비 실행 품질을 분석합니다. 실행을 잘 했는지 객관적으로 측정합니다.</p>
+        <ul class="agent-features">
+          <li>VWAP, TWAP 등 벤치마크 비교</li>
+          <li>실행 비용(슬리피지) 산출</li>
+          <li>은행별 가격 경쟁력 비교</li>
+        </ul>
+      </div>
+      <div class="agent-card l4">
+        <div class="agent-card-top">
+          <div class="agent-icon l4">&#128208;</div>
+          <div>
+            <div class="agent-name">Performance Attribution</div>
+            <div class="agent-name-en">P&L DECOMPOSER</div>
+          </div>
+        </div>
+        <p class="agent-desc">수익/손실이 어디서 왔는지 분해합니다. 전략이 맞았는지 검증합니다.</p>
+        <ul class="agent-features">
+          <li>시장 변동 vs 타이밍 vs 은행 선택 분해</li>
+          <li>헷지 효과 정량화</li>
+          <li>기회비용 분석</li>
+        </ul>
+      </div>
+      <div class="agent-card l4">
+        <div class="agent-card-top">
+          <div class="agent-icon l4">&#128196;</div>
+          <div>
+            <div class="agent-name">Report Writer</div>
+            <div class="agent-name-en">DOCUMENT GENERATOR</div>
+          </div>
+        </div>
+        <p class="agent-desc">분석 결과를 사람이 읽을 수 있는 리포트로 작성합니다. IC, CFO, 감사용 문서 자동 생성.</p>
+        <ul class="agent-features">
+          <li>일별/주별/월별 Treasury 리포트</li>
+          <li>IC 보고용 요약 자동 생성</li>
+          <li>감사 대응 문서 원클릭 출력</li>
+          <li>시각화 차트 자동 포함</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Layer 5: Learning & Improvement -->
+<section class="layer-section" id="l5">
+  <div class="layer-inner">
+    <div class="layer-header fade-up">
+      <span class="layer-badge l5">LAYER 5</span>
+      <h2 class="layer-title">Learning & Improvement</h2>
+    </div>
+    <p class="layer-desc fade-up">
+      과거 데이터를 학습하고, 정책 개선안을 IC에 제안합니다. 최종 결정은 항상 사람이 합니다.
+    </p>
+    <div class="agent-grid fade-up">
+      <div class="agent-card l5">
+        <div class="agent-card-top">
+          <div class="agent-icon l5">&#128161;</div>
+          <div>
+            <div class="agent-name">Strategy Optimizer</div>
+            <div class="agent-name-en">CONTINUOUS IMPROVEMENT</div>
+          </div>
+        </div>
+        <p class="agent-desc">과거 실행 데이터를 분석하여, IC에 전략 개선안을 제안합니다.</p>
+        <ul class="agent-features">
+          <li>과거 대비 성과 추이 분석</li>
+          <li>정책 파라미터 최적화 제안</li>
+          <li>"이렇게 했으면 얼마 절약" 시뮬레이션</li>
+          <li>제안 &rarr; IC 승인 &rarr; 정책 반영 사이클</li>
+        </ul>
+      </div>
+      <div class="agent-card featured l5">
+        <span class="agent-star">KILLER</span>
+        <div class="agent-card-top">
+          <div class="agent-icon l5">&#128293;</div>
+          <div>
+            <div class="agent-name">Counterparty Analyzer</div>
+            <div class="agent-name-en">BANK CONCENTRATION MONITOR</div>
+          </div>
+        </div>
+        <p class="agent-desc">특정 금융기관에 편중되고 있지 않은지, 그 편중이 합리적인지 분석합니다.</p>
+        <ul class="agent-features">
+          <li>은행별 거래 비중 모니터링</li>
+          <li>편중 원인 진단: 가격 우위 vs 관행</li>
+          <li>"A은행 70% &mdash; 이유: 1Y 스프레드 0.3bp 타이트" 근거 제시</li>
+          <li>분산 필요 시 대안 은행 추천</li>
+        </ul>
+      </div>
+      <div class="agent-card featured l5">
+        <span class="agent-star">META</span>
+        <div class="agent-card-top">
+          <div class="agent-icon l5">&#128172;</div>
+          <div>
+            <div class="agent-name">Agent Translator</div>
+            <div class="agent-name-en">HUMAN INTERFACE</div>
+          </div>
+        </div>
+        <p class="agent-desc">Agent들 간의 대화, 판단 근거, 의사결정 과정을 통계 내어 사람이 이해할 수 있는 언어로 변환합니다.</p>
+        <ul class="agent-features">
+          <li>Agent 간 대화 로그 요약 및 시각화</li>
+          <li>"왜 이 결정을 했는지" 사람 언어로 설명</li>
+          <li>Agent별 활동량/판단 빈도 통계</li>
+          <li>이상 패턴(Agent 간 충돌, 반복 요청) 알림</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Summary -->
+<section class="summary">
+  <div class="summary-inner">
+    <h2 class="summary-title fade-up">Architecture at a Glance</h2>
+    <p class="summary-desc fade-up">정책부터 학습까지, 전체 Treasury 사이클을 35개 Agent + SEAL Layer가 운영합니다.</p>
+    <div class="summary-stats fade-up">
+      <div class="stat-card">
+        <div class="stat-num">6</div>
+        <div class="stat-label">Layers</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">44</div>
+        <div class="stat-label">AI Agents</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">36</div>
+        <div class="stat-label">CORE</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">8</div>
+        <div class="stat-label">HUMAN</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">1</div>
+        <div class="stat-label">Cycle</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div>
+    <h2 class="cta-title fade-up">Agent Architecture가 궁금하신가요?</h2>
+    <p class="cta-desc fade-up">30분 데모에서 각 Agent가 실제로 어떻게 동작하는지 확인하세요.</p>
+    <a href="mailto:sales@kustodyfi.com?subject=KustodyFi Agent Architecture 데모 요청" class="cta-btn fade-up">데모 신청</a>
+  </div>
+</section>
+
+<!-- Footer -->
+<div class="footer">
+  &copy; 2025&ndash;2026 KustodyFi Co., Ltd. All rights reserved.
+</div>
+
+<script>
+  // Intersection Observer for fade-up
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+
+  // Mobile hamburger
+  const hamburger = document.getElementById('hamburgerBtn');
+  const navLinks = document.querySelector('.nav-links');
+  if (hamburger && navLinks) {
+    hamburger.addEventListener('click', () => {
+      const open = navLinks.style.display === 'flex';
+      navLinks.style.display = open ? 'none' : 'flex';
+      navLinks.style.flexDirection = 'column';
+      navLinks.style.position = 'absolute';
+      navLinks.style.top = '64px';
+      navLinks.style.left = '0';
+      navLinks.style.right = '0';
+      navLinks.style.background = 'rgba(255,255,255,.95)';
+      navLinks.style.padding = open ? '0' : '16px 24px';
+      navLinks.style.gap = '16px';
+      navLinks.style.borderBottom = open ? 'none' : '1px solid rgba(0,0,0,.06)';
+      navLinks.style.backdropFilter = 'blur(20px)';
+    });
+    navLinks.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => { navLinks.style.display = 'none'; });
+    });
+  }
+</script>
+</body>
+</html>

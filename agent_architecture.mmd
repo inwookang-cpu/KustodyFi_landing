@@ -1,0 +1,209 @@
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#0891b2', 'primaryTextColor': '#fff', 'primaryBorderColor': '#0e7490', 'lineColor': '#94a3b8', 'fontSize': '12px'}}}%%
+
+flowchart TB
+    %% ===== LAYER 0: POLICY =====
+    subgraph L0["LAYER 0 — Policy & Governance"]
+        direction LR
+        IC["Investment Committee\n🧑‍💼 HUMAN"]
+        PA["Policy Analyzer\n⚙️ CORE"]
+        BIA["Best Interest Advisor\n⚖️ CORE"]
+    end
+
+    %% ===== LAYER 1: DIAGNOSIS =====
+    subgraph L1["LAYER 1 — Diagnosis"]
+        direction LR
+        EM["Exposure Monitor\n📈 CORE"]
+        HC["Health Check\n📉 CORE"]
+        DNA["Trade DNA\n🧬 CORE"]
+        AO["Account Onboarding\n💳 HUMAN"]
+        LM["Liquidity Manager\n💰 CORE"]
+        CT["Calendar & Timezone\n📅 CORE"]
+        BFM["Bank Fee Manager\n💲 CORE"]
+    end
+
+    %% ===== LAYER 2: MARKET INTEL =====
+    subgraph L2["LAYER 2 — Market Intelligence"]
+        direction LR
+        MDG["Market Data Gateway\n🔌 CORE"]
+        MW["Market Watch\n📡 CORE"]
+        MA["Market Analyst\n🔬 CORE"]
+        QA["Quant Analyst\n📊 CORE"]
+        MACRO["Macro Watcher\n🌍 CORE"]
+        ER["Event Replay\n📖 CORE"]
+        SFX["StableFX Pricing Engine\n💲 CORE"]
+        SFXV["StableFX Visualizer\n📊 HUMAN"]
+        FCA["Funding Cost Analyzer\n💰 CORE"]
+        IYE["Implied Yield Engine\n📈 CORE"]
+        ICE["Interbank Curve Engine\n🏢 CORE"]
+        PCE["Proprietary Curve Engine\n🏣 CORE"]
+        CSE["Contrarian Signal Engine\n🔀 CORE"]
+        CM["Contrarian Monitor\n📋 CORE"]
+    end
+
+    %% ===== LAYER 3: EXECUTION =====
+    subgraph L3["LAYER 3 — Execution"]
+        direction TB
+        PTC["Pre-Trade Compliance\n✅ CORE"]
+        EO["Execution Orchestrator\n🚀 CORE"]
+        EB["Execution Bot\n⚡ CORE"]
+        PAU["Payment Authorizer\n🔑 HUMAN"]
+        PE["Payment Executor\n💸 CORE"]
+        BG["Bank Gateway\n🔌 CORE"]
+        VC["Venue Compliance\n📜 CORE"]
+        NE["Netting Engine\n🔄 CORE"]
+        GFO["Gas Fee Optimizer\n⛽ CORE"]
+        NR["Network Router\n🛤️ CORE"]
+    end
+
+    %% ===== SEAL LAYER =====
+    subgraph SEAL["SEAL — Security / Control / Audit"]
+        direction LR
+        S1["Policy & Approval\n🔒 HUMAN"]
+        S2["Audit Trail\n📝 HUMAN"]
+        S3["Risk Guardrail\n🛡️ CORE"]
+    end
+
+    %% ===== LAYER 4: POST-TRADE =====
+    subgraph L4["LAYER 4 — Post-Trade"]
+        direction LR
+        TR["Trade Recorder\n📚 CORE"]
+        TCA["TCA\n📊 CORE"]
+        PERF["Performance Attribution\n📉 CORE"]
+        RW["Report Writer\n📄 HUMAN"]
+    end
+
+    %% ===== LAYER 5: LEARNING =====
+    subgraph L5["LAYER 5 — Learning & Improvement"]
+        direction LR
+        SO["Strategy Optimizer\n💡 CORE"]
+        CA["Counterparty Analyzer\n🔥 CORE"]
+        AT["Agent Translator\n💬 HUMAN"]
+    end
+
+    %% ===== LAYER 0 INTERNAL =====
+    IC -->|정책 결정| PA
+    IC -->|"최선인가?"| BIA
+    BIA -->|검증 결과| IC
+
+    %% ===== L0 → L1 =====
+    PA -->|정량화된 기준| HC
+    PA -->|한도/목표| EM
+
+    %% ===== L1 INTERNAL =====
+    EM -->|현재 노출도| HC
+    LM -->|잔고 현황| BFM
+    DNA -->|거래 패턴| LM
+    CT -->|거래 가능일| EM
+    BFM -->|비용 구조| LM
+
+    %% ===== L1 → L2 =====
+    EM -->|포지션 데이터| MA
+    HC -->|gap 알림| MA
+
+    %% ===== L2 INTERNAL =====
+    MDG -->|Tier 1/2/3 데이터| MW
+    MW -->|원시 데이터| MA
+    MW -->|원시 데이터| QA
+    MW -->|이벤트 피드| MACRO
+    MA -->|시그널| ER
+    MACRO -->|매크로 이벤트| ER
+    QA -->|정량 시그널| MA
+    MW -->|원시 가격| SFX
+    SFX -->|이론가| MA
+    SFX -->|기준가| EO
+    SFX -->|이론가 데이터| SFXV
+    FCA -->|실효 금리| LM
+    FCA -->|조달 비용| EO
+    MW -->|금리 데이터| FCA
+    MW -->|스왑포인트 Tier별| IYE
+    MW -->|USD IR curve| IYE
+    IYE -->|implied yield| SFX
+    IYE -->|Tier별 괴리| MA
+    MDG -->|Tier 1 시장 bid/ask| ICE
+    MDG -->|Tier 2 은행 bid/ask| PCE
+    ICE -->|interbank 기준 커브| SFX
+    PCE -->|자사 기준 커브| SFX
+    PCE -->|은행 마진 데이터| EO
+    ICE -->|benchmark| IYE
+    MW -->|시장 데이터| CSE
+    CSE -->|inverse 시그널| MA
+    CM -->|hit rate 추적| CSE
+    CM -->|regime 전환 알림| MA
+
+    %% ===== L2 → L3 =====
+    MA -->|실행 시그널| PTC
+    ER -->|유사 사례| PTC
+
+    %% ===== L1 → L3 =====
+    DNA -->|거래 패턴| EO
+    CT -->|settlement date| PE
+    BFM -->|최저 비용 경로| EO
+    NE -->|순노출| EO
+
+    %% ===== L0 → L3 =====
+    BIA -->|적합성 판단| PTC
+
+    %% ===== L3 INTERNAL =====
+    PTC -->|승인| EO
+    EO -->|주문 지시| EB
+    EB -->|API 호출| BG
+    EB -->|규칙 체크| VC
+    PAU -->|결제 승인| PE
+    PE -->|API 호출| BG
+    GFO -->|최적 타이밍| NR
+    NR -->|결제 경로| PE
+
+    %% ===== SEAL → ALL =====
+    S1 -.->|승인 워크플로우| PTC
+    S1 -.->|승인 워크플로우| PAU
+    S3 -.->|한도 차단| EO
+    S3 -.->|한도 차단| EB
+    S2 -.->|로그 기록| EB
+    S2 -.->|로그 기록| PE
+
+    %% ===== L3 → L4 =====
+    EB -->|체결 데이터| TR
+    PE -->|결제 데이터| TR
+    MW -->|시장 컨텍스트| TR
+
+    %% ===== L4 INTERNAL =====
+    TR -->|기록| TCA
+    TCA -->|실행 품질| PERF
+    TR -->|데이터| RW
+    TCA -->|분석| RW
+    PERF -->|성과| RW
+
+    %% ===== L4 → L5 =====
+    PERF -->|성과 데이터| SO
+    TCA -->|은행별 비교| CA
+    TR -->|전체 로그| AT
+
+    %% ===== L5 INTERNAL =====
+    SO -->|개선 인사이트| AT
+    CA -->|편중 분석| AT
+
+    %% ===== L5 → L0 (FEEDBACK LOOP) =====
+    SO -->|정책 개선 제안| IC
+    CA -->|분산 제안| IC
+
+    %% ===== STYLES =====
+    classDef layer0 fill:#0f172a,stroke:#0f172a,color:#fff
+    classDef layer1 fill:#2563eb,stroke:#1d4ed8,color:#fff
+    classDef layer2 fill:#0891b2,stroke:#0e7490,color:#fff
+    classDef layer3 fill:#059669,stroke:#047857,color:#fff
+    classDef layer4 fill:#d97706,stroke:#b45309,color:#fff
+    classDef layer5 fill:#7c3aed,stroke:#6d28d9,color:#fff
+    classDef sealStyle fill:#334155,stroke:#1e293b,color:#fff
+    classDef human fill:#fef3c7,stroke:#d97706,color:#92400e
+    classDef core fill:#ecfdf5,stroke:#059669,color:#065f46
+
+    class IC,AO,PAU,S1,S2,RW,AT,SFXV human
+    class PA,BIA,EM,HC,DNA,LM,CT,BFM,MDG,MW,MA,QA,MACRO,ER,SFX,FCA,IYE,ICE,PCE,CSE,CM,PTC,EO,EB,PE,BG,VC,NE,GFO,NR,S3,TR,TCA,PERF,SO,CA core
+
+    style L0 fill:#f8fafc,stroke:#0f172a,stroke-width:2px,color:#0f172a
+    style L1 fill:#f8fafc,stroke:#2563eb,stroke-width:2px,color:#2563eb
+    style L2 fill:#f8fafc,stroke:#0891b2,stroke-width:2px,color:#0891b2
+    style L3 fill:#f8fafc,stroke:#059669,stroke-width:2px,color:#059669
+    style L4 fill:#f8fafc,stroke:#d97706,stroke-width:2px,color:#d97706
+    style L5 fill:#f8fafc,stroke:#7c3aed,stroke-width:2px,color:#7c3aed
+    style SEAL fill:#1e293b,stroke:#0f172a,stroke-width:2px,color:#94a3b8

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KustodyFi AI Agent Summary</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Noto Sans KR', 'Inter', sans-serif;
+    color: #1e293b; background: #fff; padding: 40px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .header {
+    max-width: 1000px; margin: 0 auto 32px; padding-bottom: 24px;
+    border-bottom: 2px solid #0891b2;
+  }
+  .header h1 { font-size: 24px; font-weight: 900; margin-bottom: 4px; }
+  .header h1 span { color: #0891b2; }
+  .header p { font-size: 13px; color: #64748b; }
+  .stats { display: flex; gap: 24px; margin-top: 16px; }
+  .stat { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; color: #334155; }
+  .stat strong { font-size: 20px; font-weight: 900; color: #0891b2; margin-right: 4px; }
+
+  .legend {
+    max-width: 1000px; margin: 0 auto 24px;
+    display: flex; gap: 24px; font-size: 12px; color: #475569;
+    background: #f8fafc; padding: 12px 16px; border-radius: 8px;
+    border: 1px solid #e2e8f0;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .dot.core { background: #059669; }
+  .dot.human { background: #d97706; }
+
+  .section { max-width: 1000px; margin: 0 auto 28px; }
+  .section-title {
+    font-size: 14px; font-weight: 800; padding: 8px 14px;
+    border-radius: 6px; color: #fff; margin-bottom: 8px;
+    display: inline-block;
+  }
+  .l0 { background: #0f172a; }
+  .l1 { background: #2563eb; }
+  .l2 { background: #0891b2; }
+  .l3 { background: #059669; }
+  .l4 { background: #d97706; }
+  .l5 { background: #7c3aed; }
+  .seal { background: #334155; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 4px; }
+  th {
+    text-align: left; padding: 8px 12px; font-weight: 700;
+    background: #f8fafc; border: 1px solid #e2e8f0; color: #475569;
+    font-size: 11px; letter-spacing: 0.5px;
+  }
+  td {
+    padding: 8px 12px; border: 1px solid #e2e8f0;
+    vertical-align: top; line-height: 1.5;
+  }
+  td:first-child { font-weight: 700; white-space: nowrap; color: #0f172a; }
+  td:nth-child(2) { color: #334155; }
+
+  td.core { background: rgba(5,150,105,.06); }
+  td.human { background: rgba(217,119,6,.06); }
+  .tag {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+  }
+  .tag.core { background: #059669; color: #fff; }
+  .tag.human { background: #d97706; color: #fff; }
+
+  .flow {
+    max-width: 1000px; margin: 0 auto 32px;
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; flex-wrap: wrap; padding: 16px;
+    background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0;
+  }
+  .flow-chip { padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; color: #fff; }
+  .flow-arrow { color: #cbd5e1; font-size: 16px; }
+  .flow-return { width: 100%; text-align: center; font-size: 11px; color: #94a3b8; margin-top: 4px; }
+
+  .insight {
+    max-width: 1000px; margin: 24px auto;
+    padding: 16px 20px; border-radius: 8px;
+    border-left: 4px solid #7c3aed; background: rgba(124,58,237,.03);
+    font-size: 13px; color: #334155; line-height: 1.7;
+  }
+  .insight strong { color: #7c3aed; }
+
+  .footer {
+    max-width: 1000px; margin: 40px auto 0; padding-top: 16px;
+    border-top: 1px solid #e2e8f0;
+    font-size: 11px; color: #94a3b8;
+  }
+
+  @media print {
+    body { padding: 20px; font-size: 11px; }
+    table { font-size: 11px; }
+    .flow, .section { break-inside: avoid; }
+  }
+  @media (max-width: 600px) {
+    body { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Kustody<span>Fi</span> AI Agent Architecture</h1>
+  <p>정책 수립 &rarr; 현황 진단 &rarr; 시장 감시 &rarr; 실행 &rarr; 사후 분석 &rarr; 학습/개선</p>
+  <div class="stats">
+    <div class="stat"><strong>6</strong>Layers</div>
+    <div class="stat"><strong>44</strong>AI Agents</div>
+    <div class="stat"><strong>36</strong>CORE</div>
+    <div class="stat"><strong>8</strong>HUMAN</div>
+    <div class="stat"><strong>1</strong>Continuous Cycle</div>
+  </div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><span style="color:#059669;font-size:16px;font-weight:700">&#10003;</span> <strong>AI-only</strong> &mdash; AI끼리만 소통해도 필수인 엔진</div>
+  <div class="legend-item"><span style="color:#94a3b8;font-size:13px">빈칸</span> &mdash; 사람에게 보여주거나 승인받기 위한 Agent. AI-only 시대에는 불필요 or 축소</div>
+</div>
+
+<div class="flow">
+  <span class="flow-chip l0">Policy</span>
+  <span class="flow-arrow">&rarr;</span>
+  <span class="flow-chip l1">Diagnosis</span>
+  <span class="flow-arrow">&rarr;</span>
+  <span class="flow-chip l2">Market Intel</span>
+  <span class="flow-arrow">&rarr;</span>
+  <span class="flow-chip l3">Execution</span>
+  <span class="flow-arrow">&rarr;</span>
+  <span class="flow-chip l4">Post-Trade</span>
+  <span class="flow-arrow">&rarr;</span>
+  <span class="flow-chip l5">Learning</span>
+  <div class="flow-return">&larr; 개선 결과가 다시 Policy로 피드백</div>
+</div>
+
+<!-- Layer 0 -->
+<div class="section">
+  <div class="section-title l0">LAYER 0 &mdash; Policy & Governance (3)</div>
+  <table>
+    <tr><th>Agent</th><th>기능</th><th style="width:60px;text-align:center">AI-only</th></tr>
+    <tr><td>Investment Committee</td><td>사람 + AI가 정책을 논의하는 공간. AI가 시나리오를 제시하고, 사람이 최종 결정</td><td style="text-align:center"></td></tr>
+    <tr><td>Policy Analyzer</td><td>"보수적으로 가자" &rarr; hedge ratio 80%, VaR 한도 등 구체적 수치로 변환</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Best Interest Advisor</td><td>모든 주요 결정 전 "이게 진짜 우리 회사에 최선인가?" 판단. 숨겨진 비용/리스크 경고</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+  </table>
+</div>
+
+<!-- Layer 1 -->
+<div class="section">
+  <div class="section-title l1">LAYER 1 &mdash; Diagnosis (7)</div>
+  <table>
+    <tr><th>Agent</th><th>기능</th><th style="width:60px;text-align:center">AI-only</th></tr>
+    <tr><td>Exposure Monitor</td><td>Spot/Forward/Swap delta, 통화별 순노출, 만기별 breakdown 실시간 표시</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Health Check</td><td>현재 포지션이 정책 대비 어디에 있는지 gap 진단. 이탈 시 알림</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Trade DNA</td><td>우리 회사 고유의 거래 패턴(시간대, 금액, 계절성, 선호 은행) 파악. 온톨로지</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Account Onboarding</td><td>계좌 등록, 은행 연동, 초기 설정 안내. 신규 계좌 추가 시 자동 매핑</td><td style="text-align:center"></td></tr>
+    <tr><td>Liquidity Manager</td><td>계좌별 잔고 효율 배분 + 주기적 금리 조회로 최적 수익 확보. 통화별 effective rate</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Calendar & Timezone</td><td>국가별 공휴일, value date, 은행 cut-off time, DST 전환 관리</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Bank Fee Manager</td><td>은행별 수수료 구조 관리. 원화 방향(지급/수취), 통화별 수수료 매핑. 최저 비용 경로 추천</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+  </table>
+</div>
+
+<!-- Layer 2 -->
+<div class="section">
+  <div class="section-title l2">LAYER 2 &mdash; Market Intelligence (14)</div>
+  <table>
+    <tr><th>Agent</th><th>기능</th><th style="width:60px;text-align:center">AI-only</th></tr>
+    <tr><td>Market Data Gateway</td><td>Bloomberg/Reuters/인포맥스/브로커 등 외부 데이터 소스 통합 연동. bid/ask 출처별 Tier 1~3 태깅 및 품질 관리</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Market Watch</td><td>Market Data Gateway에서 받은 데이터를 실시간 파이프라인으로 가공·배포. 24시간 운영</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Market Analyst</td><td>수집된 데이터 해석 &mdash; 트렌드, 이상 징후, 실행 적기 시그널 생성</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Quant Analyst</td><td>기술 지표(MA, RSI, 볼린저) + 통화쌍 상관관계 + 변동성 regime 분류</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Macro Watcher</td><td>금리 결정, CPI, 고용지표, 중앙은행 발언 등 거시경제 이벤트 전담</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Event Replay</td><td>"트럼프 관세 발언" &rarr; 과거 유사 사례 매칭 &rarr; 시장 반응 패턴 제안</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>StableFX Pricing Engine</td><td>통화쌍별 이론가/공정가 실시간 계산. 은행 호가의 마진을 역산하여 Execution Orchestrator에 기준가 제공</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>StableFX Visualizer</td><td>이론가 대비 실제 호가를 시각화. 은행별 마진 비교 차트, 스프레드 히트맵. IC/CFO 대시보드 연동</td><td style="text-align:center"></td></tr>
+    <tr><td>Funding Cost Analyzer</td><td>기업별/통화별 실효 조달 금리 역산. 스왑포인트 내재 금리 분석, 최적 펀딩 경로 추천</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Implied Yield Engine</td><td>USD curve(SOFR) 구축 + 스왑포인트 &rarr; implied yield 실시간 역산. Tier별 bid/ask 괴리 추적, 은행 마진 추정</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Interbank Curve Engine</td><td>StableFX 로직 기반. mid + 브로커/시장 실제 bid/ask로 interbank 커브 구축. 평가 기준선 &amp; Proprietary Curve에 mid 공급</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Proprietary Curve Engine</td><td>StableFX 로직 기반. mid = interbank 동일, bid/ask = 은행 호가 중 best 가격으로 자사 커브 구축. 갭 = 은행 마진</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Contrarian Signal Engine</td><td>단순 룰 기반 weak learner 다수 병렬 운영. 체계적으로 틀리는 시그널의 반대를 취합 (inverse ensemble)</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Contrarian Monitor</td><td>Contrarian Agent별 hit rate 실시간 추적 (rolling 7/30/90일). regime 전환 감지 시 경고</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+  </table>
+</div>
+
+<!-- Layer 3 -->
+<div class="section">
+  <div class="section-title l3">LAYER 3 &mdash; Execution (10)</div>
+  <table>
+    <tr><th>Agent</th><th>기능</th><th style="width:60px;text-align:center">AI-only</th></tr>
+    <tr><td>Pre-Trade Compliance</td><td>실행 전 정책 적합성 검증. 한도 초과 사전 차단, 비정상 패턴 탐지</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Execution Orchestrator</td><td>어떤 은행에, 어떤 타이밍에, 어떻게 분할 실행할지 결정. Multi-RFQ</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Execution Bot</td><td>Orchestrator 지시에 따라 실제 주문 집행. 체결 확인 및 상태 추적</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Payment Authorizer</td><td>지급결제 승인 워크플로우. 금액별/직급별 승인 라우팅, 이중 승인</td><td style="text-align:center"></td></tr>
+    <tr><td>Payment Executor</td><td>승인된 지급결제 실행. 결제 상태 추적, 실패 시 재처리</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Bank Gateway</td><td>은행별 API 연동 관리. 프로토콜 변환, 연결 상태 모니터링, 메시지 표준화</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Venue Compliance</td><td>거래소/플랫폼별 rulebook 준수. 호가 단위, 주문 빈도 제한. ban 방지</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Netting Engine</td><td>통화별 수입/지출 상계 &rarr; 순노출만 거래. 거래 건수/비용 절감</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Gas Fee Optimizer</td><td>블록체인 결제 시 gas fee 최적화. 네트워크 혼잡도 예측, 저비용 타이밍</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Network Router</td><td>은행 송금 vs 블록체인 vs SWIFT. 속도/비용/안정성 기준 최적 경로</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+  </table>
+</div>
+
+<!-- SEAL -->
+<div class="section">
+  <div class="section-title seal">SEAL LAYER &mdash; 보안/통제/감사 (3)</div>
+  <table>
+    <tr><th>Control</th><th>기능</th><th style="width:60px;text-align:center">AI-only</th></tr>
+    <tr><td>Policy & Approval</td><td>권한 분리, 2인 승인 구조, 직급/금액별 자동 라우팅</td><td style="text-align:center"></td></tr>
+    <tr><td>Audit Trail</td><td>누가, 언제, 왜 실행했는지 변경 불가 로그. 감사 대응 원클릭</td><td style="text-align:center"></td></tr>
+    <tr><td>Risk Guardrail</td><td>한도 초과 자동 차단, 이상 거래 실시간 탐지, 정책 위반 즉시 알림</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+  </table>
+</div>
+
+<!-- Layer 4 -->
+<div class="section">
+  <div class="section-title l4">LAYER 4 &mdash; Post-Trade (4)</div>
+  <table>
+    <tr><th>Agent</th><th>기능</th><th style="width:60px;text-align:center">AI-only</th></tr>
+    <tr><td>Trade Recorder</td><td>체결 기록 + 당시 시장 상황(환율, 변동성, 뉴스) 함께 저장</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>TCA</td><td>벤치마크(VWAP, TWAP) 대비 실행 품질 분석. 은행별 가격 경쟁력 비교</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Performance Attribution</td><td>수익/손실 원인 분해: 시장 변동 vs 타이밍 vs 은행 선택</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Report Writer</td><td>IC/CFO/감사용 리포트 자동 생성. 일별/주별/월별 Treasury 리포트</td><td style="text-align:center"></td></tr>
+  </table>
+</div>
+
+<!-- Layer 5 -->
+<div class="section">
+  <div class="section-title l5">LAYER 5 &mdash; Learning & Improvement (3)</div>
+  <table>
+    <tr><th>Agent</th><th>기능</th><th style="width:60px;text-align:center">AI-only</th></tr>
+    <tr><td>Strategy Optimizer</td><td>과거 실행 데이터 기반 정책 개선 제안. "이렇게 했으면 얼마 절약" 시뮬레이션</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Counterparty Analyzer</td><td>금융기관별 편중도 분석 + 원인 진단(가격 우위 vs 관행). 분산 대안 추천</td><td style="text-align:center;font-size:16px;color:#059669">&#10003;</td></tr>
+    <tr><td>Agent Translator</td><td>Agent 간 대화/판단을 사람이 이해할 수 있게 변환. 활동 통계, 충돌 알림</td><td style="text-align:center"></td></tr>
+  </table>
+</div>
+
+<div class="insight">
+  <strong>핵심 인사이트:</strong> 전체 44개 중 <strong>CORE 36개</strong> vs <strong>HUMAN 8개</strong>.<br>
+  AI-only 시대가 와도 36개 엔진은 그대로 필요합니다. 8개(IC, Account Onboarding, Payment Authorizer, Policy & Approval, Audit Trail, Report Writer, Agent Translator, StableFX Visualizer)만 사람 인터페이스입니다.<br><br>
+  <strong>우선 개발 전략:</strong> CORE Agent부터 만들면 AI-only 시대에도 그대로 쓸 수 있고, HUMAN Agent는 현재 규제/고객 요구에 맞춰 점진적으로 붙이면 됩니다.
+</div>
+
+<div class="footer">
+  KustodyFi Co., Ltd. &mdash; AI-Powered FX & Treasury Management &mdash; 2026
+</div>
+
+</body>
+</html>
