@@ -6,13 +6,16 @@ AI-Powered FX Management 플랫폼 KustodyFi의 공식 웹사이트.
 
 ## 페이지 구성
 
+### 메인
+
 | 파일 | 용도 | 타겟 |
 |------|------|------|
 | `index.html` | 메인 랜딩 (기업용) | 기업 재무담당자, CFO |
+| `index_child.html` | 메인 랜딩 (서브) | 기업 재무담당자 |
 | `for-institutions.html` | 기관용 랜딩 | 은행, 증권사 FX 데스크 |
 | `privacy.html` | 개인정보처리방침 | 전체 |
 
-### 데모 페이지 (Use Cases)
+### Use Case 데모
 
 | 파일 | 시나리오 |
 |------|----------|
@@ -20,6 +23,32 @@ AI-Powered FX Management 플랫폼 KustodyFi의 공식 웹사이트.
 | `fx_demo_importer.html` | 수입업체 |
 | `fx_demo_airline_v2.html` | 항공사 |
 | `fx_demo_powerplant.html` | 발전소 / 에너지 |
+
+### 제품 / 기술
+
+| 파일 | 용도 |
+|------|------|
+| `ai_agent_daily.html` | AI Agent가 일하는 하루 (워크플로우) |
+| `agents.html` | 44-Agent 아키텍처 소개 |
+| `agent_summary.html` | Agent 요약 |
+| `agent_architecture.mmd` | Agent 아키텍처 다이어그램 (Mermaid) |
+| `sme_sequence.html` | 증거금 기반 선물환 자금 흐름 |
+| `curve_config.html` | Curve 설정 화면 |
+| `usdc_term_structure.html` | USDC Term Structure 설명 |
+| `USD_Stablecoin_Term_Structure_Spec.md` | USDC Term Structure 스펙 문서 |
+
+### IR / 프레젠테이션
+
+| 파일 | 용도 |
+|------|------|
+| `kidb_presentation.html` | KIDB 프레젠테이션 |
+| `pitch_bass_ventures.html` | Bass Ventures 피치 |
+
+### 데이터
+
+| 파일 | 용도 |
+|------|------|
+| `usdkrw_vol_analysis.csv` | USDKRW 변동성 분석 데이터 |
 
 ---
 
