@@ -1597,13 +1597,13 @@
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px">
         <div style="padding:18px 20px;border-radius:14px;background:rgba(8,145,178,.04);border:1px solid rgba(8,145,178,.12)">
-          <div style="font-size:11px;font-weight:700;color:var(--primary);letter-spacing:1px;margin-bottom:10px">SPOT 경쟁 입찰 (7bp)</div>
+          <div style="font-size:11px;font-weight:700;color:var(--primary);letter-spacing:1px;margin-bottom:10px">SPOT 경쟁 입찰 (3bp)</div>
           <div style="font-size:12px;color:var(--gray-600);line-height:1.7;margin-bottom:10px">
             <span id="calcSpotVol" style="font-weight:700;color:var(--dark)">$2.5M</span>/월 &times; 12개월<br>
-            &times; <span id="calcSpotImprove" style="font-weight:700;color:var(--primary-dark)">1.04원/$</span>
-            <span style="color:var(--gray-400);font-size:11px">(1,485 &times; 0.07%)</span>
+            &times; <span id="calcSpotImprove" style="font-weight:700;color:var(--primary-dark)">0.45원/$</span>
+            <span style="color:var(--gray-400);font-size:11px">(1,485 &times; 0.03%)</span>
           </div>
-          <div style="font-size:20px;font-weight:900;font-family:'Inter',sans-serif;color:var(--primary-dark)" id="savingsSpot">&#8361;31,185,000</div>
+          <div style="font-size:20px;font-weight:900;font-family:'Inter',sans-serif;color:var(--primary-dark)" id="savingsSpot">&#8361;13,365,000</div>
           <div style="font-size:11px;color:var(--gray-500)">/ year</div>
         </div>
         <div style="padding:18px 20px;border-radius:14px;background:rgba(37,99,235,.04);border:1px solid rgba(37,99,235,.12)">
@@ -1621,7 +1621,7 @@
       <div class="savings-total">
         <div class="savings-total-left">
           <div class="savings-total-label">연간 총 절감 예상</div>
-          <div class="savings-total-amount" id="savingsTotal">&#8361;120,285,000</div>
+          <div class="savings-total-amount" id="savingsTotal">&#8361;102,465,000</div>
           <div class="savings-total-sub" id="savingsSub">월 $5,000,000 | Spot 50% + Forward 50%</div>
         </div>
         <a href="#cta" class="savings-total-cta">데모 신청하기 &#8594;</a>
@@ -1629,18 +1629,18 @@
 
       <div style="margin-top:20px;padding:14px 18px;border-radius:12px;background:var(--gray-50);border:1px solid var(--gray-200);font-size:12px;color:var(--gray-500);line-height:1.7">
         <strong style="color:var(--gray-600)">산출 근거:</strong>
-        Spot 7bp, Forward 최대 20bp 개선폭은 다자간 경쟁 입찰(Multi-RFQ) 도입 시 관찰되는 스프레드 개선 범위에 기반한 보수적 추정치입니다.
-        EUR/USD FX 파생상품 시장을 분석한 Hau et al.(2021)에 따르면, 중간 수준의 기업 고객은 대형 우량 기업보다 <strong style="color:var(--gray-700)">10.9 pips 더 비싸게</strong> 거래하며,
-        멀티딜러 RFQ 플랫폼을 사용할 경우 <strong style="color:var(--gray-700)">약 4.5 pips의 거래비용 절감</strong> 효과가 나타납니다.
-        저자들은 플랫폼에서 price discrimination이 사실상 제거된다고 보고합니다
+        Spot 3bp, Forward 최대 20bp 개선폭은 다자간 경쟁 입찰(Multi-RFQ) 도입과 선물환 접근성 확보에 따른 스프레드 개선 범위입니다.
+        EUR/USD FX 파생상품 시장을 분석한 Hau et al.(2021)에 따르면, 중간 수준의 기업 고객은 대형 우량 기업보다 <strong style="color:var(--gray-700)">10.9 pips(약 10bp) 더 비싸게</strong> 거래합니다.
+        그러나 멀티딜러 RFQ 플랫폼에서는 이러한 <strong style="color:var(--gray-700)">가격 차별(price discrimination)이 사실상 제거</strong>되어, 기업 규모와 무관하게 경쟁적 가격을 받을 수 있습니다.
+        기존에 선물환 접근이 어려웠던 중소기업이 증거금 기반으로 접근권을 확보하고 경쟁 입찰까지 활용하면, 10bp 이상의 개선이 가능하며 Forward 20bp는 이 범위 내 보수적 추정치입니다
         <span style="color:var(--gray-400)">(Hau, Hoffmann, Langfield &amp; Timmer, <em>Management Science</em>, 2021; IMF Working Paper 19/100)</span>.
-        FX 시장의 전자화로 multi-bank platform과 liquidity aggregator가 표준 인프라로 자리잡았으며
+        FX 시장의 전자화로 multi-bank platform이 표준 인프라로 자리잡았으며
         <span style="color:var(--gray-400)">(Rime &amp; Schrimpf, BIS Quarterly Review, 2013)</span>,
-        execution cost는 딜러별 리스크관리&middot;internalisation 방식에 따라 달라지므로 딜러 특성을 비교&middot;선별하는 체계가 유리합니다
+        딜러별 리스크관리&middot;internalisation 방식에 따라 execution cost가 달라지므로 딜러 특성을 비교&middot;선별하는 체계가 유리합니다
         <span style="color:var(--gray-400)">(Butz &amp; Oomen, Quantitative Finance, 2019)</span>.
-        EUR/USD 등 최고 유동성 통화쌍에서조차 스프레드가 딜러 간 경쟁 구조에 의해 결정되며, 유동성이 낮은 USD/KRW에서는 단일은행 의존의 비용이 더 클 수 있습니다
+        EUR/USD 등 최고 유동성 통화쌍에서조차 이 수준의 차별이 관찰되며, 유동성이 낮은 USD/KRW에서는 그 격차가 더 클 수 있습니다
         <span style="color:var(--gray-400)">(Stenfors, <em>Journal of International Financial Markets, Institutions and Money</em>, 2018)</span>.
-        본 시뮬레이션은 보수적 추정치를 적용한 참고용 수치이며, 실제 절감액은 거래 조건에 따라 달라질 수 있습니다.
+        <strong style="color:var(--gray-700)">선물환 비중이 높을수록 절감 효과가 커집니다.</strong> 본 시뮬레이션은 참고용 수치이며, 실제 절감액은 거래 조건에 따라 달라질 수 있습니다.
       </div>
     </div>
   </div>
@@ -2006,10 +2006,10 @@
 
   Strategy         Volume/mo   Improvement   Annual Savings
   ══════════════  ==========  ============  ═══════════════
-  RFQ 경쟁입찰      $2,500K    7bp (1.04₩)    ₩31,185,000
+  RFQ 경쟁입찰      $2,500K    3bp (0.45₩)    ₩13,365,000
   선물환 헷지        $2,500K   20bp (2.97₩)    ₩89,100,000
   ──────────────  ──────────  ────────────  ───────────────
-  TOTAL             $5,000K                  ₩120,285,000/yr
+  TOTAL             $5,000K                  ₩102,465,000/yr
 
   * 근거: BIS(2013), Multi-dealer 경쟁입찰 15-25bp 절감
   → 데모 신청: sales@kustodyfi.com`
@@ -2158,13 +2158,13 @@
   // Savings Calculator
   (function() {
     const SPOT_RATE = 1485.0;
-    const SPOT_BP = 7;      // Spot: 7bp improvement
+    const SPOT_BP = 3;      // Spot: 3bp improvement
     const FWD_BP = 20;      // Forward: max 20bp improvement
 
     const volSlider = document.getElementById('savingsSlider');
     const fwdSlider = document.getElementById('savingsFwdSlider');
 
-    const spotImprove = SPOT_RATE * (SPOT_BP / 10000);   // 1.04원/$
+    const spotImprove = SPOT_RATE * (SPOT_BP / 10000);   // 0.45원/$
     const fwdImprove = SPOT_RATE * (FWD_BP / 10000);     // 2.97원/$
 
     function fmt(n) {
