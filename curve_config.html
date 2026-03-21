@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StableFX - Curve Configuration</title>
+<style>
+:root {
+  --bg: #0a0e17;
+  --surface: #111827;
+  --surface2: #1a2235;
+  --border: #1e293b;
+  --border-hl: #334155;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --accent: #6ee7b7;
+  --accent2: #34d399;
+  --warn: #fbbf24;
+  --err: #f87171;
+  --blue: #60a5fa;
+  --mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ─── HEADER ─── */
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.logo { font-weight: 700; font-size: 18px; letter-spacing: -0.5px; }
+.logo span { color: var(--accent); }
+.badge {
+  background: rgba(110,231,183,0.1);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+}
+header nav { margin-left: auto; display: flex; gap: 8px; }
+header nav button {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text2);
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+header nav button:hover { border-color: var(--accent); color: var(--accent); }
+header nav button.active { background: rgba(110,231,183,0.1); color: var(--accent); border-color: var(--accent); }
+
+/* ─── LAYOUT ─── */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px;
+}
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+/* ─── CARD ─── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+}
+.card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-title .num {
+  background: rgba(110,231,183,0.15);
+  color: var(--accent);
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700;
+}
+
+/* ─── FORM ─── */
+.field { margin-bottom: 16px; }
+.field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text2);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.field input, .field select {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: var(--mono);
+  outline: none;
+  transition: border 0.2s;
+}
+.field input:focus, .field select:focus { border-color: var(--accent); }
+.field input::placeholder { color: #475569; }
+.field-row { display: flex; gap: 12px; }
+.field-row .field { flex: 1; }
+
+/* ─── TABLE (pillar editor) ─── */
+.pillar-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-size: 13px;
+}
+.pillar-table th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border);
+}
+.pillar-table td {
+  padding: 4px 8px;
+  border-bottom: 1px solid rgba(30,41,59,0.5);
+}
+.pillar-table input {
+  background: var(--surface2);
+  border: 1px solid transparent;
+  color: var(--text);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 13px;
+  width: 100%;
+  outline: none;
+}
+.pillar-table input:focus { border-color: var(--accent); }
+.pillar-table .tenor { color: var(--accent); font-weight: 600; }
+.add-row-btn {
+  background: transparent;
+  border: 1px dashed var(--border);
+  color: var(--text2);
+  padding: 6px;
+  width: 100%;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  margin-top: 8px;
+  transition: all 0.2s;
+}
+.add-row-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ─── SWAP POINTS TABLE ─── */
+.sp-table { width: 100%; }
+.sp-table th { text-align: right; }
+.sp-table th:first-child { text-align: left; }
+.sp-table td { text-align: right; }
+.sp-table td:first-child { text-align: left; }
+
+/* ─── OUTPUT ─── */
+.output-area {
+  background: #0d1117;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.7;
+  overflow-x: auto;
+  white-space: pre;
+  color: var(--text2);
+  max-height: 500px;
+  overflow-y: auto;
+}
+.output-area .key { color: var(--accent); }
+.output-area .str { color: var(--warn); }
+.output-area .num { color: var(--blue); }
+.output-area .comment { color: #475569; }
+
+/* ─── PREVIEW CURVE ─── */
+.preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.preview-header h3 { font-size: 16px; font-weight: 600; }
+.curve-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-size: 13px;
+}
+.curve-table th {
+  text-align: right;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text2);
+  text-transform: uppercase;
+  padding: 8px;
+  border-bottom: 2px solid var(--border);
+}
+.curve-table th:first-child { text-align: left; }
+.curve-table td {
+  text-align: right;
+  padding: 6px 8px;
+  border-bottom: 1px solid rgba(30,41,59,0.5);
+}
+.curve-table td:first-child { text-align: left; color: var(--accent); font-weight: 600; }
+.curve-table tr:hover { background: rgba(110,231,183,0.03); }
+
+/* ─── BUTTONS ─── */
+.btn {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-primary { background: var(--accent); color: var(--bg); }
+.btn-primary:hover { background: var(--accent2); }
+.btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text2); }
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+.btn-group { display: flex; gap: 12px; margin-top: 24px; }
+
+/* ─── RECIPE VISUAL ─── */
+.recipe-flow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background: var(--surface2);
+  border-radius: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.recipe-node {
+  background: rgba(110,231,183,0.1);
+  border: 1px solid rgba(110,231,183,0.3);
+  color: var(--accent);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.recipe-arrow { color: var(--text2); font-size: 18px; }
+
+/* ─── TABS ─── */
+.tabs { display: flex; gap: 4px; margin-bottom: 24px; }
+.tab {
+  padding: 8px 20px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text2);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+.tab.active { background: rgba(110,231,183,0.1); color: var(--accent); border-color: var(--accent); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ─── STATUS ─── */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.status-ok { background: rgba(110,231,183,0.1); color: var(--accent); }
+.status-warn { background: rgba(251,191,36,0.1); color: var(--warn); }
+.status-err { background: rgba(248,113,113,0.1); color: var(--err); }
+
+/* ─── EXISTING CCY LIST ─── */
+.ccy-list { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+.ccy-chip {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.ccy-chip:hover { border-color: var(--accent); }
+.ccy-chip.active { background: rgba(110,231,183,0.1); color: var(--accent); border-color: var(--accent); }
+.ccy-chip .dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+.dot-live { background: var(--accent); }
+.dot-new { background: var(--warn); }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 900px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════ HEADER ═══════ -->
+<header>
+  <div class="logo">Stable<span>FX</span></div>
+  <div class="badge">CURVE CONFIG</div>
+  <nav>
+    <button class="active" onclick="showView('config')">Configuration</button>
+    <button onclick="showView('preview')">Preview</button>
+    <button onclick="showView('output')">Export</button>
+  </nav>
+</header>
+
+<div class="container">
+
+<!-- ═══════ CURRENCY SELECTOR ═══════ -->
+<div style="margin-bottom: 24px;">
+  <div style="font-size: 12px; color: var(--text2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">Registered Currencies</div>
+  <div class="ccy-list" id="ccyList">
+    <div class="ccy-chip active" onclick="loadCurrency('KRW')"><span class="dot dot-live"></span>KRW</div>
+    <div class="ccy-chip" onclick="loadCurrency('JPY')"><span class="dot dot-live"></span>JPY</div>
+    <div class="ccy-chip" onclick="loadCurrency('EUR')"><span class="dot dot-live"></span>EUR</div>
+    <div class="ccy-chip" onclick="loadCurrency('HKD')"><span class="dot dot-new"></span>HKD (new)</div>
+    <div class="ccy-chip" onclick="loadCurrency('CNH')"><span class="dot dot-new"></span>CNH (new)</div>
+    <button class="add-row-btn" style="width: auto; padding: 6px 16px; border-radius: 20px;" onclick="addNewCurrency()">+ Add Currency</button>
+  </div>
+</div>
+
+<!-- ═══════ CONFIG VIEW ═══════ -->
+<div id="viewConfig">
+
+<!-- Recipe Flow -->
+<div class="card" style="margin-bottom: 24px;">
+  <div class="card-title">Recipe Pipeline</div>
+  <div class="recipe-flow" id="recipeFlow">
+    <div class="recipe-node">FX IMPLIED (Swap Pts)</div>
+    <div class="recipe-arrow">&rarr;</div>
+    <div class="recipe-node" style="border-style: dashed;">1Y Overlap Diagnostic</div>
+    <div class="recipe-arrow">&rarr;</div>
+    <div class="recipe-node">CRS SWAP (Bootstrap)</div>
+    <div class="recipe-arrow">&rarr;</div>
+    <div class="recipe-node" style="background: rgba(96,165,250,0.1); border-color: rgba(96,165,250,0.3); color: var(--blue);">ZeroCurve</div>
+  </div>
+  <div style="font-size: 12px; color: var(--text2);">
+    Non-USD currencies: FX Swap implied yield (&le;1Y) &rarr; CRS par swap bootstrap (&gt;1Y).
+    Recipe is auto-generated from convention + market data.
+  </div>
+</div>
+
+<div class="grid-2">
+
+  <!-- LEFT: Convention + Basic -->
+  <div>
+    <!-- Step 1: FX Convention -->
+    <div class="card" style="margin-bottom: 24px;">
+      <div class="card-title"><span class="num">1</span> FX Convention</div>
+      <div class="field-row">
+        <div class="field">
+          <label>Currency Code</label>
+          <input type="text" id="ccyCode" value="HKD" maxlength="3" style="text-transform: uppercase;">
+        </div>
+        <div class="field">
+          <label>FX Pair</label>
+          <input type="text" id="fxPair" value="USDHKD" maxlength="6" style="text-transform: uppercase;">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Base Currency</label>
+          <input type="text" id="baseCcy" value="USD" readonly style="opacity: 0.6;">
+        </div>
+        <div class="field">
+          <label>Quote Currency</label>
+          <input type="text" id="quoteCcy" value="HKD">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Spot Lag (T+N)</label>
+          <select id="spotLag">
+            <option value="0">T+0</option>
+            <option value="1">T+1</option>
+            <option value="2" selected>T+2</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Point Factor</label>
+          <select id="pointFactor">
+            <option value="100">100 (KRW, JPY, HKD)</option>
+            <option value="10000">10000 (EUR, GBP)</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Base Daycount</label>
+          <select id="baseDC">
+            <option value="ACT/360" selected>ACT/360</option>
+            <option value="ACT/365">ACT/365</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Quote Daycount</label>
+          <select id="quoteDC">
+            <option value="ACT/360">ACT/360</option>
+            <option value="ACT/365" selected>ACT/365</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>USD is Base?</label>
+          <select id="isUsdBase">
+            <option value="true" selected>Yes (USDXXX)</option>
+            <option value="false">No (XXXUSD)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>CRS Frequency</label>
+          <select id="crsFreq">
+            <option value="6">Semi-Annual (6M)</option>
+            <option value="12" selected>Annual (12M)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Spot & Calendar -->
+    <div class="card">
+      <div class="card-title"><span class="num">2</span> Spot & Calendar</div>
+      <div class="field-row">
+        <div class="field">
+          <label>Default Spot Rate</label>
+          <input type="text" id="defaultSpot" value="7.8100">
+        </div>
+        <div class="field">
+          <label>Precision (decimal)</label>
+          <select id="precision">
+            <option value="2">2 (KRW, JPY)</option>
+            <option value="4" selected>4 (EUR, HKD)</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Calendar Centers</label>
+          <input type="text" id="calendars" value="HK, US" placeholder="e.g. KR, US">
+        </div>
+        <div class="field">
+          <label>Weekend Convention</label>
+          <select id="weekendConv">
+            <option value="SAT_SUN" selected>Sat-Sun</option>
+            <option value="FRI_SAT">Fri-Sat (Middle East)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Rate Curve + CRS -->
+  <div>
+    <!-- Step 3: FX Swap Points (for implied yield) -->
+    <div class="card" style="margin-bottom: 24px;">
+      <div class="card-title"><span class="num">3</span> Interbank FX Swap Points</div>
+      <div style="font-size: 12px; color: var(--text2); margin-bottom: 12px;">
+        FX Swap implied yield &le;1Y. Unit: points (in quote currency pip).
+      </div>
+      <table class="pillar-table sp-table" id="swapPtsTable">
+        <thead>
+          <tr>
+            <th style="width:60px">Tenor</th>
+            <th style="width:50px">Days</th>
+            <th>Bid</th>
+            <th>Mid</th>
+            <th>Ask</th>
+          </tr>
+        </thead>
+        <tbody id="swapPtsBody">
+        </tbody>
+      </table>
+      <button class="add-row-btn" onclick="addSwapPtRow()">+ Add Tenor</button>
+    </div>
+
+    <!-- Step 4: CRS Rates -->
+    <div class="card">
+      <div class="card-title"><span class="num">4</span> CRS Par Rates (&gt;1Y)</div>
+      <div style="font-size: 12px; color: var(--text2); margin-bottom: 12px;">
+        Cross-Currency Swap par rates. Pay fixed CCY, receive floating USD SOFR.
+        Include 1Y for boundary diagnostic.
+      </div>
+      <table class="pillar-table" id="crsTable">
+        <thead>
+          <tr>
+            <th style="width:80px">Tenor</th>
+            <th>Par Rate (%)</th>
+          </tr>
+        </thead>
+        <tbody id="crsBody">
+        </tbody>
+      </table>
+      <button class="add-row-btn" onclick="addCrsRow()">+ Add Tenor</button>
+    </div>
+  </div>
+</div>
+
+<!-- Action buttons -->
+<div class="btn-group">
+  <button class="btn btn-primary" onclick="generateConfig()">Generate Config</button>
+  <button class="btn btn-outline" onclick="validateConfig()">Validate</button>
+  <button class="btn btn-outline" onclick="showView('preview')">Preview Curve</button>
+</div>
+
+</div> <!-- viewConfig -->
+
+<!-- ═══════ PREVIEW VIEW ═══════ -->
+<div id="viewPreview" style="display:none;">
+  <div class="card" style="margin-bottom: 24px;">
+    <div class="preview-header">
+      <h3 id="previewTitle">KRW Curve Preview</h3>
+      <div>
+        <span class="status status-ok" id="previewStatus">Valid</span>
+      </div>
+    </div>
+
+    <!-- 1Y Diagnostic -->
+    <div id="diagnosticBox" style="background: var(--surface2); border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+      <div style="font-size: 12px; font-weight: 600; color: var(--warn); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">1Y Boundary Diagnostic</div>
+      <div class="grid-3" style="font-family: var(--mono); font-size: 13px;">
+        <div>
+          <div style="color: var(--text2); font-size: 11px;">FX IMPLIED 1Y</div>
+          <div id="diagFxRate" style="font-size: 18px; font-weight: 600;">2.850%</div>
+          <div id="diagFxDf" style="color: var(--text2); font-size: 12px;">DF 0.97227945</div>
+        </div>
+        <div>
+          <div style="color: var(--text2); font-size: 11px;">CRS 1Y</div>
+          <div id="diagCrsRate" style="font-size: 18px; font-weight: 600;">2.850%</div>
+          <div id="diagCrsDf" style="color: var(--text2); font-size: 12px;">DF 0.97227945</div>
+        </div>
+        <div>
+          <div style="color: var(--text2); font-size: 11px;">BASIS</div>
+          <div id="diagBasis" style="font-size: 18px; font-weight: 600; color: var(--accent);">+0.0 bp</div>
+          <div style="color: var(--text2); font-size: 12px;">Anchor: FX Implied</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Curve Table -->
+    <table class="curve-table" id="curvePreviewTable">
+      <thead>
+        <tr>
+          <th style="text-align:left">Tenor</th>
+          <th>Source</th>
+          <th>Mat Date</th>
+          <th>Days</th>
+          <th>YF</th>
+          <th>DF</th>
+          <th>Zero Rate</th>
+        </tr>
+      </thead>
+      <tbody id="curvePreviewBody">
+      </tbody>
+    </table>
+  </div>
+
+  <div class="btn-group">
+    <button class="btn btn-outline" onclick="showView('config')">Back to Config</button>
+    <button class="btn btn-primary" onclick="showView('output')">Export Config</button>
+  </div>
+</div>
+
+<!-- ═══════ OUTPUT VIEW ═══════ -->
+<div id="viewOutput" style="display:none;">
+  <div class="card">
+    <div class="card-title">Generated Configuration</div>
+    <div style="font-size: 12px; color: var(--text2); margin-bottom: 16px;">
+      Copy and paste into the corresponding Python files. 3 files, 0 code changes.
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="showOutputTab('conv')">conventions.py</button>
+      <button class="tab" onclick="showOutputTab('mkt')">market_data.py</button>
+      <button class="tab" onclick="showOutputTab('cal')">calendars.py</button>
+    </div>
+
+    <div id="tabConv" class="tab-content active">
+      <div class="output-area" id="outputConv"></div>
+    </div>
+    <div id="tabMkt" class="tab-content">
+      <div class="output-area" id="outputMkt"></div>
+    </div>
+    <div id="tabCal" class="tab-content">
+      <div class="output-area" id="outputCal"></div>
+    </div>
+  </div>
+
+  <div class="btn-group">
+    <button class="btn btn-outline" onclick="showView('config')">Back to Config</button>
+    <button class="btn btn-primary" onclick="copyOutput()">Copy All</button>
+  </div>
+</div>
+
+</div><!-- container -->
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════════
+
+const PRESETS = {
+  KRW: {
+    pair: "USDKRW", base: "USD", quote: "KRW", spotLag: 2,
+    pointFactor: 100, baseDC: "ACT/360", quoteDC: "ACT/365",
+    isUsdBase: true, spot: 1485.40, precision: 2, calendars: "KR, US",
+    crsFreq: 12,
+    swapPts: [
+      { tenor: "O/N", days: 1,   bid: -6,    mid: -5,    ask: -4    },
+      { tenor: "1W",  days: 7,   bid: -29,   mid: -27,   ask: -25   },
+      { tenor: "1M",  days: 30,  bid: -130,  mid: -125,  ask: -120  },
+      { tenor: "2M",  days: 61,  bid: -273,  mid: -265,  ask: -257  },
+      { tenor: "3M",  days: 92,  bid: -445,  mid: -435,  ask: -425  },
+      { tenor: "6M",  days: 184, bid: -915,  mid: -900,  ask: -885  },
+      { tenor: "9M",  days: 276, bid: -1335, mid: -1310, ask: -1285 },
+      { tenor: "1Y",  days: 365, bid: -1710, mid: -1680, ask: -1650 },
+    ],
+    crs: [
+      { tenor: "1Y", rate: 2.85 },
+      { tenor: "2Y", rate: 2.78 },
+      { tenor: "3Y", rate: 2.75 },
+      { tenor: "5Y", rate: 2.70 },
+    ],
+    curvePreview: [
+      { tenor: "1W",    src: "FX Implied", date: "2026-03-27", days: 7,   yf: 0.0192, df: 0.99935, zero: 3.411 },
+      { tenor: "1M",    src: "FX Implied", date: "2026-04-20", days: 31,  yf: 0.0849, df: 0.99719, zero: 3.315 },
+      { tenor: "2M",    src: "FX Implied", date: "2026-05-20", days: 61,  yf: 0.1671, df: 0.99471, zero: 3.183 },
+      { tenor: "3M",    src: "FX Implied", date: "2026-06-22", days: 94,  yf: 0.2575, df: 0.99219, zero: 3.058 },
+      { tenor: "6M",    src: "FX Implied", date: "2026-09-21", days: 185, yf: 0.5068, df: 0.98579, zero: 2.844 },
+      { tenor: "9M",    src: "FX Implied", date: "2026-12-21", days: 276, yf: 0.7562, df: 0.97908, zero: 2.826 },
+      { tenor: "1Y",    src: "FX Implied", date: "2027-03-22", days: 367, yf: 1.0055, df: 0.97226, zero: 2.813 },
+      { tenor: "CRS:2Y", src: "CRS Swap",  date: "2028-03-20", days: 731, yf: 2.0027, df: 0.94658, zero: 2.818 },
+      { tenor: "CRS:3Y", src: "CRS Swap",  date: "2029-03-20", days: 1096, yf: 3.0027, df: 0.92180, zero: 2.825 },
+      { tenor: "CRS:5Y", src: "CRS Swap",  date: "2031-03-20", days: 1826, yf: 5.0027, df: 0.87535, zero: 2.846 },
+    ],
+    diag: { fxRate: 2.813, fxDf: 0.97226, crsRate: 2.850, crsDf: 0.97190, basis: 3.7 },
+  },
+  JPY: {
+    pair: "USDJPY", base: "USD", quote: "JPY", spotLag: 2,
+    pointFactor: 100, baseDC: "ACT/360", quoteDC: "ACT/360",
+    isUsdBase: true, spot: 150.00, precision: 2, calendars: "JP, US",
+    crsFreq: 6,
+    swapPts: [
+      { tenor: "1W",  days: 7,   bid: 0.128, mid: 0.140, ask: 0.152 },
+      { tenor: "1M",  days: 30,  bid: 0.56,  mid: 0.60,  ask: 0.64  },
+      { tenor: "3M",  days: 92,  bid: 1.72,  mid: 1.80,  ask: 1.88  },
+      { tenor: "6M",  days: 184, bid: 3.40,  mid: 3.50,  ask: 3.60  },
+      { tenor: "1Y",  days: 365, bid: 6.50,  mid: 6.70,  ask: 6.90  },
+    ],
+    crs: [
+      { tenor: "1Y", rate: 0.30 },
+      { tenor: "2Y", rate: 0.45 },
+      { tenor: "3Y", rate: 0.60 },
+      { tenor: "5Y", rate: 0.85 },
+    ],
+    curvePreview: [],
+    diag: { fxRate: 0.30, fxDf: 0.99700, crsRate: 0.30, crsDf: 0.99700, basis: 0.0 },
+  },
+  HKD: {
+    pair: "USDHKD", base: "USD", quote: "HKD", spotLag: 2,
+    pointFactor: 100, baseDC: "ACT/360", quoteDC: "ACT/365",
+    isUsdBase: true, spot: 7.8100, precision: 4, calendars: "HK, US",
+    crsFreq: 12,
+    swapPts: [
+      { tenor: "O/N", days: 1,   bid: -0.5,  mid: -0.3,  ask: -0.1  },
+      { tenor: "1W",  days: 7,   bid: -2.5,  mid: -2.0,  ask: -1.5  },
+      { tenor: "1M",  days: 30,  bid: -8,    mid: -7,    ask: -6    },
+      { tenor: "3M",  days: 92,  bid: -20,   mid: -18,   ask: -16   },
+      { tenor: "6M",  days: 184, bid: -35,   mid: -32,   ask: -29   },
+      { tenor: "1Y",  days: 365, bid: -55,   mid: -50,   ask: -45   },
+    ],
+    crs: [
+      { tenor: "1Y", rate: 3.80 },
+      { tenor: "2Y", rate: 3.70 },
+      { tenor: "3Y", rate: 3.60 },
+      { tenor: "5Y", rate: 3.50 },
+    ],
+    curvePreview: [],
+    diag: { fxRate: 3.80, fxDf: 0.96340, crsRate: 3.80, crsDf: 0.96340, basis: 0.0 },
+  },
+};
+
+let currentCcy = "KRW";
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+
+function init() {
+  loadCurrency("KRW");
+}
+
+function loadCurrency(ccy) {
+  currentCcy = ccy;
+  const p = PRESETS[ccy];
+  if (!p) { alert("No preset for " + ccy); return; }
+
+  // Highlight chip
+  document.querySelectorAll(".ccy-chip").forEach(c => c.classList.remove("active"));
+  document.querySelectorAll(".ccy-chip").forEach(c => {
+    if (c.textContent.includes(ccy)) c.classList.add("active");
+  });
+
+  // Fill form
+  document.getElementById("ccyCode").value = ccy;
+  document.getElementById("fxPair").value = p.pair;
+  document.getElementById("baseCcy").value = p.base;
+  document.getElementById("quoteCcy").value = p.quote;
+  document.getElementById("spotLag").value = p.spotLag;
+  document.getElementById("pointFactor").value = p.pointFactor;
+  document.getElementById("baseDC").value = p.baseDC;
+  document.getElementById("quoteDC").value = p.quoteDC;
+  document.getElementById("isUsdBase").value = String(p.isUsdBase);
+  document.getElementById("defaultSpot").value = p.spot;
+  document.getElementById("precision").value = p.precision;
+  document.getElementById("calendars").value = p.calendars;
+  document.getElementById("crsFreq").value = p.crsFreq;
+
+  // Swap points table
+  const spBody = document.getElementById("swapPtsBody");
+  spBody.innerHTML = "";
+  p.swapPts.forEach(r => {
+    spBody.innerHTML += `<tr>
+      <td class="tenor">${r.tenor}</td>
+      <td><input value="${r.days}" style="width:50px"></td>
+      <td><input value="${r.bid}"></td>
+      <td><input value="${r.mid}"></td>
+      <td><input value="${r.ask}"></td>
+    </tr>`;
+  });
+
+  // CRS table
+  const crsBody = document.getElementById("crsBody");
+  crsBody.innerHTML = "";
+  p.crs.forEach(r => {
+    crsBody.innerHTML += `<tr>
+      <td class="tenor">${r.tenor}</td>
+      <td><input value="${r.rate}"></td>
+    </tr>`;
+  });
+
+  // Preview
+  updatePreview(ccy);
+}
+
+function addSwapPtRow() {
+  const body = document.getElementById("swapPtsBody");
+  body.innerHTML += `<tr>
+    <td><input value="" placeholder="e.g. 2W" style="width:50px"></td>
+    <td><input value="" placeholder="14" style="width:50px"></td>
+    <td><input value=""></td>
+    <td><input value=""></td>
+    <td><input value=""></td>
+  </tr>`;
+}
+
+function addCrsRow() {
+  const body = document.getElementById("crsBody");
+  body.innerHTML += `<tr>
+    <td><input value="" placeholder="e.g. 7Y" style="width:60px"></td>
+    <td><input value=""></td>
+  </tr>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// VIEWS
+// ═══════════════════════════════════════════════════════════════
+
+function showView(v) {
+  document.getElementById("viewConfig").style.display = v === "config" ? "block" : "none";
+  document.getElementById("viewPreview").style.display = v === "preview" ? "block" : "none";
+  document.getElementById("viewOutput").style.display = v === "output" ? "block" : "none";
+
+  document.querySelectorAll("header nav button").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll("header nav button").forEach(b => {
+    if (b.textContent.toLowerCase().includes(v.substring(0,4))) b.classList.add("active");
+  });
+
+  if (v === "preview") updatePreview(currentCcy);
+  if (v === "output") generateConfig();
+}
+
+function showOutputTab(tab) {
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
+
+  if (tab === "conv") {
+    document.querySelectorAll(".tab")[0].classList.add("active");
+    document.getElementById("tabConv").classList.add("active");
+  } else if (tab === "mkt") {
+    document.querySelectorAll(".tab")[1].classList.add("active");
+    document.getElementById("tabMkt").classList.add("active");
+  } else {
+    document.querySelectorAll(".tab")[2].classList.add("active");
+    document.getElementById("tabCal").classList.add("active");
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PREVIEW
+// ═══════════════════════════════════════════════════════════════
+
+function updatePreview(ccy) {
+  const p = PRESETS[ccy];
+  if (!p) return;
+
+  document.getElementById("previewTitle").textContent = ccy + " Curve Preview";
+
+  // Diagnostic
+  const d = p.diag;
+  document.getElementById("diagFxRate").textContent = d.fxRate.toFixed(3) + "%";
+  document.getElementById("diagFxDf").textContent = "DF " + d.fxDf.toFixed(8);
+  document.getElementById("diagCrsRate").textContent = d.crsRate.toFixed(3) + "%";
+  document.getElementById("diagCrsDf").textContent = "DF " + d.crsDf.toFixed(8);
+
+  const basis = d.basis;
+  const basisEl = document.getElementById("diagBasis");
+  basisEl.textContent = (basis >= 0 ? "+" : "") + basis.toFixed(1) + " bp";
+  basisEl.style.color = Math.abs(basis) > 10 ? "var(--warn)" : "var(--accent)";
+
+  const statusEl = document.getElementById("previewStatus");
+  if (Math.abs(basis) > 10) {
+    statusEl.textContent = "Warning: basis > 10bp";
+    statusEl.className = "status status-warn";
+  } else {
+    statusEl.textContent = "Valid";
+    statusEl.className = "status status-ok";
+  }
+
+  // Curve table
+  const tbody = document.getElementById("curvePreviewBody");
+  tbody.innerHTML = "";
+
+  if (p.curvePreview && p.curvePreview.length > 0) {
+    p.curvePreview.forEach(r => {
+      const srcStyle = r.src.includes("CRS") ? "color: var(--blue)" : "color: var(--accent)";
+      tbody.innerHTML += `<tr>
+        <td>${r.tenor}</td>
+        <td style="${srcStyle}; font-size: 11px;">${r.src}</td>
+        <td style="text-align:right">${r.date}</td>
+        <td style="text-align:right">${r.days}</td>
+        <td style="text-align:right">${r.yf.toFixed(4)}</td>
+        <td style="text-align:right">${r.df.toFixed(8)}</td>
+        <td style="text-align:right">${r.zero.toFixed(3)}%</td>
+      </tr>`;
+    });
+  } else {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--text2); padding: 20px;">
+      Run <code style="color:var(--accent)">python -m app.fx.curve_bootstrapper</code> to generate preview data
+    </td></tr>`;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// GENERATE CONFIG
+// ═══════════════════════════════════════════════════════════════
+
+function generateConfig() {
+  const ccy = document.getElementById("ccyCode").value.toUpperCase();
+  const pair = document.getElementById("fxPair").value.toUpperCase();
+  const base = document.getElementById("baseCcy").value.toUpperCase();
+  const quote = document.getElementById("quoteCcy").value.toUpperCase();
+  const spotLag = document.getElementById("spotLag").value;
+  const pf = document.getElementById("pointFactor").value;
+  const bdc = document.getElementById("baseDC").value;
+  const qdc = document.getElementById("quoteDC").value;
+  const isUB = document.getElementById("isUsdBase").value;
+  const spot = document.getElementById("defaultSpot").value;
+  const prec = document.getElementById("precision").value;
+  const cals = document.getElementById("calendars").value;
+  const crsFreq = document.getElementById("crsFreq").value;
+
+  // Read swap points from table
+  const spRows = document.getElementById("swapPtsBody").querySelectorAll("tr");
+  const swapPts = [];
+  spRows.forEach(row => {
+    const cells = row.querySelectorAll("input");
+    const tenorEl = row.querySelector(".tenor");
+    const tenor = tenorEl ? tenorEl.textContent : (cells[0] ? cells[0].value : "");
+    if (!tenor) return;
+    const startIdx = tenorEl ? 0 : 1;
+    swapPts.push({
+      tenor,
+      days: cells[startIdx].value,
+      bid: cells[startIdx+1].value,
+      mid: cells[startIdx+2].value,
+      ask: cells[startIdx+3].value,
+    });
+  });
+
+  // Read CRS from table
+  const crsRows = document.getElementById("crsBody").querySelectorAll("tr");
+  const crsRates = [];
+  crsRows.forEach(row => {
+    const tenorEl = row.querySelector(".tenor");
+    const cells = row.querySelectorAll("input");
+    const tenor = tenorEl ? tenorEl.textContent : (cells[0] ? cells[0].value : "");
+    if (!tenor) return;
+    const rateIdx = tenorEl ? 0 : 1;
+    crsRates.push({ tenor, rate: cells[rateIdx].value });
+  });
+
+  // conventions.py
+  const convCode = `<span class="comment"># Add to conventions.py</span>
+
+<span class="key">${pair}</span> = FXConvention(
+    pair=<span class="str">"${pair}"</span>,
+    base_currency=<span class="str">"${base}"</span>,
+    quote_currency=<span class="str">"${quote}"</span>,
+    spot_lag=<span class="num">${spotLag}</span>,
+    point_factor=<span class="num">${pf}</span>,
+    base_daycount=DCC.${bdc.replace("/","_")},
+    quote_daycount=DCC.${qdc.replace("/","_")},
+    is_usd_base=<span class="num">${isUB === "true" ? "True" : "False"}</span>,
+)
+
+<span class="comment"># Register in _CONVENTIONS dict:</span>
+_CONVENTIONS[<span class="str">"${pair}"</span>] = ${pair}`;
+
+  document.getElementById("outputConv").innerHTML = convCode;
+
+  // market_data.py
+  const spLines = swapPts.map(r =>
+    `        ${r.days.toString().padStart(3)}: {"bid": ${r.bid}, "ask": ${r.ask}, "mid": ${r.mid}},`
+  ).join("\n");
+  const crsLines = crsRates.map(r =>
+    `            "${r.tenor}": ${(parseFloat(r.rate)/100).toFixed(4)},`
+  ).join("\n");
+
+  const mktCode = `<span class="comment"># Add to CCY_CONFIG in market_data.py</span>
+
+<span class="str">"${ccy}"</span>: {
+    <span class="key">"benchmark"</span>: <span class="str">"${ccy}_RATE"</span>,
+    <span class="key">"rate_curve"</span>: {
+        <span class="comment"># TODO: populate from live data feed</span>
+    },
+    <span class="key">"market_spread_bp"</span>: {},
+    <span class="key">"crs_rates"</span>: {
+${crsLines}
+    },
+    <span class="key">"daycount"</span>: <span class="str">"${qdc.replace("/","_")}"</span>,
+    <span class="key">"pre_spot_rate_key"</span>: <span class="num">1</span>,
+},
+
+<span class="comment"># Add to PAIR_CONFIG in market_data.py</span>
+
+<span class="str">"${pair}"</span>: {
+    <span class="key">"precision"</span>: <span class="num">${prec}</span>,
+    <span class="key">"default_spot"</span>: <span class="num">${spot}</span>,
+    <span class="key">"interbank_swap_pts"</span>: {
+${spLines}
+    },
+    <span class="key">"spread_half"</span>: {},
+},`;
+
+  document.getElementById("outputMkt").innerHTML = mktCode;
+
+  // calendars.py
+  const calList = cals.split(",").map(c => c.trim());
+  const calCode = `<span class="comment"># Add to CALENDAR_CONFIG in calendars.py (if not exists)</span>
+
+<span class="str">"${calList[0]}"</span>: {
+    <span class="key">"weekend"</span>: WeekendConvention.${document.getElementById("weekendConv").value},
+    <span class="key">"description"</span>: <span class="str">"${quote} calendar"</span>,
+},
+
+<span class="comment"># Add to CURRENCY_PAIR_MAP in calendars.py</span>
+
+<span class="str">"${pair}"</span>: {
+    <span class="key">"calendars"</span>: [<span class="str">"${calList.join('", "')}"</span>],
+    <span class="key">"spotDays"</span>: <span class="num">${spotLag}</span>,
+},
+
+<span class="comment"># Add holidays (ISO format)</span>
+<span class="str">"${calList[0]}"</span>: [
+    <span class="comment"># "2026-01-01", "2026-01-26", ...</span>
+    <span class="comment"># TODO: populate from holiday calendar provider</span>
+],`;
+
+  document.getElementById("outputCal").innerHTML = calCode;
+}
+
+function validateConfig() {
+  const ccy = document.getElementById("ccyCode").value.trim();
+  const pair = document.getElementById("fxPair").value.trim();
+  const spot = parseFloat(document.getElementById("defaultSpot").value);
+  const spRows = document.getElementById("swapPtsBody").querySelectorAll("tr");
+  const crsRows = document.getElementById("crsBody").querySelectorAll("tr");
+
+  const issues = [];
+  if (!ccy || ccy.length !== 3) issues.push("Currency code must be 3 characters");
+  if (!pair || pair.length !== 6) issues.push("FX pair must be 6 characters");
+  if (isNaN(spot) || spot <= 0) issues.push("Default spot must be positive");
+  if (spRows.length < 3) issues.push("Need at least 3 swap point tenors for curve construction");
+  if (crsRows.length < 2) issues.push("Need at least 2 CRS tenors (including 1Y for diagnostic)");
+
+  if (issues.length === 0) {
+    alert("Validation passed.\n\nReady to generate config for " + ccy + ".");
+  } else {
+    alert("Validation issues:\n\n" + issues.map(i => "- " + i).join("\n"));
+  }
+}
+
+function addNewCurrency() {
+  const ccy = prompt("Enter 3-letter currency code (e.g. SGD, THB, INR):");
+  if (!ccy || ccy.length !== 3) return;
+
+  const upper = ccy.toUpperCase();
+
+  // Add chip
+  const list = document.getElementById("ccyList");
+  const chip = document.createElement("div");
+  chip.className = "ccy-chip";
+  chip.innerHTML = `<span class="dot dot-new"></span>${upper} (new)`;
+  chip.onclick = () => loadBlankCurrency(upper);
+  list.insertBefore(chip, list.lastElementChild);
+
+  loadBlankCurrency(upper);
+}
+
+function loadBlankCurrency(ccy) {
+  currentCcy = ccy;
+  document.querySelectorAll(".ccy-chip").forEach(c => c.classList.remove("active"));
+  document.querySelectorAll(".ccy-chip").forEach(c => {
+    if (c.textContent.includes(ccy)) c.classList.add("active");
+  });
+
+  document.getElementById("ccyCode").value = ccy;
+  document.getElementById("fxPair").value = "USD" + ccy;
+  document.getElementById("baseCcy").value = "USD";
+  document.getElementById("quoteCcy").value = ccy;
+  document.getElementById("defaultSpot").value = "";
+  document.getElementById("calendars").value = ccy.substring(0,2) + ", US";
+
+  // Clear tables
+  document.getElementById("swapPtsBody").innerHTML = "";
+  document.getElementById("crsBody").innerHTML = "";
+
+  // Add default tenors
+  const defaultTenors = [
+    { tenor: "O/N", days: 1 }, { tenor: "1W", days: 7 },
+    { tenor: "1M", days: 30 }, { tenor: "3M", days: 92 },
+    { tenor: "6M", days: 184 }, { tenor: "1Y", days: 365 },
+  ];
+  defaultTenors.forEach(r => {
+    document.getElementById("swapPtsBody").innerHTML += `<tr>
+      <td class="tenor">${r.tenor}</td>
+      <td><input value="${r.days}" style="width:50px"></td>
+      <td><input value="" placeholder="bid"></td>
+      <td><input value="" placeholder="mid"></td>
+      <td><input value="" placeholder="ask"></td>
+    </tr>`;
+  });
+
+  ["1Y", "2Y", "3Y", "5Y"].forEach(t => {
+    document.getElementById("crsBody").innerHTML += `<tr>
+      <td class="tenor">${t}</td>
+      <td><input value="" placeholder="%"></td>
+    </tr>`;
+  });
+}
+
+function copyOutput() {
+  const conv = document.getElementById("outputConv").textContent;
+  const mkt = document.getElementById("outputMkt").textContent;
+  const cal = document.getElementById("outputCal").textContent;
+  const full = "# === conventions.py ===\n" + conv + "\n\n# === market_data.py ===\n" + mkt + "\n\n# === calendars.py ===\n" + cal;
+  navigator.clipboard.writeText(full).then(() => alert("Copied to clipboard."));
+}
+
+// Init
+init();
+</script>
+</body>
+</html>
