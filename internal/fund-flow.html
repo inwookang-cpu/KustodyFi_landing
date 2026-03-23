@@ -1,0 +1,2176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KustodyFi &mdash; 글로벌 자금 흐름 구조</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0a0e1a;
+    color: #e0e6f0;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .header {
+    text-align: center;
+    padding: 40px 20px 10px;
+  }
+
+  .header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+
+  .header p {
+    color: #64748b;
+    font-size: 14px;
+    margin-top: 8px;
+  }
+
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    padding: 20px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #94a3b8;
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .canvas {
+    position: relative;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 30px 60px;
+  }
+
+  .col-labels {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr 1fr;
+    gap: 40px;
+    margin-bottom: 24px;
+    padding: 0 10px;
+  }
+
+  .col-label {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(100, 116, 139, 0.3);
+  }
+
+  .col-label.left { color: #f472b6; }
+  .col-label.center { color: #a78bfa; }
+  .col-label.right { color: #60a5fa; }
+
+  .flow-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr 1fr;
+    gap: 40px;
+    align-items: start;
+    padding: 0 10px;
+  }
+
+  .column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .card {
+    border-radius: 12px;
+    padding: 16px 18px;
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: default;
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+
+  .card.exchange {
+    background: linear-gradient(135deg, rgba(244, 114, 182, 0.12), rgba(244, 114, 182, 0.04));
+    border: 1px solid rgba(244, 114, 182, 0.25);
+  }
+
+  .card.exchange .card-icon { color: #f472b6; }
+
+  .card.subsidiary {
+    background: linear-gradient(135deg, rgba(167, 139, 250, 0.12), rgba(167, 139, 250, 0.04));
+    border: 1px solid rgba(167, 139, 250, 0.25);
+  }
+
+  .card.subsidiary .card-icon { color: #a78bfa; }
+
+  .card.payment {
+    background: linear-gradient(135deg, rgba(96, 165, 250, 0.12), rgba(96, 165, 250, 0.04));
+    border: 1px solid rgba(96, 165, 250, 0.25);
+  }
+
+  .card.payment .card-icon { color: #60a5fa; }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .card-icon {
+    font-size: 20px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.05);
+    flex-shrink: 0;
+  }
+
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .card-subtitle {
+    font-size: 11px;
+    color: #64748b;
+    margin-top: 2px;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .tag {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.06);
+    color: #94a3b8;
+    white-space: nowrap;
+  }
+
+  .region-box {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .region-box .region-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: #a78bfa;
+    margin-bottom: 6px;
+  }
+
+  .region-box .region-customers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .customer-tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background: rgba(167, 139, 250, 0.15);
+    color: #c4b5fd;
+  }
+
+  .arrows-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .flow-arrow {
+    fill: none;
+    stroke-width: 1.5;
+    opacity: 0.5;
+  }
+
+  .flow-arrow.right-to-center { stroke: #7c8fff; }
+  .flow-arrow.center-to-left { stroke: #d68fff; }
+
+  .flow-dot {
+    r: 3;
+    opacity: 0.9;
+  }
+
+  .flow-dot.right-to-center { fill: #60a5fa; }
+  .flow-dot.center-to-left { fill: #f472b6; }
+
+  @media (max-width: 900px) {
+    .flow-grid { grid-template-columns: 1fr; gap: 24px; }
+    .col-labels { grid-template-columns: 1fr; gap: 8px; }
+  }
+
+  @keyframes flowPulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.7; }
+  }
+
+  .arrow-group { animation: flowPulse 3s ease-in-out infinite; }
+  .arrow-group:nth-child(2) { animation-delay: 0.5s; }
+  .arrow-group:nth-child(3) { animation-delay: 1s; }
+  .arrow-group:nth-child(4) { animation-delay: 1.5s; }
+
+  .column-wrapper {
+    position: relative;
+    z-index: 3;
+  }
+
+  .footer {
+    text-align: center;
+    padding: 30px 20px 40px;
+    color: #475569;
+    font-size: 11px;
+  }
+
+  .footer span { color: #64748b; }
+
+  /* ===== MM Section ===== */
+  .mm-section {
+    border-top: 1px solid rgba(100,116,139,0.2);
+    margin-top: 20px;
+  }
+
+  .mm-compare {
+    display: flex;
+    gap: 0;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 30px 20px;
+    align-items: stretch;
+  }
+
+  .mm-panel {
+    flex: 1;
+    border-radius: 16px;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .mm-panel-header {
+    padding: 20px 24px 16px;
+  }
+
+  .mm-panel-header.without {
+    background: linear-gradient(135deg, rgba(239,68,68,0.08), rgba(239,68,68,0.02));
+    border-bottom: 1px solid rgba(239,68,68,0.15);
+  }
+
+  .mm-panel-header.with {
+    background: linear-gradient(135deg, rgba(52,211,153,0.08), rgba(52,211,153,0.02));
+    border-bottom: 1px solid rgba(52,211,153,0.15);
+  }
+
+  .mm-panel-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .mm-panel-header p {
+    font-size: 12px;
+    color: #64748b;
+  }
+
+  .mm-panel-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .mm-panel-badge.without {
+    background: rgba(239,68,68,0.2);
+    color: #fca5a5;
+  }
+
+  .mm-panel-badge.with {
+    background: rgba(52,211,153,0.2);
+    color: #6ee7b7;
+  }
+
+  .mm-panel-without {
+    background: linear-gradient(135deg, rgba(239,68,68,0.06), rgba(30,30,50,0.9));
+    border: 1px solid rgba(239,68,68,0.2);
+  }
+
+  .mm-panel-with {
+    background: linear-gradient(135deg, rgba(52,211,153,0.06), rgba(30,30,50,0.9));
+    border: 1px solid rgba(52,211,153,0.2);
+  }
+
+  /* VS divider */
+  .mm-vs {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    gap: 8px;
+    min-width: 60px;
+  }
+
+  .vs-arrow {
+    font-size: 20px;
+    color: #475569;
+  }
+
+  .vs-text {
+    font-size: 13px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-align: center;
+    line-height: 1.3;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.05);
+  }
+
+  /* Orderbook */
+  .orderbook {
+    padding: 12px 20px 16px;
+  }
+
+  .ob-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 0 4px 8px;
+    border-bottom: 1px solid rgba(100,116,139,0.15);
+    margin-bottom: 6px;
+  }
+
+  .ob-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px;
+    border-radius: 4px;
+    position: relative;
+    font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 13px;
+  }
+
+  .ob-bar {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    border-radius: 4px;
+    opacity: 0.12;
+  }
+
+  .ask-bar { right: 0; background: #ef4444; }
+  .bid-bar { right: 0; background: #22c55e; }
+
+  .ob-qty {
+    color: #94a3b8;
+    z-index: 1;
+    min-width: 60px;
+  }
+
+  .ob-price {
+    z-index: 1;
+    font-weight: 500;
+    min-width: 80px;
+    text-align: right;
+  }
+
+  .ask-price { color: #f87171; }
+  .bid-price { color: #4ade80; }
+  .best-ask { font-weight: 700; color: #ef4444; }
+  .best-bid { font-weight: 700; color: #22c55e; }
+
+  .ob-mm-tag {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+    z-index: 1;
+    min-width: 28px;
+    text-align: center;
+    background: rgba(251,191,36,0.2);
+    color: #fcd34d;
+  }
+
+  .ob-mm-tag.hk {
+    background: rgba(52,211,153,0.2);
+    color: #6ee7b7;
+  }
+
+  /* Spread indicator */
+  .ob-spread {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 4px;
+    margin: 4px 0;
+  }
+
+  .spread-line {
+    flex: 1;
+    height: 1px;
+    background: rgba(100,116,139,0.3);
+  }
+
+  .spread-label {
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .ob-spread.wide .spread-label { color: #f87171; }
+  .ob-spread.tight .spread-label { color: #4ade80; }
+
+  /* Stats row */
+  .mm-stats {
+    display: flex;
+    gap: 12px;
+    padding: 16px 20px;
+    border-top: 1px solid rgba(100,116,139,0.1);
+  }
+
+  .stat-item {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.03);
+  }
+
+  .stat-label {
+    font-size: 10px;
+    color: #64748b;
+    margin-bottom: 4px;
+  }
+
+  .stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+  }
+
+  .stat-item.negative .stat-value { color: #f87171; }
+  .stat-item.positive .stat-value { color: #4ade80; }
+
+  /* MM Participants */
+  .mm-participants {
+    display: flex;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 30px 20px;
+  }
+
+  .mm-participant-card {
+    flex: 1;
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+
+  .mm-participant-card.internal {
+    background: linear-gradient(135deg, rgba(52,211,153,0.1), rgba(52,211,153,0.03));
+    border: 1px solid rgba(52,211,153,0.25);
+  }
+
+  .mm-participant-card.external {
+    background: linear-gradient(135deg, rgba(251,191,36,0.1), rgba(251,191,36,0.03));
+    border: 1px solid rgba(251,191,36,0.25);
+  }
+
+  /* Improvement summary */
+  .mm-improvement {
+    display: flex;
+    gap: 24px;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 30px 40px;
+    justify-content: center;
+  }
+
+  .improvement-item {
+    text-align: center;
+    padding: 20px 28px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(52,211,153,0.08), rgba(52,211,153,0.02));
+    border: 1px solid rgba(52,211,153,0.2);
+    flex: 1;
+  }
+
+  .improvement-icon {
+    font-size: 24px;
+    color: #34d399;
+    margin-bottom: 8px;
+  }
+
+  .improvement-metric {
+    font-size: 14px;
+    color: #e0e6f0;
+    margin-bottom: 4px;
+  }
+
+  .improvement-metric strong {
+    color: #4ade80;
+    font-size: 18px;
+  }
+
+  .improvement-detail {
+    font-size: 12px;
+    color: #64748b;
+    font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+  }
+
+  @media (max-width: 900px) {
+    .mm-compare { flex-direction: column; }
+    .mm-vs { flex-direction: row; padding: 10px 0; }
+    .mm-participants { flex-direction: column; }
+    .mm-improvement { flex-direction: column; }
+  }
+
+  /* ===== Section 3: Business Model & Strategy ===== */
+  .biz-section {
+    border-top: 1px solid rgba(100,116,139,0.2);
+    margin-top: 20px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 30px;
+  }
+
+  /* Differentiation */
+  .diff-box {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+
+  .diff-card {
+    flex: 1;
+    border-radius: 14px;
+    padding: 24px;
+    text-align: center;
+  }
+
+  .diff-card.ours {
+    background: linear-gradient(135deg, rgba(167,139,250,0.12), rgba(167,139,250,0.03));
+    border: 1px solid rgba(167,139,250,0.3);
+  }
+
+  .diff-card.others {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(100,116,139,0.2);
+    opacity: 0.6;
+  }
+
+  .diff-card h4 {
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+
+  .diff-card .diff-product {
+    font-size: 28px;
+    font-weight: 800;
+    margin: 12px 0;
+  }
+
+  .diff-card.ours .diff-product {
+    background: linear-gradient(135deg, #a78bfa, #f472b6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .diff-card.others .diff-product { color: #475569; }
+
+  .diff-card .diff-desc {
+    font-size: 12px;
+    color: #94a3b8;
+    line-height: 1.6;
+  }
+
+  .diff-card .diff-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 12px;
+  }
+
+  .diff-ne {
+    font-size: 22px;
+    color: #334155;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+    font-weight: 700;
+  }
+
+  /* Revenue Model */
+  .revenue-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+
+  .revenue-card {
+    border-radius: 14px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .revenue-card.exchange-rev {
+    background: linear-gradient(135deg, rgba(244,114,182,0.1), rgba(244,114,182,0.03));
+    border: 1px solid rgba(244,114,182,0.25);
+  }
+
+  .revenue-card.agent-rev {
+    background: linear-gradient(135deg, rgba(96,165,250,0.1), rgba(96,165,250,0.03));
+    border: 1px solid rgba(96,165,250,0.25);
+  }
+
+  .revenue-card h4 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 16px;
+  }
+
+  .revenue-card.exchange-rev h4 { color: #f472b6; }
+  .revenue-card.agent-rev h4 { color: #60a5fa; }
+
+  .rev-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .rev-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.05);
+  }
+
+  .rev-text h5 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .rev-text p {
+    font-size: 11px;
+    color: #64748b;
+    line-height: 1.5;
+  }
+
+  /* TAM Table */
+  .tam-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 40px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(100,116,139,0.2);
+  }
+
+  .tam-table thead th {
+    background: rgba(255,255,255,0.04);
+    padding: 12px 16px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #94a3b8;
+    text-align: left;
+    border-bottom: 1px solid rgba(100,116,139,0.2);
+  }
+
+  .tam-table thead th:not(:first-child) { text-align: right; }
+
+  .tam-table tbody td {
+    padding: 14px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(100,116,139,0.1);
+  }
+
+  .tam-table tbody td:not(:first-child) {
+    text-align: right;
+    font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+  }
+
+  .tam-table tbody tr:last-child td { border-bottom: none; }
+
+  .tam-table .tam-total td {
+    font-weight: 700;
+    background: rgba(167,139,250,0.06);
+    border-top: 2px solid rgba(167,139,250,0.3);
+  }
+
+  .tam-table .phase-label {
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 8px;
+    font-weight: 600;
+  }
+
+  .phase-1 { background: rgba(52,211,153,0.2); color: #6ee7b7; }
+  .phase-2 { background: rgba(96,165,250,0.2); color: #93c5fd; }
+
+  .tam-note {
+    font-size: 11px;
+    color: #475569;
+    margin-top: -30px;
+    margin-bottom: 40px;
+    line-height: 1.6;
+  }
+
+  /* Revenue TAM */
+  .rev-tam-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(52,211,153,0.25);
+  }
+
+  .rev-tam-table thead th {
+    background: rgba(52,211,153,0.08);
+    padding: 12px 14px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #6ee7b7;
+    text-align: left;
+    border-bottom: 1px solid rgba(52,211,153,0.2);
+  }
+
+  .rev-tam-table thead th:not(:first-child) { text-align: right; }
+
+  .rev-tam-table tbody td {
+    padding: 12px 14px;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(100,116,139,0.1);
+  }
+
+  .rev-tam-table tbody td:not(:first-child) {
+    text-align: right;
+    font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 12px;
+  }
+
+  .rev-tam-table tbody tr:last-child td { border-bottom: none; }
+
+  .rev-tam-table .rev-total td {
+    font-weight: 700;
+    background: rgba(52,211,153,0.06);
+    border-top: 2px solid rgba(52,211,153,0.3);
+  }
+
+  .rev-tam-table .rev-total td:not(:first-child) {
+    color: #4ade80;
+  }
+
+  .rev-summary {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 40px;
+    margin-top: 20px;
+  }
+
+  .rev-summary-card {
+    flex: 1;
+    text-align: center;
+    padding: 24px 16px;
+    border-radius: 14px;
+  }
+
+  .rev-summary-card.exchange-sum {
+    background: linear-gradient(135deg, rgba(244,114,182,0.1), rgba(244,114,182,0.03));
+    border: 1px solid rgba(244,114,182,0.25);
+  }
+
+  .rev-summary-card.agent-sum {
+    background: linear-gradient(135deg, rgba(96,165,250,0.1), rgba(96,165,250,0.03));
+    border: 1px solid rgba(96,165,250,0.25);
+  }
+
+  .rev-summary-card.merchant-sum {
+    background: linear-gradient(135deg, rgba(251,191,36,0.1), rgba(251,191,36,0.03));
+    border: 1px solid rgba(251,191,36,0.25);
+  }
+
+  .rev-summary-card.total-sum {
+    background: linear-gradient(135deg, rgba(52,211,153,0.1), rgba(52,211,153,0.03));
+    border: 1px solid rgba(52,211,153,0.25);
+  }
+
+  .rev-summary-card .rev-sum-label {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .rev-summary-card .rev-sum-value {
+    font-size: 28px;
+    font-weight: 800;
+    font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+  }
+
+  .rev-summary-card.exchange-sum .rev-sum-value { color: #f472b6; }
+  .rev-summary-card.agent-sum .rev-sum-value { color: #60a5fa; }
+  .rev-summary-card.merchant-sum .rev-sum-value { color: #fbbf24; }
+  .rev-summary-card.total-sum .rev-sum-value { color: #4ade80; }
+
+  .rev-summary-card .rev-sum-sub {
+    font-size: 11px;
+    color: #64748b;
+    margin-top: 4px;
+  }
+
+  /* Roadmap */
+  .roadmap {
+    display: flex;
+    gap: 0;
+    margin-bottom: 40px;
+    position: relative;
+  }
+
+  .roadmap::before {
+    content: '';
+    position: absolute;
+    top: 36px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #34d399, #60a5fa, #a78bfa, #475569);
+    z-index: 0;
+  }
+
+  .phase {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .phase-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin: 26px auto 16px;
+    border: 3px solid;
+  }
+
+  .phase.p1 .phase-dot { background: #34d399; border-color: #34d399; box-shadow: 0 0 12px rgba(52,211,153,0.4); }
+  .phase.p2 .phase-dot { background: #60a5fa; border-color: #60a5fa; box-shadow: 0 0 12px rgba(96,165,250,0.4); }
+  .phase.p3 .phase-dot { background: transparent; border-color: #a78bfa; }
+
+  .phase-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .phase.p1 .phase-title { color: #34d399; }
+  .phase.p2 .phase-title { color: #60a5fa; }
+  .phase.p3 .phase-title { color: #a78bfa; }
+
+  .phase-time {
+    font-size: 11px;
+    color: #64748b;
+    margin-bottom: 12px;
+  }
+
+  .phase-items {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .phase-item {
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.04);
+    color: #94a3b8;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  @media (max-width: 900px) {
+    .diff-box { flex-direction: column; }
+    .revenue-grid { grid-template-columns: 1fr; }
+    .roadmap { flex-direction: column; gap: 20px; }
+    .roadmap::before { display: none; }
+    .tam-table { font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>KustodyFi 글로벌 자금 흐름</h1>
+  <p>결제 인프라 &rarr; 각국 자회사 (정산 에이전트) &rarr; KustodyFi 거래소</p>
+</div>
+
+<div class="legend">
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#f472b6;"></div>
+    KustodyFi 거래소 (유동성 허브)
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#a78bfa;"></div>
+    각국 자회사 (정산 에이전트)
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#60a5fa;"></div>
+    결제 인프라 (자금 원천)
+  </div>
+  <div class="legend-item">
+    <svg width="40" height="10"><line x1="0" y1="5" x2="30" y2="5" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4 3"/><polygon points="30,2 36,5 30,8" fill="#64748b"/></svg>
+    자금 흐름 방향
+  </div>
+</div>
+
+<div class="canvas" id="canvas">
+
+  <div class="col-labels">
+    <div class="col-label left">KustodyFi 거래소</div>
+    <div class="col-label center">각국 자회사</div>
+    <div class="col-label right">결제 인프라</div>
+  </div>
+
+  <svg class="arrows-svg" id="arrowsSvg"></svg>
+
+  <div class="flow-grid" id="flowGrid">
+
+    <!-- LEFT: KustodyFi 거래소 -->
+    <div class="column column-wrapper" id="colExchanges">
+
+      <div class="card exchange" data-id="ex-hq" style="min-height: 280px;">
+        <div class="card-header">
+          <div class="card-icon" style="font-size:16px; font-weight:700; color:#f472b6;">K</div>
+          <div>
+            <div class="card-title">KustodyFi 거래소</div>
+            <div class="card-subtitle">싱가포르 &middot; MAS 라이선스</div>
+          </div>
+        </div>
+        <div class="region-box" style="border-color: rgba(244,114,182,0.15); background: rgba(244,114,182,0.05);">
+          <div class="region-title" style="color:#f472b6;">핵심 기능</div>
+          <div class="region-customers">
+            <span class="customer-tag" style="background:rgba(244,114,182,0.15); color:#f9a8d4;">주문 매칭</span>
+            <span class="customer-tag" style="background:rgba(244,114,182,0.15); color:#f9a8d4;">유동성 풀</span>
+            <span class="customer-tag" style="background:rgba(244,114,182,0.15); color:#f9a8d4;">수탁 (Custody)</span>
+            <span class="customer-tag" style="background:rgba(244,114,182,0.15); color:#f9a8d4;">FX 정산</span>
+          </div>
+        </div>
+        <div class="card-tags" style="margin-top:12px;">
+          <span class="tag">현물</span>
+          <span class="tag">파생상품</span>
+          <span class="tag">장외거래</span>
+          <span class="tag">스테이블코인</span>
+        </div>
+        <div class="card-tags">
+          <span class="tag">다통화 지원</span>
+          <span class="tag">24시간 운영</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CENTER: 각국 자회사 -->
+    <div class="column column-wrapper" id="colSubsidiaries">
+
+      <div class="card subsidiary" data-id="sub-kr">
+        <div class="card-header">
+          <div class="card-icon">&#127472;&#127479;</div>
+          <div>
+            <div class="card-title">KustodyFi 한국법인</div>
+            <div class="card-subtitle">서울 &middot; VASP 라이선스</div>
+          </div>
+        </div>
+        <div class="region-box">
+          <div class="region-title">타겟 시장</div>
+          <div class="region-customers">
+            <span class="customer-tag">한국 기업고객</span>
+            <span class="customer-tag">한국 리테일</span>
+            <span class="customer-tag">KRW 온/오프램프</span>
+          </div>
+        </div>
+        <div class="card-tags" style="margin-top:10px;">
+          <span class="tag">환헤지</span>
+          <span class="tag">원화 정산</span>
+          <span class="tag">자금 수탁</span>
+        </div>
+      </div>
+
+      <div class="card subsidiary" data-id="sub-eu">
+        <div class="card-header">
+          <div class="card-icon">&#127473;&#127481;</div>
+          <div>
+            <div class="card-title">KustodyFi 유럽법인</div>
+            <div class="card-subtitle">빌뉴스 &middot; MiCA 라이선스</div>
+          </div>
+        </div>
+        <div class="region-box">
+          <div class="region-title">타겟 시장</div>
+          <div class="region-customers">
+            <span class="customer-tag">EU 기업고객</span>
+            <span class="customer-tag">EU 리테일</span>
+            <span class="customer-tag">EURGBP 램프</span>
+          </div>
+        </div>
+        <div class="card-tags" style="margin-top:10px;">
+          <span class="tag">MiCA 준수</span>
+          <span class="tag">SEPA 연동</span>
+          <span class="tag">유로화 정산</span>
+        </div>
+      </div>
+
+      <div class="card subsidiary" data-id="sub-jp">
+        <div class="card-header">
+          <div class="card-icon">&#127471;&#127477;</div>
+          <div>
+            <div class="card-title">KustodyFi 일본법인</div>
+            <div class="card-subtitle">도쿄 &middot; JFSA 등록</div>
+          </div>
+        </div>
+        <div class="region-box">
+          <div class="region-title">타겟 시장</div>
+          <div class="region-customers">
+            <span class="customer-tag">일본 기업고객</span>
+            <span class="customer-tag">일본 리테일</span>
+            <span class="customer-tag">JPY 온/오프램프</span>
+          </div>
+        </div>
+        <div class="card-tags" style="margin-top:10px;">
+          <span class="tag">JFSA 등록</span>
+          <span class="tag">엔화 정산</span>
+        </div>
+      </div>
+
+      <div class="card subsidiary" data-id="sub-sg">
+        <div class="card-header">
+          <div class="card-icon">&#127480;&#127468;</div>
+          <div>
+            <div class="card-title">KustodyFi 동남아법인</div>
+            <div class="card-subtitle">싱가포르 &middot; MAS 라이선스</div>
+          </div>
+        </div>
+        <div class="region-box">
+          <div class="region-title">타겟 시장</div>
+          <div class="region-customers">
+            <span class="customer-tag">싱가포르</span>
+            <span class="customer-tag">태국</span>
+            <span class="customer-tag">베트남</span>
+            <span class="customer-tag">필리핀</span>
+            <span class="customer-tag">인도네시아</span>
+            <span class="customer-tag">말레이시아</span>
+          </div>
+        </div>
+        <div class="card-tags" style="margin-top:10px;">
+          <span class="tag">MAS 라이선스</span>
+          <span class="tag">SGDTHB/VND</span>
+          <span class="tag">다통화 지원</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: 결제 인프라 -->
+    <div class="column column-wrapper" id="colPayment">
+
+      <div class="card payment" data-id="pay-1">
+        <div class="card-header">
+          <div class="card-icon">&#128179;</div>
+          <div>
+            <div class="card-title">신용카드사</div>
+            <div class="card-subtitle">카드 결제 네트워크</div>
+          </div>
+        </div>
+        <div class="card-tags">
+          <span class="tag">Visa</span>
+          <span class="tag">Mastercard</span>
+          <span class="tag">JCB</span>
+          <span class="tag">AMEX</span>
+        </div>
+      </div>
+
+      <div class="card payment" data-id="pay-2">
+        <div class="card-header">
+          <div class="card-icon">&#128268;</div>
+          <div>
+            <div class="card-title">VAN 사</div>
+            <div class="card-subtitle">부가가치통신망</div>
+          </div>
+        </div>
+        <div class="card-tags">
+          <span class="tag">NICE</span>
+          <span class="tag">KIS</span>
+          <span class="tag">KSNET</span>
+          <span class="tag">KICC</span>
+        </div>
+      </div>
+
+      <div class="card payment" data-id="pay-3">
+        <div class="card-header">
+          <div class="card-icon">&#128187;</div>
+          <div>
+            <div class="card-title">POS / PG사</div>
+            <div class="card-subtitle">결제 게이트웨이</div>
+          </div>
+        </div>
+        <div class="card-tags">
+          <span class="tag">토스페이먼츠</span>
+          <span class="tag">Stripe</span>
+          <span class="tag">Adyen</span>
+          <span class="tag">PayPay</span>
+        </div>
+      </div>
+
+      <div class="card payment" data-id="pay-4">
+        <div class="card-header">
+          <div class="card-icon">&#127974;</div>
+          <div>
+            <div class="card-title">은행 송금</div>
+            <div class="card-subtitle">계좌이체 / 전신송금</div>
+          </div>
+        </div>
+        <div class="card-tags">
+          <span class="tag">SEPA</span>
+          <span class="tag">SWIFT</span>
+          <span class="tag">전신송금</span>
+          <span class="tag">ACH</span>
+        </div>
+      </div>
+
+      <div class="card payment" data-id="pay-5">
+        <div class="card-header">
+          <div class="card-icon">&#128241;</div>
+          <div>
+            <div class="card-title">모바일 / 전자지갑</div>
+            <div class="card-subtitle">간편결제</div>
+          </div>
+        </div>
+        <div class="card-tags">
+          <span class="tag">GrabPay</span>
+          <span class="tag">GoPay</span>
+          <span class="tag">카카오페이</span>
+          <span class="tag">LINE Pay</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 2: MM 호가 비교 -->
+<!-- ============================================ -->
+
+<div class="mm-section">
+  <div class="header" style="padding-top:60px;">
+    <h1>Market Maker 호가 조성 효과</h1>
+    <p>MM 부재 시 vs. MM 참여 시 — USDKRW 호가 스프레드 비교 &middot; 호가 단위: 0.05원 (은행간 0.1원 대비 2배 정밀)</p>
+  </div>
+
+  <div class="mm-compare">
+
+    <!-- 왼쪽: MM 없을 때 -->
+    <div class="mm-panel mm-panel-without">
+      <div class="mm-panel-header without">
+        <div class="mm-panel-badge without">MM 부재</div>
+        <h3>Market Maker 없는 호가창</h3>
+        <p>리테일 주문만 존재 — 스프레드 넓음, 유동성 부족</p>
+      </div>
+
+      <div class="orderbook">
+        <div class="ob-header">
+          <span>수량 (USD MM)</span>
+          <span>호가 (USDKRW)</span>
+        </div>
+        <!-- 매도 (Ask) -->
+        <div class="ob-row ask">
+          <div class="ob-bar ask-bar" style="width:10%;"></div>
+          <span class="ob-qty">0.3</span>
+          <span class="ob-price ask-price">1,495.00</span>
+        </div>
+        <div class="ob-row ask">
+          <div class="ob-bar ask-bar" style="width:6%;"></div>
+          <span class="ob-qty">0.1</span>
+          <span class="ob-price ask-price">1,494.20</span>
+        </div>
+        <div class="ob-row ask">
+          <div class="ob-bar ask-bar" style="width:15%;"></div>
+          <span class="ob-qty">0.5</span>
+          <span class="ob-price ask-price">1,493.50</span>
+        </div>
+        <div class="ob-row ask">
+          <div class="ob-bar ask-bar" style="width:8%;"></div>
+          <span class="ob-qty">0.2</span>
+          <span class="ob-price ask-price">1,493.05</span>
+        </div>
+        <div class="ob-row ask">
+          <div class="ob-bar ask-bar" style="width:4%;"></div>
+          <span class="ob-qty">0.1</span>
+          <span class="ob-price ask-price best-ask">1,492.50</span>
+        </div>
+
+        <!-- 스프레드 표시 -->
+        <div class="ob-spread wide">
+          <div class="spread-line"></div>
+          <span class="spread-label">스프레드: <strong>1.50원 (0.10%)</strong></span>
+          <div class="spread-line"></div>
+        </div>
+
+        <!-- 매수 (Bid) -->
+        <div class="ob-row bid">
+          <div class="ob-bar bid-bar" style="width:5%;"></div>
+          <span class="ob-qty">0.1</span>
+          <span class="ob-price bid-price best-bid">1,491.00</span>
+        </div>
+        <div class="ob-row bid">
+          <div class="ob-bar bid-bar" style="width:8%;"></div>
+          <span class="ob-qty">0.2</span>
+          <span class="ob-price bid-price">1,490.50</span>
+        </div>
+        <div class="ob-row bid">
+          <div class="ob-bar bid-bar" style="width:12%;"></div>
+          <span class="ob-qty">0.3</span>
+          <span class="ob-price bid-price">1,489.80</span>
+        </div>
+        <div class="ob-row bid">
+          <div class="ob-bar bid-bar" style="width:6%;"></div>
+          <span class="ob-qty">0.1</span>
+          <span class="ob-price bid-price">1,489.00</span>
+        </div>
+        <div class="ob-row bid">
+          <div class="ob-bar bid-bar" style="width:10%;"></div>
+          <span class="ob-qty">0.2</span>
+          <span class="ob-price bid-price">1,488.50</span>
+        </div>
+      </div>
+
+      <div class="mm-stats">
+        <div class="stat-item negative">
+          <div class="stat-label">평균 스프레드</div>
+          <div class="stat-value">0.10%</div>
+        </div>
+        <div class="stat-item negative">
+          <div class="stat-label">호가 깊이 (5단계)</div>
+          <div class="stat-value">$1.2MM</div>
+        </div>
+        <div class="stat-item negative">
+          <div class="stat-label">슬리피지 ($5MM)</div>
+          <div class="stat-value">~0.25%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 가운데: VS 표시 -->
+    <div class="mm-vs">
+      <div class="vs-arrow">&#8594;</div>
+      <div class="vs-text">MM<br>참여</div>
+      <div class="vs-arrow">&#8594;</div>
+    </div>
+
+    <!-- 오른쪽: MM 있을 때 -->
+    <div class="mm-panel mm-panel-with">
+      <div class="mm-panel-header with">
+        <div class="mm-panel-badge with">MM 참여</div>
+        <h3>Market Maker 참여 호가창</h3>
+        <p>외부 MM + KustodyFi 홍콩법인 MM — 타이트한 호가</p>
+      </div>
+
+      <div class="orderbook">
+        <div class="ob-header">
+          <span>수량 (USD MM)</span>
+          <span>호가 (USDKRW)</span>
+        </div>
+        <!-- 매도 (Ask) -->
+        <div class="ob-row ask">
+          <div class="ob-bar ask-bar" style="width:50%;"></div>
+          <span class="ob-qty">8.0</span>
+          <span class="ob-price ask-price">1,492.40</span>
+          <span class="ob-mm-tag">MM</span>
+        </div>
+        <div class="ob-row ask">
+          <div class="ob-bar ask-bar" style="width:65%;"></div>
+          <span class="ob-qty">12.0</span>
+          <span class="ob-price ask-price">1,492.30</span>
+          <span class="ob-mm-tag hk">HK</span>
+        </div>
+        <div class="ob-row ask">
+          <div class="ob-bar ask-bar" style="width:40%;"></div>
+          <span class="ob-qty">6.5</span>
+          <span class="ob-price ask-price">1,492.20</span>
+          <span class="ob-mm-tag">MM</span>
+        </div>
+        <div class="ob-row ask">
+          <div class="ob-bar ask-bar" style="width:55%;"></div>
+          <span class="ob-qty">10.0</span>
+          <span class="ob-price ask-price">1,492.15</span>
+          <span class="ob-mm-tag hk">HK</span>
+        </div>
+        <div class="ob-row ask">
+          <div class="ob-bar ask-bar" style="width:75%;"></div>
+          <span class="ob-qty">15.0</span>
+          <span class="ob-price ask-price best-ask">1,492.10</span>
+          <span class="ob-mm-tag">MM</span>
+        </div>
+
+        <!-- 스프레드 표시 -->
+        <div class="ob-spread tight">
+          <div class="spread-line"></div>
+          <span class="spread-label">스프레드: <strong>0.30원 (0.02%)</strong></span>
+          <div class="spread-line"></div>
+        </div>
+
+        <!-- 매수 (Bid) -->
+        <div class="ob-row bid">
+          <div class="ob-bar bid-bar" style="width:70%;"></div>
+          <span class="ob-qty">14.0</span>
+          <span class="ob-price bid-price best-bid">1,491.80</span>
+          <span class="ob-mm-tag hk">HK</span>
+        </div>
+        <div class="ob-row bid">
+          <div class="ob-bar bid-bar" style="width:55%;"></div>
+          <span class="ob-qty">10.0</span>
+          <span class="ob-price bid-price">1,491.75</span>
+          <span class="ob-mm-tag">MM</span>
+        </div>
+        <div class="ob-row bid">
+          <div class="ob-bar bid-bar" style="width:45%;"></div>
+          <span class="ob-qty">8.0</span>
+          <span class="ob-price bid-price">1,491.60</span>
+          <span class="ob-mm-tag hk">HK</span>
+        </div>
+        <div class="ob-row bid">
+          <div class="ob-bar bid-bar" style="width:50%;"></div>
+          <span class="ob-qty">9.0</span>
+          <span class="ob-price bid-price">1,491.50</span>
+          <span class="ob-mm-tag">MM</span>
+        </div>
+        <div class="ob-row bid">
+          <div class="ob-bar bid-bar" style="width:40%;"></div>
+          <span class="ob-qty">7.0</span>
+          <span class="ob-price bid-price">1,491.40</span>
+          <span class="ob-mm-tag">MM</span>
+        </div>
+      </div>
+
+      <div class="mm-stats">
+        <div class="stat-item positive">
+          <div class="stat-label">평균 스프레드</div>
+          <div class="stat-value">0.02%</div>
+        </div>
+        <div class="stat-item positive">
+          <div class="stat-label">호가 깊이 (5단계)</div>
+          <div class="stat-value">$51.5MM</div>
+        </div>
+        <div class="stat-item positive">
+          <div class="stat-label">슬리피지 ($10MM)</div>
+          <div class="stat-value">~0.01%</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MM 참여자 카드 -->
+  <div class="mm-participants">
+    <div class="mm-participant-card internal">
+      <div class="card-header">
+        <div class="card-icon" style="font-size:16px; font-weight:700; color:#34d399;">K</div>
+        <div>
+          <div class="card-title">KustodyFi 홍콩법인 MM</div>
+          <div class="card-subtitle">홍콩 &middot; SFC 라이선스 &middot; 자체 운용사</div>
+        </div>
+      </div>
+      <div class="card-tags" style="margin-top:8px;">
+        <span class="tag" style="background:rgba(52,211,153,0.15); color:#6ee7b7;">자체 유동성 공급</span>
+        <span class="tag" style="background:rgba(52,211,153,0.15); color:#6ee7b7;">알고리즘 호가 조성</span>
+        <span class="tag" style="background:rgba(52,211,153,0.15); color:#6ee7b7;">크로스 페어 MM</span>
+        <span class="tag" style="background:rgba(52,211,153,0.15); color:#6ee7b7;">24시간 호가 유지</span>
+      </div>
+    </div>
+    <div class="mm-participant-card external">
+      <div class="card-header">
+        <div class="card-icon" style="font-size:14px; color:#fbbf24;">&#9733;</div>
+        <div>
+          <div class="card-title">외부 Market Makers</div>
+          <div class="card-subtitle">전문 MM 업체 파트너십</div>
+        </div>
+      </div>
+      <div class="card-tags" style="margin-top:8px;">
+        <span class="tag" style="background:rgba(251,191,36,0.15); color:#fcd34d;">글로벌 MM 파트너</span>
+        <span class="tag" style="background:rgba(251,191,36,0.15); color:#fcd34d;">HFT 유동성</span>
+        <span class="tag" style="background:rgba(251,191,36,0.15); color:#fcd34d;">Arb 전략</span>
+        <span class="tag" style="background:rgba(251,191,36,0.15); color:#fcd34d;">깊은 호가 유지</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 개선 효과 요약 -->
+  <div class="mm-improvement">
+    <div class="improvement-item">
+      <div class="improvement-icon">&#8595;</div>
+      <div class="improvement-metric">스프레드 <strong>80%</strong> 축소</div>
+      <div class="improvement-detail">1.5원 (0.10%) &rarr; 0.3원 (0.02%)</div>
+    </div>
+    <div class="improvement-item">
+      <div class="improvement-icon">&#8593;</div>
+      <div class="improvement-metric">호가 깊이 <strong>43x</strong> 증가</div>
+      <div class="improvement-detail">$1.2MM &rarr; $51.5MM</div>
+    </div>
+    <div class="improvement-item">
+      <div class="improvement-icon">&#8595;</div>
+      <div class="improvement-metric">슬리피지 <strong>96%</strong> 감소</div>
+      <div class="improvement-detail">~0.25% &rarr; ~0.01%</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 3: 사업 모델 & 전략 -->
+<!-- ============================================ -->
+
+<div class="biz-section">
+
+  <div class="header" style="padding-top:60px;">
+    <h1>사업 모델 &amp; 글로벌 전략</h1>
+    <p>Dated Futures 기반 거래소 + 각국 자회사 정산 에이전트</p>
+  </div>
+
+  <!-- 차별점 -->
+  <div class="diff-box">
+    <div class="diff-card ours">
+      <h4>KustodyFi</h4>
+      <div class="diff-product">Dated Futures</div>
+      <div class="diff-desc">
+        만기가 있는 선물 계약 기반<br>
+        기업 환헤지, FX Forward, 만기별 이론가 산출
+      </div>
+      <div class="diff-items">
+        <span class="tag" style="background:rgba(167,139,250,0.2); color:#c4b5fd;">FX Forward</span>
+        <span class="tag" style="background:rgba(167,139,250,0.2); color:#c4b5fd;">Cross Currency Swap</span>
+        <span class="tag" style="background:rgba(167,139,250,0.2); color:#c4b5fd;">Calendar Spread</span>
+        <span class="tag" style="background:rgba(167,139,250,0.2); color:#c4b5fd;">Exotic Swap</span>
+        <span class="tag" style="background:rgba(167,139,250,0.2); color:#c4b5fd;">NDF</span>
+      </div>
+    </div>
+    <div class="diff-ne">&#8800;</div>
+    <div class="diff-card others">
+      <h4>기존 거래소 (Binance, OKX 등)</h4>
+      <div class="diff-product">Spot / Perp</div>
+      <div class="diff-desc">
+        만기 없는 무기한 선물 / 현물 거래<br>
+        리테일 투기 중심, B2B 헤지 불가
+      </div>
+      <div class="diff-items">
+        <span class="tag">현물 거래</span>
+        <span class="tag">무기한 선물</span>
+        <span class="tag">레버리지</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 수익 모델 (3 세그먼트) -->
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:40px;">
+
+    <!-- 세그먼트 1: 거래소 -->
+    <div class="revenue-card exchange-rev">
+      <h4>&#9312; 거래소 (싱가포르)</h4>
+      <div class="rev-item">
+        <div class="rev-icon" style="color:#f472b6;">%</div>
+        <div class="rev-text">
+          <h5>Transaction Fee</h5>
+          <p>Dated Futures 거래 체결 시 매매 수수료<br>Maker 0.5bp / Taker 1.0bp</p>
+        </div>
+      </div>
+      <div class="rev-item">
+        <div class="rev-icon" style="color:#f472b6;">&#9733;</div>
+        <div class="rev-text">
+          <h5>Listing Fee</h5>
+          <p>신규 통화쌍 / 만기 상품 상장 수수료</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 세그먼트 2: Agent / TMS -->
+    <div class="revenue-card agent-rev">
+      <h4>&#9313; Agent / TMS (B2B)</h4>
+      <div class="rev-item">
+        <div class="rev-icon" style="color:#60a5fa;">S</div>
+        <div class="rev-text">
+          <h5>B2B SaaS 구독</h5>
+          <p>기업 FX 리스크 관리 플랫폼<br>Tier별 월 구독료 (10만~600만원)</p>
+        </div>
+      </div>
+      <div class="rev-item">
+        <div class="rev-icon" style="color:#60a5fa;">A</div>
+        <div class="rev-text">
+          <h5>Managed Notional Fee</h5>
+          <p>AI Agent 기반 헤지 운용 대행<br>운용 명목금액 기준 0.4~1bp</p>
+        </div>
+      </div>
+      <div class="rev-item">
+        <div class="rev-icon" style="color:#60a5fa;">T</div>
+        <div class="rev-text">
+          <h5>TMS (Treasury Management)</h5>
+          <p>기업 자금관리 솔루션<br>FX 헤지 자동화 &middot; CMS License</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 세그먼트 3: 가맹사업 (B2C) -->
+    <div style="border-radius:14px; padding:20px 24px; background:linear-gradient(135deg,rgba(251,191,36,0.08),rgba(251,191,36,0.02)); border:1px solid rgba(251,191,36,0.25);">
+      <h4 style="font-size:14px; font-weight:700; color:#fbbf24; margin-bottom:16px;">&#9314; 가맹사업 (B2C)</h4>
+      <div style="font-size:11px; color:#94a3b8; margin-bottom:12px; padding:8px 10px; background:rgba(251,191,36,0.06); border-radius:8px;">
+        외국인이 <strong style="color:#fbbf24;">USD Stable</strong>로 현지 가맹점에서 결제<br>
+        해외 신용카드 대체 &middot; 즉시 현지 통화 정산
+      </div>
+      <div class="rev-item">
+        <div class="rev-icon" style="color:#fbbf24;">&#128179;</div>
+        <div class="rev-text">
+          <h5>결제수수료 0.3%</h5>
+          <p>USD Stable &rarr; 현지통화 결제 정산<br>가맹점 POS / QR 연동</p>
+        </div>
+      </div>
+      <div class="rev-item">
+        <div class="rev-icon" style="color:#fbbf24;">&#128177;</div>
+        <div class="rev-text">
+          <h5>환전수수료 0.7%</h5>
+          <p>USD &rarr; KRW/JPY/EUR/SGD 자동 FX<br>Take Rate 합계: <strong>1%</strong></p>
+        </div>
+      </div>
+      <div class="rev-item">
+        <div class="rev-icon" style="color:#fbbf24;">&#127873;</div>
+        <div class="rev-text">
+          <h5>레퍼럴 인센티브</h5>
+          <p>가맹점 &rarr; 가맹점 소개 시 3~6개월<br>환전수수료 30% 포인트백<br>&rarr; 실질 결제수수료 <strong>0.09%</strong>까지</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TAM Phase 1+2 -->
+  <div class="header" style="padding-top:20px; padding-bottom:20px;">
+    <h1 style="font-size:22px;">시장 규모 &mdash; Phase 1+2</h1>
+  </div>
+
+  <table class="tam-table">
+    <thead>
+      <tr>
+        <th>국가 / 지역</th>
+        <th>B2B 무역 규모</th>
+        <th>B2C 해외결제 규모</th>
+        <th>외국인 현지결제<br><span style="font-weight:400; opacity:0.7;">가맹사업 TAM</span></th>
+        <th>합산 TAM</th>
+        <th>목표 (40%)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          &#127472;&#127479; 한국
+          <span class="phase-label phase-1">Phase 1</span>
+        </td>
+        <td>약 1,914조원</td>
+        <td>약 31.5조원</td>
+        <td>약 9.3조원</td>
+        <td>약 1,955조원</td>
+        <td>약 782조원</td>
+      </tr>
+      <tr>
+        <td>
+          &#127480;&#127468; 싱가포르
+          <span class="phase-label phase-1">Phase 1</span>
+        </td>
+        <td>약 1,395조원</td>
+        <td>약 12.9조원</td>
+        <td>약 31.9조원</td>
+        <td>약 1,440조원</td>
+        <td>약 576조원</td>
+      </tr>
+      <tr>
+        <td>
+          &#127481;&#127469; 태국
+          <span class="phase-label phase-2">Phase 2</span>
+        </td>
+        <td>약 881조원</td>
+        <td>약 27조원</td>
+        <td>약 70조원</td>
+        <td>약 978조원</td>
+        <td>약 391조원</td>
+      </tr>
+      <tr>
+        <td>
+          &#127473;&#127481; EU (리투아니아)
+          <span class="phase-label phase-2">Phase 2</span>
+        </td>
+        <td>약 7,975조원</td>
+        <td>약 261조원</td>
+        <td>약 1,175조원</td>
+        <td>약 9,411조원</td>
+        <td>약 3,764조원</td>
+      </tr>
+      <tr>
+        <td>
+          &#127471;&#127477; 일본
+          <span class="phase-label phase-2">Phase 2</span>
+        </td>
+        <td>약 2,074조원</td>
+        <td>약 26.1조원</td>
+        <td>약 75.1조원</td>
+        <td>약 2,175조원</td>
+        <td>약 870조원</td>
+      </tr>
+      <tr>
+        <td>
+          &#127462;&#127482; 호주
+          <span class="phase-label phase-2">Phase 2</span>
+        </td>
+        <td>약 1,204조원</td>
+        <td>약 49조원</td>
+        <td>약 47조원</td>
+        <td>약 1,300조원</td>
+        <td>약 520조원</td>
+      </tr>
+      <tr class="tam-total">
+        <td>Phase 1+2 합산</td>
+        <td>약 1경 5,443조원</td>
+        <td>약 408조원</td>
+        <td>약 1,408조원</td>
+        <td>약 1경 7,259조원</td>
+        <td>약 6,904조원</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="tam-note">
+    * 환율: 1 USD = 1,450 KRW 기준 환산<br>
+    * B2B: 각국 연간 국제 무역액 (수출+수입, 2024 기준) &middot;
+    B2C: 개인 해외 카드결제 + 해외직구 + 해외송금 (2024 기준)<br>
+    * 외국인 현지결제: 각국 인바운드 관광객 현지 소비액 (2024 기준)<br>
+    * 태국: 가맹사업 TAM 1위 ASEAN 국가 &mdash; 연 3,550만 외국인 방문객, $48.5B 소비<br>
+    * 목표 시장점유율 상한: 40% &middot;
+    Phase 3 (미국, 말레이시아) + Phase 4 (ASEAN 3개국, 중동, 남미 등) TAM 미포함<br>
+    * 출처: BOK, MAS, TAT, Eurostat, 일본 재무성, ABS, STB, ETC, Nippon.com, Tourism Research Australia
+  </div>
+
+  <!-- 매출 TAM Phase 1+2 -->
+  <div class="header" style="padding-top:20px; padding-bottom:20px;">
+    <h1 style="font-size:22px;">매출 TAM &mdash; Phase 1+2</h1>
+    <p>거래소 1.5bp &middot; Agent B2B 1bp &middot; Agent B2C(MSP) 4bp &middot; 가맹사업 1% &middot; 목표 점유율 40% 기준</p>
+  </div>
+
+  <table class="rev-tam-table">
+    <thead>
+      <tr>
+        <th>국가 / 지역</th>
+        <th>Agent B2B<br><span style="font-weight:400; opacity:0.7;">1bp</span></th>
+        <th>Agent B2C<br><span style="font-weight:400; opacity:0.7;">MSP 4bp</span></th>
+        <th>Agent 합계</th>
+        <th>가맹사업<br><span style="font-weight:400; opacity:0.7;">1%</span></th>
+        <th>거래소<br><span style="font-weight:400; opacity:0.7;">1.5bp</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>&#127472;&#127479; 한국 <span class="phase-label phase-1">P1</span></td>
+        <td>766억</td>
+        <td>50억</td>
+        <td>816억</td>
+        <td>372억</td>
+        <td rowspan="6" style="vertical-align:middle; text-align:center; font-size:18px; font-weight:700; color:#f472b6; border-left:1px solid rgba(244,114,182,0.15); background:rgba(244,114,182,0.03);">
+          1.04조<br>
+          <span style="font-size:11px; font-weight:400; color:#64748b;">
+            6,904조 &times; 1.5bp
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td>&#127480;&#127468; 싱가포르 <span class="phase-label phase-1">P1</span></td>
+        <td>558억</td>
+        <td>21억</td>
+        <td>579억</td>
+        <td>1,276억</td>
+      </tr>
+      <tr>
+        <td>&#127481;&#127469; 태국 <span class="phase-label phase-2">P2</span></td>
+        <td>352억</td>
+        <td>43억</td>
+        <td>395억</td>
+        <td>2,800억</td>
+      </tr>
+      <tr>
+        <td>&#127473;&#127481; EU <span class="phase-label phase-2">P2</span></td>
+        <td>3,190억</td>
+        <td>418억</td>
+        <td>3,608억</td>
+        <td>4.7조</td>
+      </tr>
+      <tr>
+        <td>&#127471;&#127477; 일본 <span class="phase-label phase-2">P2</span></td>
+        <td>830억</td>
+        <td>42억</td>
+        <td>872억</td>
+        <td>3,004억</td>
+      </tr>
+      <tr>
+        <td>&#127462;&#127482; 호주 <span class="phase-label phase-2">P2</span></td>
+        <td>482억</td>
+        <td>78억</td>
+        <td>560억</td>
+        <td>1,880억</td>
+      </tr>
+      <tr class="rev-total">
+        <td>합계</td>
+        <td>6,178억</td>
+        <td>652억</td>
+        <td>6,830억</td>
+        <td>5.63조</td>
+        <td style="text-align:right;">1.04조</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="rev-summary" style="flex-wrap:wrap;">
+    <div class="rev-summary-card exchange-sum">
+      <div class="rev-sum-label">거래소 매출</div>
+      <div class="rev-sum-value">1.04조</div>
+      <div class="rev-sum-sub">Transaction Fee 1.5bp</div>
+    </div>
+    <div class="rev-summary-card agent-sum">
+      <div class="rev-sum-label">Agent 매출 합계</div>
+      <div class="rev-sum-value">6,830억</div>
+      <div class="rev-sum-sub">B2B 1bp + B2C MSP 4bp</div>
+    </div>
+    <div class="rev-summary-card merchant-sum">
+      <div class="rev-sum-label">가맹사업 매출</div>
+      <div class="rev-sum-value">5.63조</div>
+      <div class="rev-sum-sub">외국인 현지결제 Take Rate 1%</div>
+    </div>
+    <div class="rev-summary-card total-sum">
+      <div class="rev-sum-label">총 매출 TAM</div>
+      <div class="rev-sum-value">7.4조</div>
+      <div class="rev-sum-sub">Phase 1+2 &middot; 점유율 40% 기준</div>
+    </div>
+  </div>
+
+  <!-- TAM Phase 1~3 -->
+  <div class="header" style="padding-top:30px; padding-bottom:20px;">
+    <h1 style="font-size:22px;">시장 규모 &mdash; Phase 3 포함</h1>
+    <p style="color:#64748b; font-size:13px; margin-top:6px;">Phase 1+2 + Phase 3 (미국, 말레이시아)</p>
+  </div>
+
+  <table class="tam-table">
+    <thead>
+      <tr>
+        <th>구분</th>
+        <th>B2B 무역 규모</th>
+        <th>B2C 해외결제 규모</th>
+        <th>외국인 현지결제<br><span style="font-weight:400; opacity:0.7;">가맹사업 TAM</span></th>
+        <th>합산 TAM</th>
+        <th>목표 (40%)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="opacity:0.6;">
+        <td>Phase 1+2 소계</td>
+        <td>약 1경 5,443조원</td>
+        <td>약 408조원</td>
+        <td>약 1,408조원</td>
+        <td>약 1경 7,259조원</td>
+        <td>약 6,904조원</td>
+      </tr>
+      <tr>
+        <td>
+          &#127482;&#127480; 미국
+          <span class="phase-label" style="background:rgba(167,139,250,0.2); color:#c4b5fd;">Phase 3</span>
+        </td>
+        <td>약 1경 587조원</td>
+        <td>약 690조원</td>
+        <td>약 368조원</td>
+        <td>약 1경 1,645조원</td>
+        <td>약 4,658조원</td>
+      </tr>
+      <tr>
+        <td>
+          &#127474;&#127486; 말레이시아
+          <span class="phase-label" style="background:rgba(167,139,250,0.2); color:#c4b5fd;">Phase 3</span>
+        </td>
+        <td>약 912조원</td>
+        <td>약 9조원</td>
+        <td>약 34조원</td>
+        <td>약 955조원</td>
+        <td>약 382조원</td>
+      </tr>
+      <tr class="tam-total">
+        <td>Phase 1~3 합산</td>
+        <td>약 2경 6,942조원</td>
+        <td>약 1,107조원</td>
+        <td>약 1,810조원</td>
+        <td>약 2경 9,859조원</td>
+        <td>약 1경 1,944조원</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="tam-note">
+    * Phase 3: 미국 (BEA 2024) + 말레이시아 (MATRADE / Tourism Malaysia 2024)<br>
+    * 미국 외국인소비: ITA/NTTO 2024 ($253.9B, 7,239만 방문객)<br>
+    * Phase 4 (베트남, 인도네시아, 필리핀, 중동 등) TAM 미포함 &mdash; 가맹사업 매출 1천억 미만 또는 신흥시장
+  </div>
+
+  <!-- 매출 TAM Phase 1~3 -->
+  <div class="header" style="padding-top:20px; padding-bottom:20px;">
+    <h1 style="font-size:22px;">매출 TAM &mdash; Phase 3 포함</h1>
+    <p>거래소 1.5bp &middot; Agent B2B 1bp &middot; Agent B2C(MSP) 4bp &middot; 가맹사업 1% &middot; 목표 점유율 40% 기준</p>
+  </div>
+
+  <table class="rev-tam-table">
+    <thead>
+      <tr>
+        <th>구분</th>
+        <th>Agent B2B<br><span style="font-weight:400; opacity:0.7;">1bp</span></th>
+        <th>Agent B2C<br><span style="font-weight:400; opacity:0.7;">MSP 4bp</span></th>
+        <th>Agent 합계</th>
+        <th>가맹사업<br><span style="font-weight:400; opacity:0.7;">1%</span></th>
+        <th>거래소<br><span style="font-weight:400; opacity:0.7;">1.5bp</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="opacity:0.6;">
+        <td>Phase 1+2 소계</td>
+        <td>6,178억</td>
+        <td>652억</td>
+        <td>6,830억</td>
+        <td>5.63조</td>
+        <td rowspan="3" style="vertical-align:middle; text-align:center; font-size:18px; font-weight:700; color:#f472b6; border-left:1px solid rgba(244,114,182,0.15); background:rgba(244,114,182,0.03);">
+          1.79조<br>
+          <span style="font-size:11px; font-weight:400; color:#64748b;">
+            1경 1,944조 &times; 1.5bp
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td>&#127482;&#127480; 미국 <span class="phase-label" style="background:rgba(167,139,250,0.2); color:#c4b5fd;">P3</span></td>
+        <td>4,235억</td>
+        <td>1,104억</td>
+        <td>5,339억</td>
+        <td>1.47조</td>
+      </tr>
+      <tr>
+        <td>&#127474;&#127486; 말레이시아 <span class="phase-label" style="background:rgba(167,139,250,0.2); color:#c4b5fd;">P3</span></td>
+        <td>365억</td>
+        <td>14억</td>
+        <td>379억</td>
+        <td>1,360억</td>
+      </tr>
+      <tr class="rev-total">
+        <td>Phase 1~3 합계</td>
+        <td>1.08조</td>
+        <td>1,770억</td>
+        <td>1.25조</td>
+        <td>7.24조</td>
+        <td style="text-align:right;">1.79조</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="rev-summary" style="flex-wrap:wrap;">
+    <div class="rev-summary-card exchange-sum">
+      <div class="rev-sum-label">거래소 매출</div>
+      <div class="rev-sum-value">1.79조</div>
+      <div class="rev-sum-sub">Transaction Fee 1.5bp</div>
+    </div>
+    <div class="rev-summary-card agent-sum">
+      <div class="rev-sum-label">Agent 매출 합계</div>
+      <div class="rev-sum-value">1.25조</div>
+      <div class="rev-sum-sub">B2B 1bp + B2C MSP 4bp</div>
+    </div>
+    <div class="rev-summary-card merchant-sum">
+      <div class="rev-sum-label">가맹사업 매출</div>
+      <div class="rev-sum-value">7.24조</div>
+      <div class="rev-sum-sub">외국인 현지결제 Take Rate 1%</div>
+    </div>
+    <div class="rev-summary-card total-sum">
+      <div class="rev-sum-label">총 매출 TAM</div>
+      <div class="rev-sum-value">10.3조</div>
+      <div class="rev-sum-sub">Phase 1~3 &middot; 점유율 40% 기준</div>
+    </div>
+  </div>
+
+  <!-- 로드맵 -->
+  <div class="header" style="padding-top:20px; padding-bottom:20px;">
+    <h1 style="font-size:22px;">글로벌 확장 로드맵</h1>
+  </div>
+
+  <div class="roadmap">
+    <div class="phase p1">
+      <div class="phase-dot"></div>
+      <div class="phase-title">Phase 1</div>
+      <div class="phase-time">현재 ~ 2027</div>
+      <div class="phase-items">
+        <div class="phase-item">&#127480;&#127468; 싱가포르 거래소</div>
+        <div class="phase-item">&#127472;&#127479; 한국법인 (정산)</div>
+        <div class="phase-item" style="color:#34d399;">핵심 인프라 구축</div>
+      </div>
+    </div>
+    <div class="phase p2">
+      <div class="phase-dot"></div>
+      <div class="phase-title">Phase 2</div>
+      <div class="phase-time">~ 2030</div>
+      <div class="phase-items">
+        <div class="phase-item">&#127473;&#127481; 유럽법인 (MiCA + EMI)</div>
+        <div class="phase-item">&#127471;&#127477; 일본법인 (JFSA)</div>
+        <div class="phase-item">&#127462;&#127482; 호주법인 (AFSL)</div>
+        <div class="phase-item">&#127481;&#127469; 태국법인 (가맹사업)</div>
+        <div class="phase-item">&#127469;&#127472; 홍콩법인 MM (SFC Type 9)</div>
+        <div class="phase-item" style="color:#60a5fa;">3대 경제권 + 태국 + 홍콩 MM</div>
+      </div>
+    </div>
+    <div class="phase p3">
+      <div class="phase-dot"></div>
+      <div class="phase-title">Phase 3</div>
+      <div class="phase-time">2030 ~</div>
+      <div class="phase-items">
+        <div class="phase-item">&#127482;&#127480; 미국법인</div>
+        <div class="phase-item">&#127474;&#127486; 말레이시아 (가맹사업)</div>
+        <div class="phase-item" style="color:#a78bfa;">고ROI 시장 집중</div>
+      </div>
+    </div>
+    <div class="phase" style="flex:1; padding:20px; border-radius:12px; background:rgba(100,116,139,0.06); border:1px solid rgba(100,116,139,0.15); position:relative;">
+      <div class="phase-dot" style="background:#64748b;"></div>
+      <div class="phase-title" style="color:#94a3b8;">Phase 4</div>
+      <div class="phase-time">2032 ~</div>
+      <div class="phase-items">
+        <div class="phase-item">&#127483;&#127475; 베트남 &#127470;&#127465; 인도네시아 &#127477;&#127469; 필리핀</div>
+        <div class="phase-item">&#127462;&#127466; 중동 &#127463;&#127479; 남미</div>
+        <div class="phase-item" style="color:#94a3b8;">글로벌 완성</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span>KustodyFi</span> &mdash; 글로벌 자금 흐름 &amp; 유동성 구조 &middot; Confidential
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const svg = document.getElementById('arrowsSvg');
+  const canvas = document.getElementById('canvas');
+
+  function drawArrows() {
+    svg.innerHTML = '';
+    const canvasRect = canvas.getBoundingClientRect();
+
+    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+    const marker1 = createMarker('arrowRC', '#7c8fff');
+    const marker2 = createMarker('arrowCL', '#d68fff');
+    defs.appendChild(marker1);
+    defs.appendChild(marker2);
+    svg.appendChild(defs);
+
+    // 결제 인프라 → 자회사 연결
+    const rcConnections = [
+      { from: 'pay-1', to: 'sub-kr' },
+      { from: 'pay-1', to: 'sub-eu' },
+      { from: 'pay-1', to: 'sub-jp' },
+      { from: 'pay-1', to: 'sub-sg' },
+      { from: 'pay-2', to: 'sub-kr' },
+      { from: 'pay-3', to: 'sub-kr' },
+      { from: 'pay-3', to: 'sub-eu' },
+      { from: 'pay-3', to: 'sub-jp' },
+      { from: 'pay-3', to: 'sub-sg' },
+      { from: 'pay-4', to: 'sub-eu' },
+      { from: 'pay-4', to: 'sub-jp' },
+      { from: 'pay-4', to: 'sub-sg' },
+      { from: 'pay-5', to: 'sub-sg' },
+      { from: 'pay-5', to: 'sub-jp' },
+      { from: 'pay-5', to: 'sub-kr' },
+    ];
+
+    // 자회사 → 거래소 연결
+    const clConnections = [
+      { from: 'sub-kr', to: 'ex-hq' },
+      { from: 'sub-eu', to: 'ex-hq' },
+      { from: 'sub-jp', to: 'ex-hq' },
+      { from: 'sub-sg', to: 'ex-hq' },
+    ];
+
+    rcConnections.forEach((conn, i) => {
+      const fromEl = document.querySelector(`[data-id="${conn.from}"]`);
+      const toEl = document.querySelector(`[data-id="${conn.to}"]`);
+      if (!fromEl || !toEl) return;
+
+      const fromRect = fromEl.getBoundingClientRect();
+      const toRect = toEl.getBoundingClientRect();
+
+      const x1 = fromRect.left - canvasRect.left;
+      const y1 = fromRect.top + fromRect.height / 2 - canvasRect.top;
+      const x2 = toRect.right - canvasRect.left;
+      const y2 = toRect.top + toRect.height / 2 - canvasRect.top;
+
+      const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      group.classList.add('arrow-group');
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      const cx1 = x1 - (x1 - x2) * 0.4;
+      const cx2 = x2 + (x1 - x2) * 0.4;
+      path.setAttribute('d', `M${x1},${y1} C${cx1},${y1} ${cx2},${y2} ${x2},${y2}`);
+      path.classList.add('flow-arrow', 'right-to-center');
+      path.setAttribute('marker-end', 'url(#arrowRC)');
+      const pathId = `rc-${i}`;
+      path.setAttribute('id', pathId);
+      group.appendChild(path);
+
+      const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      dot.classList.add('flow-dot', 'right-to-center');
+      const anim = document.createElementNS('http://www.w3.org/2000/svg', 'animateMotion');
+      anim.setAttribute('dur', `${2.5 + Math.random() * 2}s`);
+      anim.setAttribute('repeatCount', 'indefinite');
+      anim.setAttribute('begin', `${Math.random() * 3}s`);
+      const motionPath = document.createElementNS('http://www.w3.org/2000/svg', 'mpath');
+      motionPath.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `#${pathId}`);
+      anim.appendChild(motionPath);
+      dot.appendChild(anim);
+      group.appendChild(dot);
+      svg.appendChild(group);
+    });
+
+    clConnections.forEach((conn, i) => {
+      const fromEl = document.querySelector(`[data-id="${conn.from}"]`);
+      const toEl = document.querySelector(`[data-id="${conn.to}"]`);
+      if (!fromEl || !toEl) return;
+
+      const fromRect = fromEl.getBoundingClientRect();
+      const toRect = toEl.getBoundingClientRect();
+
+      const x1 = fromRect.left - canvasRect.left;
+      const y1 = fromRect.top + fromRect.height / 2 - canvasRect.top;
+      const x2 = toRect.right - canvasRect.left;
+      const y2 = toRect.top + toRect.height / 2 - canvasRect.top;
+
+      const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      group.classList.add('arrow-group');
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      const cx1 = x1 - (x1 - x2) * 0.4;
+      const cx2 = x2 + (x1 - x2) * 0.4;
+      path.setAttribute('d', `M${x1},${y1} C${cx1},${y1} ${cx2},${y2} ${x2},${y2}`);
+      path.classList.add('flow-arrow', 'center-to-left');
+      path.setAttribute('marker-end', 'url(#arrowCL)');
+      const pathId = `cl-${i}`;
+      path.setAttribute('id', pathId);
+      group.appendChild(path);
+
+      const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      dot.classList.add('flow-dot', 'center-to-left');
+      const anim = document.createElementNS('http://www.w3.org/2000/svg', 'animateMotion');
+      anim.setAttribute('dur', `${2.5 + Math.random() * 2}s`);
+      anim.setAttribute('repeatCount', 'indefinite');
+      anim.setAttribute('begin', `${Math.random() * 3}s`);
+      const motionPath = document.createElementNS('http://www.w3.org/2000/svg', 'mpath');
+      motionPath.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `#${pathId}`);
+      anim.appendChild(motionPath);
+      dot.appendChild(anim);
+      group.appendChild(dot);
+      svg.appendChild(group);
+    });
+  }
+
+  function createMarker(id, color) {
+    const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+    marker.setAttribute('id', id);
+    marker.setAttribute('viewBox', '0 0 10 7');
+    marker.setAttribute('refX', '10');
+    marker.setAttribute('refY', '3.5');
+    marker.setAttribute('markerWidth', '8');
+    marker.setAttribute('markerHeight', '6');
+    marker.setAttribute('orient', 'auto-start-reverse');
+    const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    polygon.setAttribute('points', '0 0, 10 3.5, 0 7');
+    polygon.setAttribute('fill', color);
+    polygon.setAttribute('opacity', '0.6');
+    marker.appendChild(polygon);
+    return marker;
+  }
+
+  drawArrows();
+
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(drawArrows, 150);
+  });
+});
+</script>
+
+</body>
+</html>

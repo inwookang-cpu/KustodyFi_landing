@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KustodyFi — 글로벌 법인 및 규제 구조</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --navy:#0D1B3E;--gold:#C9A84C;--gold-dim:rgba(201,168,76,0.35);--gold-glow:rgba(201,168,76,0.12);
+  --green:#34D399;--green-dim:rgba(52,211,153,0.18);--cyan:#67E8F9;--cyan-dim:rgba(103,232,249,0.18);
+  --orange:#FB923C;--orange-dim:rgba(251,146,60,0.18);--red-soft:#F87171;
+  --purple:#A78BFA;--purple-dim:rgba(167,139,250,0.15);
+  --pink:#F472B6;--pink-dim:rgba(244,114,182,0.15);
+  --bg:#080E1F;--text:#E2E8F0;--text-dim:#94A3B8;--border:rgba(255,255,255,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.header{padding:24px 32px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.header-left h1{font-size:18px;font-weight:700;color:var(--gold);letter-spacing:-0.3px}
+.header-left p{font-size:11px;color:var(--text-dim);margin-top:2px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:1.5px}
+.badge{font-size:9px;padding:3px 8px;border-radius:3px;background:rgba(248,113,113,0.15);color:var(--red-soft);font-weight:600;letter-spacing:0.5px;text-transform:uppercase;border:1px solid rgba(248,113,113,0.2)}
+.controls{display:flex;gap:6px;padding:12px 32px;flex-wrap:wrap}
+.layer-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--text-dim);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all 0.25s;user-select:none}
+.layer-btn:hover{border-color:rgba(255,255,255,0.2)}
+.layer-btn.active-money{background:var(--green-dim);border-color:var(--green);color:var(--green)}
+.layer-btn.active-info{background:var(--cyan-dim);border-color:var(--cyan);color:var(--cyan)}
+.layer-btn.active-license{background:var(--purple-dim);border-color:var(--purple);color:var(--purple)}
+.layer-btn.active-gov{background:var(--orange-dim);border-color:var(--orange);color:var(--orange)}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot-money{background:var(--green)}.dot-info{background:var(--cyan)}.dot-license{background:var(--purple)}.dot-gov{background:var(--orange)}
+.legend{display:flex;gap:20px;padding:8px 32px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text-dim)}
+.legend-line{width:20px;height:2px;border-radius:1px}
+.legend-dash{width:20px;height:0;border-top:2px dashed}
+
+.canvas-wrap{position:relative;width:100%;padding:16px;overflow-x:auto}
+.canvas{position:relative;width:1520px;min-height:1020px;margin:0 auto}
+
+.zone{position:absolute;border-radius:10px;border:1px dashed}
+.zone-label{position:absolute;top:10px;left:14px;font-size:9px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:1.6px;font-weight:500}
+.zone-us{top:8px;left:8px;width:490px;height:400px;border-color:rgba(201,168,76,0.22);background:var(--gold-glow)}
+.zone-us .zone-label{color:var(--gold)}
+.zone-sg{top:8px;left:508px;width:400px;height:400px;border-color:rgba(103,232,249,0.15);background:rgba(103,232,249,0.03)}
+.zone-sg .zone-label{color:var(--cyan)}
+.zone-mm{top:8px;left:918px;width:594px;height:400px;border-color:rgba(244,114,182,0.2);background:rgba(244,114,182,0.03)}
+.zone-mm .zone-label{color:var(--pink)}
+.zone-opco{top:435px;left:8px;width:1504px;height:260px;border-color:rgba(52,211,153,0.15);background:rgba(52,211,153,0.03)}
+.zone-opco .zone-label{color:var(--green)}
+.zone-cust{top:720px;left:8px;width:1504px;height:220px;border-color:rgba(255,255,255,0.06);background:rgba(255,255,255,0.015)}
+.zone-cust .zone-label{color:var(--text-dim)}
+
+.entity{position:absolute;border-radius:8px;padding:12px 14px;border:1px solid var(--border);background:var(--navy);transition:all 0.3s;cursor:pointer;z-index:10}
+.entity:hover{border-color:rgba(255,255,255,0.18);transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,0.4)}
+.entity-name{font-size:12px;font-weight:600;margin-bottom:2px;color:#fff}
+.entity-role{font-size:9.5px;color:var(--text-dim);line-height:1.4}
+.entity-tag{display:inline-block;margin-top:6px;font-size:8px;padding:2px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;letter-spacing:0.4px;font-weight:500}
+.tag-holdco{background:var(--gold-dim);color:var(--gold)}
+.tag-seal{background:var(--purple-dim);color:var(--purple);border:1px solid rgba(167,139,250,0.25)}
+.tag-exchange{background:var(--cyan-dim);color:var(--cyan)}
+.tag-mm{background:var(--pink-dim);color:var(--pink);border:1px solid rgba(244,114,182,0.25)}
+.tag-opco{background:var(--green-dim);color:var(--green)}
+.tag-ext{background:rgba(255,255,255,0.06);color:var(--text-dim)}
+.entity-ref{opacity:0.5;border-style:dashed;border-color:rgba(255,255,255,0.12)}
+.entity-ref:hover{opacity:0.75}
+
+/* Top Row */
+.e-holdco{top:40px;left:30px;width:320px}
+.e-seal{top:210px;left:50px;width:400px;border-color:rgba(167,139,250,0.25);background:linear-gradient(135deg,rgba(167,139,250,0.06),var(--navy))}
+.e-exchange{top:40px;left:530px;width:340px}
+.e-sg-opco{top:220px;left:530px;width:340px}
+.e-mm{top:40px;left:950px;width:330px}
+
+/* OpCo Row — 5 boxes: KR, SG(ref), LT, JP, Future */
+.e-opco-kr{top:470px;left:40px;width:240px}
+.e-opco-sg{top:470px;left:310px;width:240px}
+.e-opco-lt{top:470px;left:580px;width:240px}
+.e-opco-jp{top:470px;left:850px;width:240px}
+.e-opco-future{top:470px;left:1120px;width:280px}
+
+/* Customer Row */
+.e-b2b{top:760px;left:150px;width:220px}
+.e-b2c{top:760px;left:550px;width:220px}
+.e-lp{top:760px;left:1050px;width:250px}
+
+svg.arrows{position:absolute;top:0;left:0;width:1520px;height:1020px;pointer-events:none}
+svg.arrows path{transition:opacity 0.35s}
+.arrow-label{position:absolute;font-size:9px;font-family:'JetBrains Mono',monospace;padding:2px 6px;border-radius:3px;white-space:nowrap;pointer-events:none;transition:opacity 0.35s;letter-spacing:0.3px;font-weight:500;z-index:5}
+.label-money{background:rgba(52,211,153,0.12);color:var(--green)}
+.label-info{background:rgba(103,232,249,0.12);color:var(--cyan)}
+.label-license{background:rgba(167,139,250,0.12);color:var(--purple)}
+.label-gov{background:rgba(251,146,60,0.12);color:var(--orange)}
+.hidden{opacity:0!important;pointer-events:none}
+
+.detail-panel{position:fixed;top:0;right:-440px;width:420px;height:100vh;background:var(--navy);border-left:1px solid var(--border);padding:28px 20px;overflow-y:auto;transition:right 0.35s cubic-bezier(0.4,0,0.2,1);z-index:100;box-shadow:-12px 0 40px rgba(0,0,0,0.5)}
+.detail-panel.open{right:0}
+.detail-close{position:absolute;top:14px;right:14px;background:none;border:1px solid var(--border);color:var(--text-dim);width:26px;height:26px;border-radius:5px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center}
+.detail-close:hover{border-color:var(--text);color:var(--text)}
+.detail-panel h3{font-size:15px;font-weight:700;color:#fff;margin-bottom:4px}
+.detail-panel .detail-role{font-size:11px;color:var(--text-dim);margin-bottom:14px}
+.detail-section{margin-bottom:14px}
+.detail-section h4{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--gold);font-family:'JetBrains Mono',monospace;margin-bottom:6px}
+.detail-section p,.detail-section li{font-size:12px;line-height:1.55;color:var(--text)}
+.detail-section ul{list-style:none;padding:0}
+.detail-section li::before{content:'\2192\00a0';color:var(--gold)}
+.detail-section li{margin-bottom:3px}
+@media(max-width:1540px){.canvas-wrap{padding:12px 4px}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-left">
+    <h1>KustodyFi &mdash; 글로벌 법인 및 규제 구조</h1>
+    <p>법률 자문 &middot; 다중 법인 플로우 다이어그램</p>
+  </div>
+  <span class="badge">기밀 &amp; 대외비</span>
+</div>
+<div class="controls">
+  <button class="layer-btn active-money" data-layer="money" onclick="toggleLayer('money')"><span class="dot dot-money"></span>자금 흐름</button>
+  <button class="layer-btn active-info" data-layer="info" onclick="toggleLayer('info')"><span class="dot dot-info"></span>정보 흐름</button>
+  <button class="layer-btn active-license" data-layer="license" onclick="toggleLayer('license')"><span class="dot dot-license"></span>IP / 라이선스</button>
+  <button class="layer-btn active-gov" data-layer="gov" onclick="toggleLayer('gov')"><span class="dot dot-gov"></span>거버넌스</button>
+</div>
+<div class="legend">
+  <div class="legend-item"><div class="legend-line" style="background:var(--green)"></div>결제 / 수수료</div>
+  <div class="legend-item"><div class="legend-line" style="background:var(--cyan)"></div>데이터 (실선=상향, 점선=하향)</div>
+  <div class="legend-item"><div class="legend-dash" style="border-color:var(--purple)"></div>IP / 소프트웨어 라이선스</div>
+  <div class="legend-item"><div class="legend-dash" style="border-color:var(--orange)"></div>지분 / 거버넌스</div>
+</div>
+
+<div class="canvas-wrap">
+<div class="canvas">
+  <!-- ZONES -->
+  <div class="zone zone-us"><span class="zone-label">미국 (델라웨어) &mdash; 본사</span></div>
+  <div class="zone zone-sg"><span class="zone-label">싱가포르 (MAS)</span></div>
+  <div class="zone zone-mm"><span class="zone-label">BVI / 케이만 (중립)</span></div>
+  <div class="zone zone-opco"><span class="zone-label">현지 관할권 &mdash; 규제 OpCo (고객 대면 주체)</span></div>
+  <div class="zone zone-cust"><span class="zone-label">고객 및 외부 거래상대방</span></div>
+
+  <!-- SVG ARROWS -->
+  <svg class="arrows" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="ah-m" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="none" stroke="var(--green)" stroke-width="1.2"/></marker>
+      <marker id="ah-i" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="none" stroke="var(--cyan)" stroke-width="1.2"/></marker>
+      <marker id="ah-l" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="none" stroke="var(--purple)" stroke-width="1.2"/></marker>
+      <marker id="ah-g" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="none" stroke="var(--orange)" stroke-width="1.2"/></marker>
+    </defs>
+
+    <!-- ====== 자금 흐름 (green, solid) ====== -->
+    <g class="layer-money">
+      <!-- 고객 -> OpCo -->
+      <path d="M260,760 Q200,670 160,585" stroke="var(--green)" stroke-width="1.3" fill="none" marker-end="url(#ah-m)" opacity="0.7"/>
+      <path d="M310,760 Q510,670 700,585" stroke="var(--green)" stroke-width="1.2" fill="none" marker-end="url(#ah-m)" opacity="0.6"/>
+      <path d="M700,760 Q840,670 970,585" stroke="var(--green)" stroke-width="1.1" fill="none" marker-end="url(#ah-m)" opacity="0.5"/>
+      <!-- OpCo -> US HoldCo (SEAL 라이선스 수수료) -->
+      <path d="M160,470 Q165,300 170,125" stroke="var(--green)" stroke-width="1.4" fill="none" marker-end="url(#ah-m)" opacity="0.8"/>
+      <path d="M700,470 Q450,300 250,125" stroke="var(--green)" stroke-width="1.1" fill="none" marker-end="url(#ah-m)" opacity="0.55"/>
+      <path d="M970,470 Q600,300 320,125" stroke="var(--green)" stroke-width="1" fill="none" marker-end="url(#ah-m)" opacity="0.4"/>
+      <!-- SG OpCo (상단) -> US HoldCo -->
+      <path d="M530,260 Q430,190 350,100" stroke="var(--green)" stroke-width="1.3" fill="none" marker-end="url(#ah-m)" opacity="0.7"/>
+      <!-- OpCo -> SG 거래소 (체결 수수료) -->
+      <path d="M190,470 Q420,300 680,130" stroke="var(--green)" stroke-width="1.5" fill="none" marker-end="url(#ah-m)" opacity="0.8"/>
+      <path d="M710,470 Q705,300 700,130" stroke="var(--green)" stroke-width="1.2" fill="none" marker-end="url(#ah-m)" opacity="0.6"/>
+      <!-- SG 거래소 -> US HoldCo (SEAL 수수료) -->
+      <path d="M530,82 L355,82" stroke="var(--green)" stroke-width="1.5" fill="none" marker-end="url(#ah-m)" opacity="0.85"/>
+      <!-- SG 거래소 -> 외부 LP -->
+      <path d="M870,100 Q1050,400 1175,760" stroke="var(--green)" stroke-width="1.5" fill="none" marker-end="url(#ah-m)" opacity="0.8"/>
+      <!-- MM Co -> SG 거래소 (유동성, dashed) -->
+      <path d="M950,90 L875,90" stroke="var(--green)" stroke-width="1.3" fill="none" marker-end="url(#ah-m)" opacity="0.7" stroke-dasharray="4,3"/>
+    </g>
+
+    <!-- ====== 정보 흐름 (cyan) ====== -->
+    <g class="layer-info">
+      <!-- 상향 (실선): OpCo -> SEAL -->
+      <path d="M150,470 Q160,390 195,320" stroke="var(--cyan)" stroke-width="1.8" fill="none" marker-end="url(#ah-i)" opacity="0.85"/>
+      <path d="M690,470 Q480,390 275,320" stroke="var(--cyan)" stroke-width="1.3" fill="none" marker-end="url(#ah-i)" opacity="0.5"/>
+      <path d="M960,470 Q625,390 315,320" stroke="var(--cyan)" stroke-width="1.1" fill="none" marker-end="url(#ah-i)" opacity="0.4"/>
+      <!-- 하향 (점선): SEAL -> OpCo -->
+      <path d="M200,320 Q165,390 155,470" stroke="var(--cyan)" stroke-width="1.8" fill="none" marker-end="url(#ah-i)" stroke-dasharray="5,3" opacity="0.85"/>
+      <path d="M280,320 Q490,390 705,470" stroke="var(--cyan)" stroke-width="1.3" fill="none" marker-end="url(#ah-i)" stroke-dasharray="5,3" opacity="0.5"/>
+      <path d="M320,320 Q635,390 975,470" stroke="var(--cyan)" stroke-width="1.1" fill="none" marker-end="url(#ah-i)" stroke-dasharray="5,3" opacity="0.4"/>
+      <!-- SG 거래소 -> SEAL (실선) -->
+      <path d="M530,100 Q480,170 430,225" stroke="var(--cyan)" stroke-width="1.5" fill="none" marker-end="url(#ah-i)" opacity="0.8"/>
+      <!-- SEAL -> SG 거래소 (점선) -->
+      <path d="M440,235 Q490,175 545,110" stroke="var(--cyan)" stroke-width="1.5" fill="none" marker-end="url(#ah-i)" stroke-dasharray="5,3" opacity="0.8"/>
+    </g>
+
+    <!-- ====== 라이선스 / IP (purple, dashed) ====== -->
+    <g class="layer-license">
+      <!-- US HoldCo -> SEAL Cloud (SEAL IP) -->
+      <path d="M200,125 L230,210" stroke="var(--purple)" stroke-width="1.5" fill="none" marker-end="url(#ah-l)" stroke-dasharray="6,3" opacity="0.8"/>
+      <!-- OpCo Korea -> Lithuania (TMS + AI 에이전트 라이선스) -->
+      <path d="M280,520 L625,520" stroke="var(--purple)" stroke-width="1.5" fill="none" marker-end="url(#ah-l)" stroke-dasharray="6,3" opacity="0.7"/>
+      <!-- OpCo Korea -> Japan -->
+      <path d="M280,528 L895,528" stroke="var(--purple)" stroke-width="1.3" fill="none" marker-end="url(#ah-l)" stroke-dasharray="6,3" opacity="0.6"/>
+      <!-- OpCo Korea -> SG OpCo (상단 zone, TMS 라이선스) -->
+      <path d="M160,470 Q380,380 580,300" stroke="var(--purple)" stroke-width="1.3" fill="none" marker-end="url(#ah-l)" stroke-dasharray="6,3" opacity="0.6"/>
+    </g>
+
+    <!-- ====== 거버넌스 (orange, dashed) ====== -->
+    <g class="layer-gov">
+      <!-- HoldCo -> SG 거래소 (100% 소유) -->
+      <path d="M350,70 L530,70" stroke="var(--orange)" stroke-width="1.5" fill="none" marker-end="url(#ah-g)" stroke-dasharray="7,3" opacity="0.85"/>
+      <!-- HoldCo -> SEAL (IP + 운영) -->
+      <path d="M180,125 L210,210" stroke="var(--orange)" stroke-width="1.2" fill="none" marker-end="url(#ah-g)" stroke-dasharray="7,3" opacity="0.6"/>
+      <!-- HoldCo -> SG OpCo (100% 소유) -->
+      <path d="M350,100 Q450,180 540,245" stroke="var(--orange)" stroke-width="1.2" fill="none" marker-end="url(#ah-g)" stroke-dasharray="7,3" opacity="0.5"/>
+      <!-- HoldCo -> MM Co (100% 소유) -->
+      <path d="M350,60 L950,60" stroke="var(--orange)" stroke-width="1.2" fill="none" marker-end="url(#ah-g)" stroke-dasharray="7,3" opacity="0.6"/>
+      <!-- HoldCo -> OpCo Korea -->
+      <path d="M155,125 Q130,300 158,465" stroke="var(--orange)" stroke-width="1.1" fill="none" marker-end="url(#ah-g)" stroke-dasharray="7,3" opacity="0.5"/>
+      <!-- HoldCo -> OpCo Lithuania -->
+      <path d="M230,125 Q460,310 698,465" stroke="var(--orange)" stroke-width="1" fill="none" marker-end="url(#ah-g)" stroke-dasharray="7,3" opacity="0.35"/>
+      <!-- HoldCo -> OpCo Japan -->
+      <path d="M260,125 Q580,310 968,465" stroke="var(--orange)" stroke-width="0.9" fill="none" marker-end="url(#ah-g)" stroke-dasharray="7,3" opacity="0.3"/>
+      <!-- HoldCo -> 후보 시장 (계획, 매우 연함) -->
+      <path d="M290,125 Q700,310 1258,465" stroke="var(--orange)" stroke-width="0.7" fill="none" marker-end="url(#ah-g)" stroke-dasharray="7,3" opacity="0.15"/>
+    </g>
+
+    <!-- 참조선: SG OpCo (상단) = OpCo SG (OpCo 행) — 항상 표시 -->
+    <path d="M700,308 Q560,390 430,467" stroke="var(--text-dim)" stroke-width="0.8" fill="none" stroke-dasharray="3,3" opacity="0.25"/>
+  </svg>
+
+  <!-- 화살표 라벨 -->
+  <div class="arrow-label label-money layer-money" style="top:280px;left:80px">SEAL 수수료</div>
+  <div class="arrow-label label-money layer-money" style="top:320px;left:420px">체결 수수료</div>
+  <div class="arrow-label label-money layer-money" style="top:58px;left:388px">SEAL 수수료</div>
+  <div class="arrow-label label-money layer-money" style="top:708px;left:40px">수수료 / 스프레드</div>
+  <div class="arrow-label label-money layer-money" style="top:450px;left:1060px">에이전시&rarr;LP</div>
+  <div class="arrow-label label-money layer-money" style="top:72px;left:878px;font-size:8px">유동성</div>
+  <div class="arrow-label label-money layer-money" style="top:190px;left:410px;font-size:8px">SEAL 수수료</div>
+
+  <div class="arrow-label label-info layer-info" style="top:382px;left:20px;font-size:8px;line-height:1.3">감사&middot;거래&middot;AML &uarr;</div>
+  <div class="arrow-label label-info layer-info" style="top:382px;left:360px;font-size:8px;line-height:1.3">&darr; 정책&middot;리스크&middot;스크리닝</div>
+  <div class="arrow-label label-info layer-info" style="top:155px;left:460px;font-size:8px">로그 &harr; 정책</div>
+
+  <div class="arrow-label label-license layer-license" style="top:508px;left:350px;font-size:8px">TMS + AI 에이전트 라이선스 &rarr;</div>
+  <div class="arrow-label label-license layer-license" style="top:160px;left:148px;font-size:8px">SEAL IP</div>
+  <div class="arrow-label label-license layer-license" style="top:405px;left:350px;font-size:8px">TMS 라이선스</div>
+
+  <div class="arrow-label label-gov layer-gov" style="top:48px;left:408px;font-size:8px">100% 소유</div>
+  <div class="arrow-label label-gov layer-gov" style="top:38px;left:700px;font-size:8px">100% 소유</div>
+  <div class="arrow-label label-gov layer-gov" style="top:168px;left:420px;font-size:8px">100% 소유</div>
+
+  <!-- 엔티티: 상단 행 -->
+  <div class="entity e-holdco" onclick="showDetail('holdco')">
+    <div class="entity-name">US HoldCo (델라웨어 C-Corp)</div>
+    <div class="entity-role">본사 &middot; 그룹 컨트롤러 &middot; SEAL IP 보유<br>이전가격 허브 &middot; 지분 보유</div>
+    <span class="entity-tag tag-holdco">지주사 / 본사</span>
+  </div>
+  <div class="entity e-seal" onclick="showDetail('seal')">
+    <div class="entity-name">SEAL Cloud</div>
+    <div class="entity-role">정책코드화 &middot; 컴플라이언스 허브<br>감사 추적 &middot; AML 스크리닝<br>불변 로그 &middot; Fail-Closed</div>
+    <span class="entity-tag tag-seal">SEAL</span>
+    <span class="entity-tag tag-seal" style="margin-left:3px">정보 허브</span>
+  </div>
+  <div class="entity e-exchange" onclick="showDetail('exchange')">
+    <div class="entity-name">SG 거래소 자회사</div>
+    <div class="entity-role">에이전시 체결 &middot; 헤지 허브<br>MAS MPI + CMS<br>스테이블코인 FX 선물</div>
+    <span class="entity-tag tag-exchange">거래소</span>
+    <span class="entity-tag tag-exchange" style="margin-left:3px">MAS</span>
+  </div>
+  <div class="entity e-sg-opco" onclick="showDetail('sg-opco')">
+    <div class="entity-name">SG OpCo</div>
+    <div class="entity-role">고객 대면 (APAC)<br>MAS PS Act &middot; 거래소와 분리</div>
+    <span class="entity-tag tag-opco">OPCO</span>
+    <span class="entity-tag tag-exchange" style="margin-left:3px">MAS</span>
+  </div>
+  <div class="entity e-mm" onclick="showDetail('mm')">
+    <div class="entity-name">MM Co (마켓 메이킹)</div>
+    <div class="entity-role">독립 마켓 메이커<br>거래소 LP &middot; 자기매매<br>거래소와 차단</div>
+    <span class="entity-tag tag-mm">MM</span>
+    <span class="entity-tag tag-mm" style="margin-left:3px">독립</span>
+  </div>
+
+  <!-- 엔티티: OpCo 행 -->
+  <div class="entity e-opco-kr" onclick="showDetail('opco-kr')">
+    <div class="entity-name">OpCo Korea</div>
+    <div class="entity-role">주체 &middot; VASP &middot; 전금법<br><b>TMS+AI 에이전트 IP 라이선서</b></div>
+    <span class="entity-tag tag-opco">OPCO</span>
+    <span class="entity-tag tag-seal" style="margin-left:3px">TMS IP</span>
+  </div>
+  <div class="entity entity-ref e-opco-sg" onclick="showDetail('opco-sg')">
+    <div class="entity-name">OpCo Singapore</div>
+    <div class="entity-role">= SG OpCo (위 SG zone과<br>동일 법인)</div>
+    <span class="entity-tag tag-opco">OPCO</span>
+  </div>
+  <div class="entity e-opco-lt" onclick="showDetail('opco-lt')">
+    <div class="entity-name">OpCo Lithuania</div>
+    <div class="entity-role">MiCA CASP<br>EU 27개국 패스포팅</div>
+    <span class="entity-tag tag-opco">OPCO</span>
+    <span class="entity-tag tag-exchange" style="margin-left:3px">MiCA</span>
+  </div>
+  <div class="entity e-opco-jp" onclick="showDetail('opco-jp')">
+    <div class="entity-name">OpCo Japan</div>
+    <div class="entity-role">JFSA VASP<br>일본 FX 시장</div>
+    <span class="entity-tag tag-opco">OPCO</span>
+  </div>
+  <div class="entity entity-ref e-opco-future" onclick="showDetail('future')">
+    <div class="entity-name">후보 시장</div>
+    <div class="entity-role">UAE &middot; 브라질 &middot; 남아프리카</div>
+    <span class="entity-tag tag-ext">예정</span>
+  </div>
+
+  <!-- 엔티티: 고객 행 -->
+  <div class="entity e-b2b" onclick="showDetail('b2b')">
+    <div class="entity-name">B2B 기업 고객</div>
+    <div class="entity-role">FX 헤지 &middot; 자금관리 &middot; 해외송금</div>
+    <span class="entity-tag tag-ext">고객</span>
+  </div>
+  <div class="entity e-b2c" onclick="showDetail('b2c')">
+    <div class="entity-name">B2C 사용자</div>
+    <div class="entity-role">리테일 FX &middot; 송금</div>
+    <span class="entity-tag tag-ext">고객</span>
+  </div>
+  <div class="entity e-lp" onclick="showDetail('lp')">
+    <div class="entity-name">외부 유동성</div>
+    <div class="entity-role">은행 &middot; LP &middot; 거래소</div>
+    <span class="entity-tag tag-ext">LP / 거래소</span>
+  </div>
+</div>
+</div>
+
+<!-- 상세 패널 -->
+<div class="detail-panel" id="detailPanel">
+  <button class="detail-close" onclick="closeDetail()">&#10005;</button>
+  <div id="detailContent"></div>
+</div>
+
+<script>
+const layers={money:true,info:true,license:true,gov:true};
+function toggleLayer(n){
+  layers[n]=!layers[n];
+  document.querySelector(`[data-layer="${n}"]`).classList.toggle(`active-${n}`);
+  document.querySelectorAll(`.layer-${n}`).forEach(e=>e.classList.toggle('hidden',!layers[n]));
+}
+
+const D={
+holdco:{name:'US HoldCo (델라웨어 C-Corp)',role:'본사 · 그룹 컨트롤러 · SEAL IP 보유',sections:[
+  {title:'구조',text:'델라웨어 C-Corp. 모든 자회사의 본사 및 모회사. 상증법 보충적평가 시점을 활용한 한국 법인 → US Flip 이후 설립.'},
+  {title:'보유 IP',items:['SEAL (Security & Execution Audit Layer) — 정책코드화','StableFX 플랫폼 아키텍처','거래소 티커 상표 (USD+ISO+X)']},
+  {title:'수익',items:['모든 OpCo + 거래소로부터 SEAL 라이선스 수수료 (이전가격 준수)','플랫폼 수수료 (구간별)','그룹 내 경영관리 수수료']},
+  {title:'거버넌스',text:'100% 지분 보유: SG 거래소, SG OpCo, MM Co, 전 세계 모든 OpCo (OpCo Korea는 Flip 이후).'},
+  {title:'데이터 원칙',text:'연결 재무보고용 집계 데이터만 보유. 고객 수준 데이터 없음.'}
+]},
+seal:{name:'SEAL Cloud',role:'정책코드화 · 컴플라이언스 & 감사 허브',sections:[
+  {title:'아키텍처',text:'US HoldCo IP 하의 중앙 컴플라이언스 인텔리전스. Fail-closed 설계 — SEAL에 접근 불가 시 모든 체결 중단.'},
+  {title:'인바운드 (OpCo → SEAL)',items:['거래 이벤트 (토큰화)','AML/KYC 스크리닝 요청','컴플라이언스 로그','불변 감사 추적']},
+  {title:'아웃바운드 (SEAL → OpCo)',items:['정책 결정 (승인/거부/에스컬레이션)','리스크 알림','AML 스크리닝 결과','규제 보고 템플릿']},
+  {title:'거래소 연동',items:['인: 체결 로그, 시장 데이터, 주문 감사','아웃: 체결 정책, 한도 집행, LP 접근 제어']},
+  {title:'개인정보',text:'고객 펀딩 레이트 (r_KRW, r_USD), 신원, 프라이싱 스프레드는 절대 평문 전송 불가. 토큰화 참조 + 메타데이터만 전송.'},
+  {title:'이전가격 근거',text:'SEAL = 라이선스 수수료를 정당화하는 핵심 IP. SEAL 없이는 어떤 법인도 운영 불가.'}
+]},
+exchange:{name:'SG 거래소 자회사',role:'에이전시 체결 · 스테이블코인 FX 선물',sections:[
+  {title:'구조',text:'US HoldCo의 싱가포르 자회사. MAS MPI + CMS 라이선스 보유.'},
+  {title:'기능',items:['에이전시 전용 — 자기 리스크 없음','OpCo로부터 순 익스포저 티켓 수신','LP에 헤지 라우팅','스테이블코인 FX 선물 (예: USDCKRW)']},
+  {title:'MM Co 분리',text:'거래소와 MM Co는 법적으로 분리. 거래소 = 거래장; MM Co = 독립 LP. 우대 없음. SEAL이 정책코드화로 집행.'},
+  {title:'SG OpCo 독립성',text:'SG 거래소와 SG OpCo는 완전히 독립된 법인. 직접적 관계 없음 — 둘 다 US HoldCo의 직접 자회사.'},
+  {title:'수익',items:['체결 수수료 (bps, 구간별)','선물 수수료 (메이커 0.5bp + 테이커 1bp)']},
+  {title:'비용',text:'US HoldCo에 SEAL 라이선스 수수료 납부.'}
+]},
+'sg-opco':{name:'SG OpCo',role:'고객 대면 APAC 주체',sections:[
+  {title:'구조',text:'거래소와 별도의 SG 법인. MAS PS Act. US HoldCo 100% 자회사.'},
+  {title:'독립성',text:'SG 거래소와 공통 모회사 (US HoldCo) 외 관계 없음. 운영 및 재무적으로 독립.'},
+  {title:'목적',text:'APAC 고객 대면. 거래소와의 규제 + 이전가격 분리.'},
+  {title:'TMS 라이선스',text:'OpCo Korea로부터 TMS + AI 에이전트 라이선스 수령.'}
+]},
+mm:{name:'MM Co (마켓 메이킹)',role:'독립 마켓 메이커',sections:[
+  {title:'구조',text:'BVI/케이만 법인. US HoldCo 100% 자회사이나 운영적으로 독립.'},
+  {title:'기능',items:['KustodyFi 거래소 자기매매 MM','독립 LP — 외부 LP와 동일 대우','외부 거래소에도 유동성 공급 가능']},
+  {title:'차단',text:'별도 손익, 리스크 한도, 컴플라이언스. SEAL이 정보 비대칭 및 우대 접근 차단 집행.'},
+  {title:'규제',text:'중립 관할권으로 현지 규제기관과의 이해충돌 회피.'}
+]},
+'opco-kr':{name:'OpCo Korea',role:'주체 · VASP · TMS+AI IP 라이선서',sections:[
+  {title:'구조',text:'한국 주식회사. Seed 법인 → Flip 이후 US HoldCo 자회사. 인우 TIPS용 1주 잔류.'},
+  {title:'라이선스',items:['VASP (법무법인 정솔)','전금법','PG 라이선스']},
+  {title:'TMS + AI 에이전트 IP',text:'OpCo Korea가 TMS 소프트웨어 + AI 에이전트 IP 보유. 모든 다른 OpCo + SG OpCo에 라이선스 공여. SEAL과 별도의 이전가격 방어 가능 수익원.'},
+  {title:'라이선스 구조',items:['TMS 핵심 모듈 (M02-M13)','AI 에이전트 (Pro 6개 핵심, Enterprise 고급)','OpCo별 사용자수/거래량 기반 수수료']},
+  {title:'수익',items:['SaaS (엔터프라이즈 ₩600만 → 스타터 ₩10만/월)','MNF (FY29~)','다른 OpCo로부터 TMS/AI 라이선스 수수료','주체로서 고객 수수료/스프레드']}
+]},
+'opco-sg':{name:'OpCo Singapore',role:'= SG OpCo (상단과 동일)',sections:[
+  {title:'참고',text:'위 싱가포르 존에 표시된 SG OpCo와 동일 법인. OpCo 행에 완전성을 위해 나열 — 실제 법인은 MAS PS Act 라이선스를 가진 SG 관할권 소속.'}
+]},
+'opco-lt':{name:'OpCo Lithuania (EU)',role:'MiCA CASP · EU 패스포팅',sections:[
+  {title:'구조',text:'리투아니아 UAB. US HoldCo 100% 자회사.'},
+  {title:'라이선스',text:'리투아니아 중앙은행을 통한 MiCA CASP. EU 27개 회원국 패스포팅.'},
+  {title:'리투아니아 선정 이유',items:['MiCA 조기 도입국 (2025년 4월)','낮은 설립 비용 (에스토니아/키프로스 대비 2-3배 저렴)','강한 핀테크 허브','법인세 15-16%, 소규모 법인 5%','원격 설립 가능']},
+  {title:'TMS',text:'OpCo Korea로부터 TMS + AI 에이전트 라이선스 수령. 표준 SEAL 연동.'}
+]},
+'opco-jp':{name:'OpCo Japan',role:'JFSA 라이선스 · 일본 FX 시장',sections:[
+  {title:'구조',text:'일본 법인. US HoldCo 100% 자회사.'},
+  {title:'라이선스',text:'JFSA (금융청) VASP 등록. 일본은 엄격한 준비금 및 AML 요건을 갖춘 성숙한 암호자산 규제 체계 보유.'},
+  {title:'일본 선정 이유',items:['세계 3위 FX 시장','성숙한 암호자산 프레임워크 (개정 PSA + FIEA)','강한 기관 수요 (은행, 상사)','JPY 스테이블코인 기회','한국 본사 팀과의 문화적 근접성']},
+  {title:'TMS',text:'OpCo Korea로부터 TMS + AI 에이전트 라이선스 수령. 표준 SEAL 연동.'}
+]},
+future:{name:'후보 시장',role:'UAE · 브라질 · 남아프리카',sections:[
+  {title:'UAE',text:'VARA/ADGM. MENA + 남아시아 커버리지. 프리존 법인세 0%. 강한 무역 회랑.'},
+  {title:'브라질',text:'BCB VASP. 중남미 최대 암호자산 시장. 아르헨티나, 칠레, 콜롬비아 진출 교두보. 스테이블코인 사용 급증.'},
+  {title:'남아프리카',text:'FSCA CASP (248개 이상 라이선스 발급). 아프리카 최성숙 규제. 사하라 이남 아프리카 관문.'},
+  {title:'일정',text:'시리즈 A 이후. 각 신규 시장은 템플릿을 따름: OpCo + 현지 라이선스 + SEAL 연동 + OpCo Korea TMS 라이선스. 한계비용 거의 0.'}
+]},
+b2b:{name:'B2B 기업 고객',role:'주요 세그먼트',sections:[
+  {title:'GTM',items:['무료 FX 계산기 → 유료 SaaS → MNF → 선물']},
+  {title:'가치',text:'FX 가격에 대한 은행 정보 비대칭 제거.'}
+]},
+b2c:{name:'B2C 사용자',role:'프로젝트 Hermes (향후)',sections:[
+  {title:'단계',text:'B2B+거래소 이후. 리테일 FX & 송금. 24/7, T+0.'}
+]},
+lp:{name:'외부 유동성',role:'은행 · LP · 거래소',sections:[
+  {title:'참고',text:'SG 거래소 + MM Co의 거래상대방. OpCo/고객에 대한 직접 가시성 없음.'}
+]}
+};
+
+function showDetail(id){
+  const d=D[id];if(!d)return;
+  let h=`<h3>${d.name}</h3><div class="detail-role">${d.role}</div>`;
+  d.sections.forEach(s=>{
+    h+=`<div class="detail-section"><h4>${s.title}</h4>`;
+    if(s.text)h+=`<p>${s.text}</p>`;
+    if(s.items)h+='<ul>'+s.items.map(i=>`<li>${i}</li>`).join('')+'</ul>';
+    h+='</div>';
+  });
+  document.getElementById('detailContent').innerHTML=h;
+  document.getElementById('detailPanel').classList.add('open');
+}
+function closeDetail(){document.getElementById('detailPanel').classList.remove('open')}
+document.addEventListener('click',e=>{
+  const p=document.getElementById('detailPanel');
+  if(p.classList.contains('open')&&!p.contains(e.target)&&!e.target.closest('.entity'))closeDetail();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KustodyFi — FX Desk: A Day in the Life</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600;700;800&display=swap');
+  :root {
+    --primary: #2563eb; --primary-dark: #1d4ed8; --accent: #7c3aed;
+    --success: #059669; --warning: #d97706; --danger: #dc2626;
+    --dark: #0f172a; --gray-900: #1e293b; --gray-700: #334155;
+    --gray-500: #64748b; --gray-300: #cbd5e1; --gray-100: #f1f5f9; --white: #ffffff;
+    --gradient-2: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Noto Sans KR','Inter',sans-serif; background:var(--dark); color:var(--white); overflow:hidden; height:100vh; width:100vw; }
+
+  .progress-bar { position:fixed; top:0; left:0; height:4px; background:var(--gradient-2); z-index:1000; transition:width .5s cubic-bezier(.4,0,.2,1); }
+  .slide-counter { position:fixed; bottom:30px; right:40px; font-size:14px; color:var(--gray-500); font-weight:500; z-index:100; font-family:'Inter',monospace; }
+  .nav-arrows { position:fixed; bottom:30px; left:50%; transform:translateX(-50%); display:flex; gap:16px; z-index:100; }
+  .nav-btn { width:48px; height:48px; border-radius:50%; border:2px solid rgba(255,255,255,.15); background:rgba(255,255,255,.05); color:var(--white); font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .3s; backdrop-filter:blur(10px); }
+  .nav-btn:hover { background:rgba(255,255,255,.15); border-color:rgba(255,255,255,.3); transform:scale(1.1); }
+  .keyboard-hint { position:fixed; bottom:30px; left:40px; font-size:12px; color:var(--gray-500); z-index:100; display:flex; align-items:center; gap:8px; }
+  kbd { display:inline-block; padding:2px 8px; border-radius:4px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); font-family:'Inter',monospace; font-size:11px; }
+
+  .slides-container { width:100vw; height:100vh; position:relative; }
+  .slide { position:absolute; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; opacity:0; transform:translateX(80px); transition:all .7s cubic-bezier(.4,0,.2,1); pointer-events:none; padding:60px 80px; }
+  .slide.active { opacity:1; transform:translateX(0); pointer-events:auto; }
+  .slide.exit-left { opacity:0; transform:translateX(-80px); }
+  .slide-content { max-width:1200px; width:100%; }
+
+  /* Cover */
+  .cover-slide { background:radial-gradient(ellipse at 30% 50%,rgba(37,99,235,.15) 0%,transparent 60%),radial-gradient(ellipse at 70% 50%,rgba(124,58,237,.1) 0%,transparent 60%),var(--dark); }
+  .cover-logo { font-size:16px; font-weight:700; letter-spacing:6px; color:var(--primary); text-transform:uppercase; margin-bottom:32px; opacity:0; animation:fadeUp .8s .3s forwards; }
+  .cover-title { font-size:52px; font-weight:900; line-height:1.2; margin-bottom:24px; opacity:0; animation:fadeUp .8s .5s forwards; }
+  .cover-title .hl { background:var(--gradient-2); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .cover-sub { font-size:18px; color:var(--gray-500); margin-bottom:40px; opacity:0; animation:fadeUp .8s .7s forwards; line-height:1.6; }
+  .cover-meta { margin-top:40px; font-size:13px; color:var(--gray-500); opacity:0; animation:fadeUp .8s 1.1s forwards; }
+
+  /* Scene intro */
+  .scene-slide { text-align:center; }
+  .scene-time { font-size:64px; font-weight:900; background:var(--gradient-2); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1; margin-bottom:12px; opacity:0; animation:scaleIn .6s .2s forwards; }
+  .scene-title { font-size:36px; font-weight:800; margin-bottom:12px; opacity:0; animation:fadeUp .6s .4s forwards; }
+  .scene-desc { font-size:15px; color:var(--gray-500); opacity:0; animation:fadeUp .6s .6s forwards; max-width:600px; margin:0 auto; line-height:1.6; }
+
+  /* Section */
+  .section-label { font-size:13px; font-weight:600; letter-spacing:4px; color:var(--primary); text-transform:uppercase; margin-bottom:8px; }
+  .section-time { font-size:13px; font-weight:700; color:#6ee7b7; font-family:'Inter',monospace; margin-bottom:4px; }
+  .section-title { font-size:34px; font-weight:800; margin-bottom:8px; line-height:1.3; }
+  .section-desc { font-size:14px; color:var(--gray-500); margin-bottom:24px; line-height:1.6; }
+
+  /* Phase tabs */
+  .phase-tabs { display:flex; gap:4px; margin-bottom:24px; background:rgba(255,255,255,.05); border-radius:12px; padding:4px; width:fit-content; }
+  .phase-tab { padding:10px 24px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; transition:all .3s; color:var(--gray-500); border:none; background:transparent; }
+  .phase-tab.active-tab { color:var(--white); }
+  .phase-tab.asis.active-tab { background:rgba(220,38,38,.2); color:#fca5a5; }
+  .phase-tab.tobe.active-tab { background:rgba(37,99,235,.2); color:#93c5fd; }
+  .phase-content { display:none; }
+  .phase-content.active-phase { display:block; animation:fadeIn .5s; }
+
+  /* Timeline */
+  .tl { position:relative; padding-left:32px; }
+  .tl::before { content:''; position:absolute; left:7px; top:8px; bottom:8px; width:2px; background:rgba(255,255,255,.08); border-radius:2px; }
+  .tl-item { position:relative; margin-bottom:16px; opacity:0; transform:translateX(20px); }
+  .tl-item.animated { opacity:1; transform:translateX(0); transition:all .4s; }
+  .tl-item::before { content:''; position:absolute; left:-29px; top:8px; width:12px; height:12px; border-radius:50%; border:2px solid var(--primary); background:var(--dark); }
+  .tl-time { font-size:12px; font-weight:600; color:var(--primary); margin-bottom:3px; font-family:'Inter',monospace; }
+  .tl-who { display:inline-block; font-size:10px; font-weight:700; padding:1px 6px; border-radius:4px; margin-bottom:4px; }
+  .tl-who.dealer { background:rgba(110,231,183,.12); color:#6ee7b7; }
+  .tl-who.sales { background:rgba(147,197,253,.12); color:#93c5fd; }
+  .tl-who.client { background:rgba(252,211,77,.12); color:#fcd34d; }
+  .tl-who.mo { background:rgba(196,181,253,.12); color:#c4b5fd; }
+  .tl-text { font-size:13px; color:var(--gray-300); line-height:1.6; }
+
+  /* Pain / Benefit */
+  .pain-point { display:flex; align-items:flex-start; gap:8px; font-size:12px; color:#fca5a5; padding:8px 14px; background:rgba(220,38,38,.08); border-radius:8px; border-left:3px solid rgba(220,38,38,.4); margin-bottom:6px; opacity:0; transform:translateX(20px); }
+  .pain-point.animated { opacity:1; transform:translateX(0); transition:all .4s; }
+  .benefit-point { display:flex; align-items:flex-start; gap:8px; font-size:12px; padding:8px 14px; border-radius:8px; border-left:3px solid; margin-bottom:6px; opacity:0; transform:translateX(20px); }
+  .benefit-point.animated { opacity:1; transform:translateX(0); transition:all .4s; }
+  .benefit-point.blue { color:#93c5fd; background:rgba(37,99,235,.08); border-left-color:rgba(37,99,235,.4); }
+
+  /* Data table */
+  .dt { width:100%; border-collapse:collapse; font-size:12px; }
+  .dt th { text-align:left; padding:8px 12px; background:rgba(37,99,235,.1); color:#93c5fd; font-weight:600; font-size:11px; letter-spacing:.5px; border-bottom:1px solid rgba(255,255,255,.08); }
+  .dt td { padding:8px 12px; border-bottom:1px solid rgba(255,255,255,.04); color:var(--gray-300); }
+  .dt tr:hover td { background:rgba(255,255,255,.02); }
+
+  /* Panels */
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .panel { background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.06); border-radius:14px; padding:20px; }
+  .panel-title { font-size:13px; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+
+  /* Badges */
+  .badge { display:inline-block; padding:2px 8px; border-radius:6px; font-size:10px; font-weight:600; }
+  .badge-green { background:rgba(5,150,105,.15); color:#6ee7b7; }
+  .badge-blue { background:rgba(37,99,235,.15); color:#93c5fd; }
+  .badge-yellow { background:rgba(217,119,6,.15); color:#fcd34d; }
+  .badge-red { background:rgba(220,38,38,.15); color:#fca5a5; }
+  .badge-purple { background:rgba(124,58,237,.15); color:#c4b5fd; }
+  .tier-vip { background:rgba(252,211,77,.15); color:#fcd34d; }
+  .tier-premium { background:rgba(110,231,183,.15); color:#6ee7b7; }
+  .tier-standard { background:rgba(147,197,253,.15); color:#93c5fd; }
+  .tier-basic { background:rgba(148,163,184,.15); color:#94a3b8; }
+  .tier-new { background:rgba(196,181,253,.15); color:#c4b5fd; }
+
+  /* Flow diagram */
+  .flow { display:flex; align-items:center; justify-content:center; gap:10px; margin:16px 0; flex-wrap:wrap; }
+  .flow-box { padding:10px 16px; border-radius:10px; font-size:12px; font-weight:600; text-align:center; opacity:0; transform:scale(.8); }
+  .flow-box.animated { opacity:1; transform:scale(1); transition:all .4s; }
+  .flow-arr { color:var(--gray-500); font-size:16px; opacity:0; }
+  .flow-arr.animated { opacity:1; transition:all .4s; }
+
+  /* Scroll */
+  .scroll-area { max-height:calc(100vh - 220px); overflow-y:auto; padding-right:8px; }
+  .scroll-area::-webkit-scrollbar { width:4px; }
+  .scroll-area::-webkit-scrollbar-track { background:transparent; }
+  .scroll-area::-webkit-scrollbar-thumb { background:rgba(255,255,255,.1); border-radius:4px; }
+
+  /* Module grid */
+  .module-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:24px; }
+  .mod-card { background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:24px; text-align:center; opacity:0; transform:scale(.9); }
+  .mod-card.animated { opacity:1; transform:scale(1); transition:all .4s; }
+  .mod-card:hover { border-color:var(--primary); background:rgba(37,99,235,.05); transform:scale(1.03)!important; }
+  .mod-id { font-size:11px; font-weight:700; color:var(--primary); letter-spacing:2px; margin-bottom:6px; font-family:'Inter',monospace; }
+  .mod-name { font-size:16px; font-weight:700; margin-bottom:6px; }
+  .mod-desc { font-size:12px; color:var(--gray-500); line-height:1.5; }
+
+  /* Closing */
+  .closing-slide { background:radial-gradient(ellipse at 50% 50%,rgba(37,99,235,.12) 0%,transparent 60%),var(--dark); text-align:center; }
+  .closing-title { font-size:48px; font-weight:900; margin-bottom:20px; background:var(--gradient-2); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; opacity:0; animation:fadeUp .8s .3s forwards; }
+  .closing-desc { font-size:18px; color:var(--gray-500); max-width:600px; margin:0 auto 40px; line-height:1.7; opacity:0; animation:fadeUp .8s .5s forwards; }
+  .closing-stats { display:flex; justify-content:center; gap:60px; opacity:0; animation:fadeUp .8s .7s forwards; }
+  .stat-num { font-size:42px; font-weight:800; background:var(--gradient-2); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .stat-label { font-size:14px; color:var(--gray-500); margin-top:4px; }
+
+  /* Highlight box */
+  .hbox { padding:12px 18px; border-radius:10px; font-size:12px; }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  @keyframes scaleIn { from{opacity:0;transform:scale(.5)} to{opacity:1;transform:scale(1)} }
+
+  @media(max-width:900px) {
+    .slide{padding:40px 32px} .cover-title{font-size:36px} .section-title{font-size:24px}
+    .two-col,.module-grid{grid-template-columns:1fr} .closing-stats{flex-wrap:wrap;gap:32px}
+    .scene-time{font-size:48px}
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+<div class="slides-container" id="slidesContainer">
+
+<!-- ====== SLIDE 0: COVER ====== -->
+<div class="slide cover-slide active" data-slide="0">
+  <div class="slide-content">
+    <div class="cover-logo">KUSTODYFI</div>
+    <h1 class="cover-title">FX Desk:<br><span class="hl">A Day in the Life</span></h1>
+    <p class="cover-sub">은행 FX 데스크의 하루를 따라갑니다.<br>오전 8:30 포지션 체크부터 오후 4시 결제까지 &mdash; 실무 그대로.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;opacity:0;animation:fadeUp .8s .85s forwards">
+      <div class="hbox" style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.2);color:#6ee7b7;font-size:13px;font-weight:600">&#127919; 시스템이 제안, 담당자가 승인</div>
+      <div class="hbox" style="background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.2);color:#93c5fd;font-size:13px;font-weight:600">AI Agent &rarr; 소규모 고객에도 일관된 서비스</div>
+      <div class="hbox" style="background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);color:#c4b5fd;font-size:13px;font-weight:600">&#8361;1,800조 시장의 38%를 되찾자</div>
+      <div class="hbox" style="background:rgba(217,119,6,.08);border:1px solid rgba(217,119,6,.2);color:#fcd34d;font-size:13px;font-weight:600">&#127760; 18시 이후? AI Agent ON &mdash; 24시간 운영</div>
+    </div>
+    <div style="display:flex;gap:12px;opacity:0;animation:fadeUp .8s .9s forwards">
+      <div class="hbox" style="background:rgba(110,231,183,.08);border:1px solid rgba(110,231,183,.2);color:#6ee7b7"><strong>Dealer</strong> 이준혁 과장</div>
+      <div class="hbox" style="background:rgba(147,197,253,.08);border:1px solid rgba(147,197,253,.2);color:#93c5fd"><strong>Sales</strong> 박서연 차장</div>
+      <div class="hbox" style="background:rgba(252,211,77,.08);border:1px solid rgba(252,211,77,.2);color:#fcd34d"><strong>Client</strong> 대한전자 (가칭) 홍부장</div>
+      <div class="hbox" style="background:rgba(196,181,253,.08);border:1px solid rgba(196,181,253,.2);color:#c4b5fd"><strong>MO</strong> 최민수 대리</div>
+    </div>
+    <div class="cover-meta">Confidential &nbsp;|&nbsp; March 2026 &nbsp;|&nbsp; KustodyFi Co., Ltd.</div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 1: 08:30 MORNING ====== -->
+<div class="slide scene-slide" data-slide="1">
+  <div class="slide-content">
+    <div class="scene-time">08:30</div>
+    <div class="scene-title">Morning Setup</div>
+    <div class="scene-desc">Dealer 이준혁 과장이 콘솔을 엽니다.<br>전일 포지션, Overnight P&L, 시장 동향을 한 화면에서 확인합니다.</div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 2: MORNING DETAIL ====== -->
+<div class="slide" data-slide="2">
+  <div class="slide-content">
+    <div class="section-time">08:30</div>
+    <div class="section-title">Morning Position Check</div>
+    <div class="section-desc">Dealer 이준혁 과장 &mdash; 출근 후 콘솔에서 전일 포지션과 시장 상황을 점검합니다.</div>
+
+    <div class="phase-tabs">
+      <button class="phase-tab asis active-tab" onclick="switchPhase(this,'asis-morning')">AS-IS (Excel)</button>
+      <button class="phase-tab tobe" onclick="switchPhase(this,'tobe-morning')">KustodyFi</button>
+    </div>
+
+    <div class="scroll-area">
+      <div class="phase-content active-phase" id="asis-morning">
+        <div class="tl">
+          <div class="tl-item" data-delay="0"><div class="tl-time">08:30</div><span class="tl-who dealer">DEALER</span><div class="tl-text">엑셀 Blotter 파일 열기. 어제 입력한 거래가 제대로 저장됐는지 수기 확인.</div></div>
+          <div class="tl-item" data-delay="100"><div class="tl-time">08:35</div><span class="tl-who dealer">DEALER</span><div class="tl-text">별도 엑셀에서 포지션 합산. 어제 USDKRW Long $15M, USDJPY Short ¥200M 확인.</div></div>
+          <div class="tl-item" data-delay="200"><div class="tl-time">08:40</div><span class="tl-who dealer">DEALER</span><div class="tl-text">Reuters 터미널에서 Overnight 시장가 확인. 엑셀에 수기 입력하여 P&L 재계산.</div></div>
+          <div class="tl-item" data-delay="300"><div class="tl-time">08:50</div><span class="tl-who dealer">DEALER</span><div class="tl-text">팀장에게 카톡으로 포지션 보고: "USDKRW Long $15M, 전일종가 1,443.20 → 현재 1,445.00, O/N P&L +2,700만원"</div></div>
+        </div>
+        <div style="margin-top:12px">
+          <div class="pain-point" data-delay="400"><span>&#9888;</span> 엑셀 3개 파일(Blotter, Position, P&L)을 각각 열어서 수기 대조. 20분 소요.</div>
+          <div class="pain-point" data-delay="500"><span>&#9888;</span> 어제 동료가 입력한 거래 1건 누락 발견 → 포지션 $5M 차이.</div>
+        </div>
+      </div>
+
+      <div class="phase-content" id="tobe-morning">
+        <div class="two-col" style="gap:16px;margin-bottom:16px">
+          <div class="panel">
+            <div class="panel-title" style="color:#6ee7b7">&#128200; Position &amp; Market</div>
+            <table class="dt">
+              <thead><tr><th>CCY</th><th>Position</th><th>전일 종가</th><th>현재가</th><th>변동</th></tr></thead>
+              <tr><td>USDKRW</td><td style="color:#6ee7b7;font-weight:700">Long $15M</td><td style="font-size:11px">1,443.20</td><td style="font-weight:700">1,445.00</td><td style="color:#6ee7b7;font-weight:700">+1.80</td></tr>
+              <tr><td>USDJPY</td><td style="color:#fca5a5;font-weight:700">Short ¥200M</td><td style="font-size:11px">149.85</td><td style="font-weight:700">149.94</td><td style="color:#fca5a5;font-weight:700">+0.09</td></tr>
+              <tr><td>EURUSD</td><td style="color:var(--gray-300)">Flat</td><td style="font-size:11px">1.0842</td><td style="font-weight:700">1.0838</td><td style="color:var(--gray-500)">-</td></tr>
+            </table>
+          </div>
+          <div class="panel">
+            <div class="panel-title" style="color:#fcd34d">&#128176; Overnight P&L (전일 종가 → 현재가)</div>
+            <table class="dt">
+              <tr><td>USDKRW</td><td style="color:#6ee7b7;font-weight:700">+2,700만원</td><td style="font-size:11px;color:var(--gray-500)">+1.80 &times; $15M</td></tr>
+              <tr><td>USDJPY</td><td style="color:#fca5a5;font-weight:700">-¥18M</td><td style="font-size:11px;color:var(--gray-500)">+0.09 &times; ¥200M (Short)</td></tr>
+              <tr style="background:rgba(37,99,235,.06)"><td style="font-weight:700">Total (KRW)</td><td colspan="2" style="font-weight:900;color:#6ee7b7;font-size:14px">+960만원</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="benefit-point blue" data-delay="0"><span>&#10003;</span> 콘솔 오픈 즉시 전일 포지션 + P&L 자동 표시. 수기 대조 불필요. <strong>20분 → 0분.</strong></div>
+        <div class="benefit-point blue" data-delay="100"><span>&#10003;</span> 모든 거래가 Single Source에 기록. 누락/불일치 원천 차단.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 3: 09:00 MARKET OPEN ====== -->
+<div class="slide scene-slide" data-slide="3">
+  <div class="slide-content">
+    <div class="scene-time">09:00</div>
+    <div class="scene-title">Market Open</div>
+    <div class="scene-desc">서울 외환시장 개장. IPS 실시간 피드가 연결되고<br>3-Layer 가격 체계가 자동으로 작동합니다.</div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 4: 3-LAYER PRICING ====== -->
+<div class="slide" data-slide="4">
+  <div class="slide-content">
+    <div class="section-time">09:00</div>
+    <div class="section-title">3-Layer 가격 엔진 가동</div>
+    <div class="section-desc">IPS/Reuters 원시 가격 → Dealer 마진 → Tier별 Client 가격이 자동 생성됩니다.</div>
+
+    <div class="scroll-area">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px">
+        <div class="panel" style="border-left:3px solid rgba(110,231,183,.4)">
+          <div style="font-size:10px;font-weight:700;color:#6ee7b7;letter-spacing:2px;margin-bottom:6px">LAYER 1 &mdash; MARKET</div>
+          <div style="font-size:12px;font-weight:700;margin-bottom:4px">Dealer만 접근</div>
+          <div style="font-size:11px;color:var(--gray-500);margin-bottom:10px">IPS/Reuters 원시 가격</div>
+          <div style="padding:8px;background:rgba(110,231,183,.06);border-radius:8px;font-size:11px;text-align:center;color:var(--gray-300)">
+            <div>Spot: <strong style="color:#6ee7b7">1,445.00</strong></div>
+            <div style="margin-top:4px">3M Points: <strong style="color:#6ee7b7">-6.50</strong> / <strong style="color:#6ee7b7">-6.10</strong></div>
+            <div style="font-size:10px;color:var(--gray-500);margin-top:2px">Spread: 0.40</div>
+          </div>
+        </div>
+        <div class="panel" style="border-left:3px solid rgba(147,197,253,.4)">
+          <div style="font-size:10px;font-weight:700;color:#93c5fd;letter-spacing:2px;margin-bottom:6px">LAYER 2 &mdash; ORIGIN (ITP)</div>
+          <div style="font-size:12px;font-weight:700;margin-bottom:4px">Sales가 보는 기준가</div>
+          <div style="font-size:11px;color:var(--gray-500);margin-bottom:10px">Dealer 마진 +0.20 적용</div>
+          <div style="padding:8px;background:rgba(147,197,253,.06);border-radius:8px;font-size:11px;text-align:center;color:var(--gray-300)">
+            <div>3M Bid: <strong style="color:#93c5fd">-6.70</strong> &nbsp; Ask: <strong style="color:#93c5fd">-5.90</strong></div>
+            <div style="margin-top:4px">FWD Bid: <strong style="color:#93c5fd">1,438.30</strong></div>
+            <div style="font-size:10px;color:var(--gray-500);margin-top:2px">Spread: 0.80 (+0.40)</div>
+          </div>
+        </div>
+        <div class="panel" style="border-left:3px solid rgba(196,181,253,.4)">
+          <div style="font-size:10px;font-weight:700;color:#c4b5fd;letter-spacing:2px;margin-bottom:6px">LAYER 3 &mdash; CLIENT</div>
+          <div style="font-size:12px;font-weight:700;margin-bottom:4px">고객 Tier별 차등</div>
+          <div style="font-size:11px;color:var(--gray-500);margin-bottom:10px">Tier &times; CCY &times; Product &times; Tenor</div>
+          <div style="padding:8px;background:rgba(196,181,253,.06);border-radius:8px;font-size:10px;text-align:left;color:var(--gray-300);line-height:1.7">
+            <div><span style="color:#fcd34d;font-weight:700">VIP +0.05</span> &rarr; Bid 1,438.25</div>
+            <div><span style="color:#6ee7b7;font-weight:700">Premium +0.10</span> &rarr; Bid 1,438.20</div>
+            <div><span style="color:#93c5fd;font-weight:700">Standard +0.15</span> &rarr; Bid 1,438.15</div>
+            <div><span style="color:#94a3b8;font-weight:700">Basic +0.30</span> &rarr; Bid 1,438.00</div>
+            <div><span style="color:#c4b5fd;font-weight:700">New +0.50</span> &rarr; Bid 1,437.80</div>
+            <div style="font-size:9px;color:var(--gray-500);margin-top:4px">&#9881; Tier 구분 &middot; 마진폭 모두 은행이 자유롭게 설정</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hbox" style="background:rgba(252,211,77,.06);border:1px solid rgba(252,211,77,.15);text-align:center;color:var(--gray-300)">
+        <strong style="color:#fcd34d">핵심:</strong> Bid 방향 = Price <span style="color:#fca5a5">- Margin</span> (낮아짐) &nbsp;|&nbsp; Ask 방향 = Price <span style="color:#6ee7b7">+ Margin</span> (높아짐) &nbsp;&rarr;&nbsp; Spread는 항상 넓어짐
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 5: SCENE 1 INTRO ====== -->
+<div class="slide scene-slide" data-slide="5">
+  <div class="slide-content">
+    <div class="scene-time">09:15</div>
+    <div class="scene-title">대한전자 (가칭) 3M Forward $30M</div>
+    <div class="scene-desc">대한전자 (가칭) 재무팀 홍부장이 전화합니다.<br>"3개월 뒤 수출대금 $30M이 들어옵니다. 환율 고정하고 싶습니다."</div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 6: CLIENT CALL & QUOTE ====== -->
+<div class="slide" data-slide="6">
+  <div class="slide-content">
+    <div class="section-time">09:15</div>
+    <div class="section-title">고객 전화 &rarr; 호가</div>
+    <div class="section-desc">대한전자 (가칭) 홍부장: "3M 선물환 $30M 매도 환율 주세요" &mdash; Sales 박서연 차장이 응대합니다.</div>
+
+    <div class="phase-tabs">
+      <button class="phase-tab asis active-tab" onclick="switchPhase(this,'asis-call')">AS-IS (수기)</button>
+      <button class="phase-tab tobe" onclick="switchPhase(this,'tobe-call')">KustodyFi</button>
+    </div>
+
+    <div class="scroll-area">
+      <div class="phase-content active-phase" id="asis-call">
+        <div class="tl">
+          <div class="tl-item" data-delay="0"><div class="tl-time">09:15</div><span class="tl-who client">CLIENT</span><div class="tl-text">대한전자 (가칭) 홍부장이 Sales 박차장에게 전화. "3개월 선물환 $30M 매도 환율 주세요."</div></div>
+          <div class="tl-item" data-delay="100"><div class="tl-time">09:16</div><span class="tl-who sales">SALES</span><div class="tl-text">박차장이 Dealer 이과장에게 <strong>구두로</strong> 호가 요청. "대한전자 (가칭) 3M $30M 셀 얼마에 줄 수 있어요?"</div></div>
+          <div class="tl-item" data-delay="200"><div class="tl-time">09:17</div><span class="tl-who dealer">DEALER</span><div class="tl-text">이과장이 <strong>엑셀</strong>에서 3M 스왑포인트 확인, <strong>수기로 마진 계산</strong>. "삼성이면 VIP니까... 2전 정도?"</div></div>
+          <div class="tl-item" data-delay="300"><div class="tl-time">09:19</div><span class="tl-who dealer">DEALER</span><div class="tl-text">이과장이 박차장에게 구두 전달: "1,438.25로 줘."</div></div>
+          <div class="tl-item" data-delay="400"><div class="tl-time">09:20</div><span class="tl-who sales">SALES</span><div class="tl-text">박차장이 대한전자 (가칭)에 전화로 호가 전달: "1,438.25입니다."</div></div>
+        </div>
+        <div style="margin-top:12px">
+          <div class="pain-point" data-delay="500"><span>&#9888;</span> <strong>5분 소요.</strong> Sales → Dealer → Sales → Client. 구두 전달 2회. 환율 변동 리스크.</div>
+          <div class="pain-point" data-delay="600"><span>&#9888;</span> "삼성이면 VIP니까 2전 정도" — Tier 마진이 <strong>담당자 기억에 의존.</strong></div>
+          <div class="pain-point" data-delay="700"><span>&#9888;</span> 다른 Sales가 삼성 담당하면 마진이 달라질 수 있음. 일관성 제로.</div>
+        </div>
+      </div>
+
+      <div class="phase-content" id="tobe-call">
+        <div class="tl">
+          <div class="tl-item" data-delay="0"><div class="tl-time">09:15</div><span class="tl-who client">CLIENT</span><div class="tl-text">대한전자 (가칭) 홍부장이 Sales 박차장에게 전화. "3M 선물환 $30M 매도 환율 주세요."</div></div>
+          <div class="tl-item" data-delay="100"><div class="tl-time">09:15</div><span class="tl-who sales">SALES</span><div class="tl-text">박차장이 콘솔에서 <strong>[대한전자 (가칭)]</strong> 선택 → <span class="badge tier-vip" style="font-size:9px">VIP</span> 자동 인식. 3M FWD SELL $30M 입력.</div></div>
+          <div class="tl-item" data-delay="200"><div class="tl-time">09:15</div><span class="tl-who sales">SALES</span><div class="tl-text">화면에 즉시 표시: <strong style="color:#fcd34d">Client Bid 1,438.25</strong> (VIP +0.05 자동 적용). "1,438.25입니다."</div></div>
+          <div class="tl-item" data-delay="300"><div class="tl-time">09:16</div><span class="tl-who client">CLIENT</span><div class="tl-text">홍부장: "좋습니다, 체결합니다." → 박차장이 <strong>[체결]</strong> 클릭.</div></div>
+        </div>
+        <div style="margin-top:12px">
+          <div class="benefit-point blue" data-delay="400"><span>&#10003;</span> <strong>1분.</strong> Dealer 구두 확인 불필요. 콘솔이 실시간 가격 + Tier 마진 자동 적용.</div>
+          <div class="benefit-point blue" data-delay="500"><span>&#10003;</span> VIP +0.05 = 시스템에 설정된 값. 누가 담당하든 동일한 가격. 일관성 100%.</div>
+          <div class="benefit-point blue" data-delay="600"><span>&#10003;</span> 체결 즉시 Blotter + Position + Cash Schedule 동시 반영. 이중 입력 제로.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 7: PRICING ANATOMY ====== -->
+<div class="slide" data-slide="7">
+  <div class="slide-content">
+    <div class="section-time">09:15</div>
+    <div class="section-title">가격 분해 &mdash; 대한전자 (가칭) 3M FWD SELL $30M</div>
+    <div class="section-desc">Market → Origin → Client VIP 가격이 만들어지는 과정. 각 Layer의 마진이 투명하게 기록됩니다.</div>
+
+    <div class="scroll-area">
+      <table class="dt" style="margin-bottom:16px">
+        <thead><tr><th>Layer</th><th>항목</th><th style="text-align:right">Swap Points (Bid)</th><th style="text-align:right">3M FWD Rate</th><th>비고</th></tr></thead>
+        <tbody>
+          <tr style="background:rgba(110,231,183,.04)">
+            <td style="font-weight:700;color:#6ee7b7">1. Market</td>
+            <td>IPS 원시 가격</td>
+            <td style="text-align:right;font-weight:700;color:#6ee7b7">-6.50</td>
+            <td style="text-align:right;font-weight:700;color:#6ee7b7">1,438.50</td>
+            <td style="font-size:11px;color:var(--gray-500)">Dealer만 볼 수 있음</td>
+          </tr>
+          <tr style="background:rgba(147,197,253,.04)">
+            <td style="font-weight:700;color:#93c5fd">2. Origin</td>
+            <td>Dealer 마진 +0.20</td>
+            <td style="text-align:right;font-weight:700;color:#93c5fd">-6.70</td>
+            <td style="text-align:right;font-weight:700;color:#93c5fd">1,438.30</td>
+            <td style="font-size:11px;color:var(--gray-500)">Sales가 보는 기준가 (Cost)</td>
+          </tr>
+          <tr style="background:rgba(252,211,77,.06)">
+            <td style="font-weight:700;color:#fcd34d">3. Client (VIP)</td>
+            <td>VIP Spread +0.05</td>
+            <td style="text-align:right;font-weight:700;color:#fcd34d">-6.75</td>
+            <td style="text-align:right;font-weight:700;color:#fcd34d">1,438.25</td>
+            <td><span class="badge tier-vip" style="font-size:9px">VIP</span> 대한전자 (가칭)</td>
+          </tr>
+          <tr style="background:rgba(110,231,183,.03)">
+            <td style="color:#6ee7b7">Premium</td>
+            <td>Premium Spread +0.10</td>
+            <td style="text-align:right;color:#6ee7b7">-6.80</td>
+            <td style="text-align:right;color:#6ee7b7">1,438.20</td>
+            <td><span class="badge tier-premium" style="font-size:9px">Premium</span></td>
+          </tr>
+          <tr style="background:rgba(147,197,253,.03)">
+            <td style="color:#93c5fd">Standard</td>
+            <td>Standard Spread +0.15</td>
+            <td style="text-align:right;color:#93c5fd">-6.85</td>
+            <td style="text-align:right;color:#93c5fd">1,438.15</td>
+            <td><span class="badge tier-standard" style="font-size:9px">Standard</span></td>
+          </tr>
+          <tr style="background:rgba(148,163,184,.04)">
+            <td style="color:#94a3b8">Basic</td>
+            <td>Basic Spread +0.30</td>
+            <td style="text-align:right;color:#94a3b8">-7.00</td>
+            <td style="text-align:right;color:#94a3b8">1,438.00</td>
+            <td><span class="badge tier-basic" style="font-size:9px">Basic</span> 한성무역</td>
+          </tr>
+          <tr style="background:rgba(196,181,253,.03)">
+            <td style="color:#c4b5fd">New</td>
+            <td>New Spread +0.50</td>
+            <td style="text-align:right;color:#c4b5fd">-7.20</td>
+            <td style="text-align:right;color:#c4b5fd">1,437.80</td>
+            <td><span class="badge tier-new" style="font-size:9px">New</span> 신규 거래처</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="two-col" style="gap:14px">
+        <div class="hbox" style="background:rgba(110,231,183,.06);border:1px solid rgba(110,231,183,.15);color:var(--gray-300)">
+          <div style="font-size:11px;color:#6ee7b7;font-weight:700;margin-bottom:4px">은행 마진 (VIP)</div>
+          <div style="font-size:11px">Market Bid 1,438.50 - Client Bid 1,438.25 = <strong style="color:#6ee7b7">0.25원/USD</strong></div>
+          <div style="font-size:11px">$30M &times; 0.25 = <strong style="color:#6ee7b7">750만원 수익</strong></div>
+        </div>
+        <div class="hbox" style="background:rgba(252,211,77,.06);border:1px solid rgba(252,211,77,.15);color:var(--gray-300)">
+          <div style="font-size:11px;color:#fcd34d;font-weight:700;margin-bottom:4px">VIP vs New 가격 차이</div>
+          <div style="font-size:11px">VIP 1,438.25 vs New 1,437.80 = <strong style="color:#fcd34d">0.45원/USD</strong></div>
+          <div style="font-size:10px;color:var(--gray-500);margin-top:2px">&#9881; 5단계 Tier 구분 &middot; 마진폭 &middot; 승급 기준 모두 은행이 자유롭게 설정 가능</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 8: INTERBANK COVER ====== -->
+<div class="slide" data-slide="8">
+  <div class="slide-content">
+    <div class="section-time">09:17</div>
+    <div class="section-title">인터뱅크 커버 &mdash; 양면 거래</div>
+    <div class="section-desc">대한전자 (가칭) 딜 체결 직후. Dealer 이과장이 포지션 변동을 확인하고 인터뱅크에서 커버합니다.</div>
+
+    <div class="scroll-area">
+      <div class="tl" style="margin-bottom:20px">
+        <div class="tl-item" data-delay="0"><div class="tl-time">09:17</div><span class="tl-who dealer">DEALER</span><div class="tl-text">콘솔 알림: <strong>"대한전자 (가칭) 3M FWD SELL $30M @ 1,438.25 체결"</strong>. 포지션 자동 업데이트.</div></div>
+        <div class="tl-item" data-delay="100"><div class="tl-time">09:17</div><span class="tl-who dealer">DEALER</span><div class="tl-text">포지션 확인: 기존 Long $15M + 신규 Long $30M = <strong style="color:#fca5a5">Total Long $45M</strong>. 한도 $30M 초과.</div></div>
+        <div class="tl-item" data-delay="200"><div class="tl-time">09:18</div><span class="tl-who dealer">DEALER</span><div class="tl-text">인터뱅크 커버: BGC 브로커에게 "3M $30M 셀 주세요." → <strong>SELL $30M @ Market Bid -6.50 (1,438.50)</strong></div></div>
+        <div class="tl-item" data-delay="300"><div class="tl-time">09:19</div><span class="tl-who dealer">DEALER</span><div class="tl-text">커버 체결. 콘솔에 Client Trade + Hedge Trade가 <strong>chain_id</strong>로 자동 연결.</div></div>
+      </div>
+
+      <div style="font-size:12px;font-weight:700;color:#93c5fd;margin-bottom:10px">양면 거래 구조</div>
+      <table class="dt" style="margin-bottom:16px">
+        <thead><tr><th></th><th>Client Trade (대한전자 (가칭))</th><th>Interbank Hedge (BGC)</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:700">방향</td><td style="color:#6ee7b7;font-weight:700">BUY USD $30M</td><td style="color:#fca5a5;font-weight:700">SELL USD $30M</td></tr>
+          <tr><td style="font-weight:700">Rate</td><td style="font-weight:700">1,438.25</td><td style="font-weight:700">1,438.50</td></tr>
+          <tr><td style="font-weight:700">C/P</td><td>대한전자 (가칭)</td><td>외환은행 (via BGC)</td></tr>
+          <tr><td style="font-weight:700">Settlement</td><td>CLS (PvP)</td><td>CLS (PvP)</td></tr>
+          <tr><td style="font-weight:700">Chain</td><td><span class="badge badge-blue">ORIGIN</span></td><td><span class="badge badge-purple">HEDGE</span></td></tr>
+        </tbody>
+      </table>
+
+      <div class="two-col" style="gap:14px">
+        <div class="hbox" style="background:rgba(110,231,183,.06);border:1px solid rgba(110,231,183,.15);color:var(--gray-300)">
+          <div style="font-size:11px;color:#6ee7b7;font-weight:700;margin-bottom:4px">은행 수익</div>
+          <div style="font-size:11px">삼성에서 $30M을 1,438.25에 매수</div>
+          <div style="font-size:11px">인터뱅크에 $30M을 1,438.50에 매도</div>
+          <div style="font-size:11px;margin-top:4px"><strong style="color:#6ee7b7">차익: 0.25 &times; $30M = 750만원</strong></div>
+        </div>
+        <div class="hbox" style="background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.15);color:var(--gray-300)">
+          <div style="font-size:11px;color:#93c5fd;font-weight:700;margin-bottom:4px">커버 후 포지션</div>
+          <div style="font-size:11px">기존 Long $15M + Client +$30M - Hedge -$30M</div>
+          <div style="font-size:11px;margin-top:4px"><strong style="color:#93c5fd">Net Position: Long $15M (원래대로)</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 9: SCENE 2 INTRO ====== -->
+<div class="slide scene-slide" data-slide="9">
+  <div class="slide-content">
+    <div class="scene-time">09:30</div>
+    <div class="scene-title">한성무역 &mdash; 같은 상품, 다른 가격</div>
+    <div class="scene-desc">같은 시간, 같은 3M FWD SELL $5M인데<br>Tier가 다르면 가격이 달라집니다.</div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 10: TIER COMPARISON ====== -->
+<div class="slide" data-slide="10">
+  <div class="slide-content">
+    <div class="section-time">09:30</div>
+    <div class="section-title">같은 상품, 다른 가격 &mdash; Tier의 위력</div>
+    <div class="section-desc">한성무역 (Basic) &mdash; 3M FWD SELL $5M. 대한전자 (가칭)와 동일 시점, 동일 상품.</div>
+
+    <div class="scroll-area">
+      <div style="display:flex;gap:16px;margin-bottom:20px">
+        <div class="panel" style="flex:1;border:2px solid rgba(252,211,77,.3);text-align:center">
+          <div style="font-size:10px;font-weight:700;color:#fcd34d;margin-bottom:4px">&#127941; VIP &mdash; 대한전자 (가칭)</div>
+          <div style="font-size:28px;font-weight:900;color:#fcd34d;margin-bottom:4px">1,438.25</div>
+          <div style="font-size:11px;color:var(--gray-500)">Spread +0.05 &nbsp;|&nbsp; $30M</div>
+          <div style="font-size:11px;color:var(--gray-500)">연 $1.2B, 10년 거래, AAA</div>
+        </div>
+        <div style="display:flex;align-items:center;font-size:24px;color:var(--gray-500)">vs</div>
+        <div class="panel" style="flex:1;border:2px solid rgba(148,163,184,.3);text-align:center">
+          <div style="font-size:10px;font-weight:700;color:#94a3b8;margin-bottom:4px">Basic &mdash; 한성무역</div>
+          <div style="font-size:28px;font-weight:900;color:#94a3b8;margin-bottom:4px">1,438.00</div>
+          <div style="font-size:11px;color:var(--gray-500)">Spread +0.30 &nbsp;|&nbsp; $5M</div>
+          <div style="font-size:11px;color:var(--gray-500)">연 $10M, 2년 거래, BBB</div>
+        </div>
+      </div>
+
+      <table class="dt" style="margin-bottom:16px">
+        <thead><tr><th>Tier</th><th>Spread</th><th>Client Bid</th><th>예시 고객</th><th>기준 (은행 설정)</th></tr></thead>
+        <tbody>
+          <tr style="background:rgba(252,211,77,.04)"><td><span class="badge tier-vip" style="font-size:9px">VIP</span></td><td style="color:#fcd34d;font-weight:700">+0.05</td><td style="font-weight:700;color:#fcd34d">1,438.25</td><td>대한전자 (가칭)</td><td style="font-size:10px;color:var(--gray-500)">연 $500M+, 5년+</td></tr>
+          <tr style="background:rgba(110,231,183,.03)"><td><span class="badge tier-premium" style="font-size:9px">Premium</span></td><td style="color:#6ee7b7;font-weight:700">+0.10</td><td style="font-weight:700;color:#6ee7b7">1,438.20</td><td></td><td style="font-size:10px;color:var(--gray-500)">연 $100M+, 3년+</td></tr>
+          <tr style="background:rgba(147,197,253,.03)"><td><span class="badge tier-standard" style="font-size:9px">Standard</span></td><td style="color:#93c5fd;font-weight:700">+0.15</td><td style="font-weight:700;color:#93c5fd">1,438.15</td><td></td><td style="font-size:10px;color:var(--gray-500)">연 $30M+, 1년+</td></tr>
+          <tr style="background:rgba(148,163,184,.04)"><td><span class="badge tier-basic" style="font-size:9px">Basic</span></td><td style="color:#94a3b8;font-weight:700">+0.30</td><td style="font-weight:700;color:#94a3b8">1,438.00</td><td>한성무역</td><td style="font-size:10px;color:var(--gray-500)">연 $10M+</td></tr>
+          <tr style="background:rgba(196,181,253,.03)"><td><span class="badge tier-new" style="font-size:9px">New</span></td><td style="color:#c4b5fd;font-weight:700">+0.50</td><td style="font-weight:700;color:#c4b5fd">1,437.80</td><td>신규 거래처</td><td style="font-size:10px;color:var(--gray-500)">신규</td></tr>
+        </tbody>
+      </table>
+
+      <div class="benefit-point blue" data-delay="0"><span>&#10003;</span> <strong>5단계 Tier, 마진폭, 승급 기준 모두 은행이 자유롭게 설정.</strong> Sales 누가 담당하든 동일 가격. 마진 일탈 원천 차단.</div>
+      <div class="benefit-point blue" data-delay="100"><span>&#10003;</span> 한성무역이 거래량을 늘리면 Basic → Standard → Premium 승급. <strong>고객 성장 인센티브.</strong></div>
+      <div class="benefit-point blue" data-delay="200"><span>&#10003;</span> Tier 수, 이름, 마진 기준, CCY별/Product별 차등 &mdash; 모두 <strong>은행 Admin이 콘솔에서 직접 설정</strong>.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 11: SCENE 3 INTRO ====== -->
+<div class="slide scene-slide" data-slide="11">
+  <div class="slide-content">
+    <div class="scene-time">10:00</div>
+    <div class="scene-title">FX SWAP 롤오버</div>
+    <div class="scene-desc">대한전자 (가칭)가 만기 도래하는 기존 포지션을 롤오버합니다.<br>Even Swap과 Uneven Swap의 실무적 차이.</div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 12: SWAP DETAIL ====== -->
+<div class="slide" data-slide="12">
+  <div class="slide-content">
+    <div class="section-time">10:00</div>
+    <div class="section-title">FX SWAP &mdash; 롤오버 실행</div>
+    <div class="section-desc">대한전자 (가칭) 기존 1M FWD 만기 도래 → 1M SWAP S/B $10M으로 롤오버. 유동성 확보 목적.</div>
+
+    <div class="phase-tabs">
+      <button class="phase-tab asis active-tab" onclick="switchPhase(this,'even-swap')">Even Swap</button>
+      <button class="phase-tab tobe" onclick="switchPhase(this,'uneven-swap')">Uneven Swap</button>
+      <button class="phase-tab tobe" onclick="switchPhase(this,'unwinding-swap')">Unwinding</button>
+    </div>
+
+    <div class="scroll-area">
+      <div class="phase-content active-phase" id="even-swap">
+        <div style="font-size:12px;font-weight:700;color:#93c5fd;margin-bottom:10px">Even Swap &mdash; 양 Leg 동일 Notional (일반 롤오버)</div>
+        <table class="dt" style="margin-bottom:14px">
+          <thead><tr><th>Leg</th><th>Direction</th><th>결제일</th><th>Notional</th><th>Rate</th></tr></thead>
+          <tbody>
+            <tr><td style="color:#fca5a5;font-weight:700">Near (SELL)</td><td style="color:#fca5a5">USD 매도</td><td>3/7 (T+2)</td><td style="font-weight:700">$10M</td><td>1,445.00</td></tr>
+            <tr><td style="color:#6ee7b7;font-weight:700">Far (BUY)</td><td style="color:#6ee7b7">USD 매수</td><td>4/7 (1M)</td><td style="font-weight:700">$10M</td><td>1,442.80</td></tr>
+          </tbody>
+        </table>
+        <div class="hbox" style="background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.15);color:var(--gray-300);margin-bottom:12px">
+          <div style="font-size:11px">Near: <span style="color:#fca5a5">USD -$10M</span> / <span style="color:#6ee7b7">KRW +₩144.5억</span> &nbsp;&rarr;&nbsp; Far: <span style="color:#6ee7b7">USD +$10M</span> / <span style="color:#fca5a5">KRW -₩144.28억</span></div>
+          <div style="font-size:11px;margin-top:4px;color:#fcd34d;font-weight:700">Net Cost: 2,200만원 (1M Swap Points -2.20 &times; $10M)</div>
+        </div>
+        <div class="hbox" style="background:rgba(147,197,253,.06);border:1px solid rgba(147,197,253,.15);color:var(--gray-300);margin-bottom:8px;font-size:11px">
+          <strong style="color:#93c5fd">Near Rate 결정:</strong> Near Date = Spot Date(T+2)이므로 Near Rate = 현재 Spot Rate(1,445.00).<br>
+          Far Rate = Near Rate + Swap Points(-2.20) = 1,442.80. Swap Points만 협상 대상.
+        </div>
+        <div class="benefit-point blue" data-delay="0"><span>&#10003;</span> Near/Far가 <strong>swap_link_id</strong>로 자동 연결. 만기 관리 자동화.</div>
+        <div class="benefit-point blue" data-delay="100"><span>&#10003;</span> 사용 목적: 기존 만기 포지션 연장. 금액 동일, 방향 반대.</div>
+      </div>
+
+      <div class="phase-content" id="uneven-swap">
+        <div style="font-size:12px;font-weight:700;color:#fcd34d;margin-bottom:10px">Uneven Swap &mdash; 양 Leg 다른 Notional (유동성 조정)</div>
+        <table class="dt" style="margin-bottom:14px">
+          <thead><tr><th>Leg</th><th>Direction</th><th>결제일</th><th>Notional</th><th>Rate</th></tr></thead>
+          <tbody>
+            <tr><td style="color:#6ee7b7;font-weight:700">Near (BUY)</td><td style="color:#6ee7b7">USD 매수</td><td>3/7 (T+2)</td><td style="font-weight:700">$10M</td><td>1,445.00</td></tr>
+            <tr><td style="color:#fca5a5;font-weight:700">Far (SELL)</td><td style="color:#fca5a5">USD 매도</td><td>5/7 (2M)</td><td style="font-weight:700;color:#fcd34d">$12M</td><td>1,440.60</td></tr>
+          </tbody>
+        </table>
+        <div class="hbox" style="background:rgba(252,211,77,.06);border:1px solid rgba(252,211,77,.15);color:var(--gray-300);margin-bottom:12px">
+          <div style="font-size:11px;font-weight:700;color:#fcd34d;margin-bottom:4px">왜 Uneven인가?</div>
+          <div style="font-size:11px">&bull; Near: $10M 매수 (당장 필요한 달러 확보)</div>
+          <div style="font-size:11px">&bull; Far: $12M 매도 (2개월 뒤 수출대금 $12M 입금 예정 반영)</div>
+          <div style="font-size:11px">&bull; 차이 +$2M은 마진콜 대응 또는 유동성 조정 목적</div>
+        </div>
+        <div class="hbox" style="background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.15);color:var(--gray-300);margin-bottom:8px;font-size:11px">
+          <strong style="color:#fca5a5">&#9888; Uneven Swap의 핵심: Spot Delta</strong><br>
+          Near $10M BUY vs Far $12M SELL &rarr; Net <strong style="color:#fca5a5">$2M Short Delta</strong> 발생.<br>
+          Spot 환율 변동이 손익에 직접 영향 &rarr; Near Rate을 정확하게 산출하는 것이 중요.
+        </div>
+        <div class="hbox" style="background:rgba(147,197,253,.06);border:1px solid rgba(147,197,253,.15);color:var(--gray-300);margin-bottom:8px;font-size:11px">
+          <strong style="color:#93c5fd">Near Rate 결정 방식:</strong><br>
+          &bull; Near Date = Spot Date(T+2) &rarr; 현재 Spot Rate(1,445.00)에 준하게 제시<br>
+          &bull; Near Date &ne; Spot Date일 경우 &rarr; 해당 날짜의 <strong style="color:#93c5fd">공정가치(Swap Point 보간)</strong>로 평가<br>
+          &bull; 시스템이 Near Date에 맞는 공정가치를 자동 산출 &rarr; Spot Delta 영향도 함께 표시
+        </div>
+        <div class="benefit-point blue" data-delay="0"><span>&#10003;</span> Uneven Swap 전용 데이터 모델. Near/Far Leg 별도 관리 + <strong>Spot Delta 자동 계산.</strong></div>
+        <div class="benefit-point blue" data-delay="100"><span>&#10003;</span> Near Rate을 날짜 기준 공정가치로 자동 산출. 수기 계산 오류 방지.</div>
+        <div class="benefit-point blue" data-delay="200"><span>&#10003;</span> 회계팀에 SWAP 구조 + Spot Delta 영향 자동 전달. Near만 보고 단순 매매로 오인하는 문제 방지.</div>
+      </div>
+      <div class="phase-content" id="unwinding-swap">
+        <div style="font-size:12px;font-weight:700;color:#c4b5fd;margin-bottom:10px">Unwinding &mdash; 기존 거래를 조기 청산 (꺼뜨리기)</div>
+        <div class="hbox" style="background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.15);color:var(--gray-300);margin-bottom:14px;font-size:11px;line-height:1.7">
+          <strong style="color:#c4b5fd">Unwinding이란?</strong> 기존에 체결한 FX Swap을 만기 전에 청산하는 것.<br>
+          기존 B/S에 대해 반대 방향 S/B를 매칭하여 Far Date의 결제를 상쇄(net-off)시킵니다.<br>
+          <strong style="color:#fcd34d">핵심: Far Date, Far Rate을 기존 거래와 동일하게 고정 → Far Date에 결제가 일어나지 않게 만듦.</strong>
+        </div>
+
+        <div style="font-size:11px;font-weight:700;color:#c4b5fd;margin-bottom:6px">예시: 기존 B/S $10M (3M) 을 1개월 후 Unwinding</div>
+        <table class="dt" style="margin-bottom:14px">
+          <thead><tr><th></th><th>기존 거래 (B/S)</th><th>Unwinding 거래 (S/B)</th><th>Net</th></tr></thead>
+          <tbody>
+            <tr>
+              <td style="font-weight:700">Far Leg</td>
+              <td><span style="color:#fca5a5">SELL $10M</span> @ 1,440.60 (5/7)</td>
+              <td><span style="color:#6ee7b7">BUY $10M</span> @ <strong style="color:#c4b5fd">1,440.60</strong> (5/7)</td>
+              <td style="color:#6ee7b7;font-weight:700">$0 (상쇄)</td>
+            </tr>
+            <tr>
+              <td style="font-weight:700">Near Leg</td>
+              <td style="color:var(--gray-500)">(이미 결제 완료)</td>
+              <td><span style="color:#fca5a5">SELL $10M</span> @ <strong style="color:#fcd34d">?</strong> (4/7, 고객 희망일)</td>
+              <td style="color:#fcd34d;font-weight:700">정산금 발생</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="two-col" style="gap:14px;margin-bottom:14px">
+          <div class="panel" style="border-left:3px solid rgba(139,92,246,.4)">
+            <div class="panel-title" style="color:#c4b5fd;font-size:12px">계산 순서</div>
+            <div style="font-size:11px;color:var(--gray-300);line-height:1.9">
+              <div><strong style="color:#fca5a5">1.</strong> Far Date(5/7) + Far Rate(1,440.60) <strong>고정</strong> (기존 거래와 동일)</div>
+              <div><strong style="color:#fcd34d">2.</strong> Near Date = 고객이 원하는 청산일 (예: 4/7)</div>
+              <div><strong style="color:#6ee7b7">3.</strong> Near Rate = Far Date~Near Date 구간의 Swap Point에서 파생</div>
+              <div style="padding:6px 10px;background:rgba(139,92,246,.08);border-radius:6px;margin-top:6px;font-size:10px">
+                예: 5/7까지 1M Swap Points = -2.20<br>
+                Near Rate = 1,440.60 - (-2.20) = <strong style="color:#c4b5fd">1,442.80</strong>
+              </div>
+            </div>
+          </div>
+          <div class="panel" style="border-left:3px solid rgba(252,211,77,.4)">
+            <div class="panel-title" style="color:#fcd34d;font-size:12px">고객에게 제공하는 정보</div>
+            <div style="font-size:11px;color:var(--gray-300);line-height:1.9">
+              <div>&bull; <strong style="color:#fcd34d">"이 거래를 4/7에 꺼뜨리려면:"</strong></div>
+              <div>&bull; Near Leg: SELL $10M @ 1,442.80 (4/7)</div>
+              <div>&bull; Far Leg: BUY $10M @ 1,440.60 (5/7) &rarr; 기존 거래와 상쇄</div>
+              <div>&bull; <strong>정산금:</strong> (1,442.80 - 1,440.60) &times; $10M</div>
+              <div style="padding:6px 10px;background:rgba(252,211,77,.08);border-radius:6px;margin-top:6px">
+                = <strong style="color:#fcd34d;font-size:14px">2,200만원 수취</strong> (또는 지급)
+              </div>
+              <div style="font-size:10px;color:var(--gray-500);margin-top:4px">시장 상황에 따라 수취/지급 결정</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="benefit-point blue" data-delay="0"><span>&#10003;</span> <strong>Far 고정, Near 파생</strong> &mdash; 시스템이 Swap Point 커브에서 Near Rate 자동 산출.</div>
+        <div class="benefit-point blue" data-delay="100"><span>&#10003;</span> 고객에게 <strong>"이 거래를 꺼뜨리면 얼마"</strong> 즉시 제시. Unwinding 비용/수익 시뮬레이션 제공.</div>
+        <div class="benefit-point blue" data-delay="200"><span>&#10003;</span> Unwinding 체결 시 기존 거래와 자동 매칭 &rarr; Far Date Settlement 자동 취소.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 13: SCENE 4 INTRO ====== -->
+<div class="slide scene-slide" data-slide="13">
+  <div class="slide-content">
+    <div class="scene-time">14:00</div>
+    <div class="scene-title">Blotter &amp; 결제 준비</div>
+    <div class="scene-desc">오전 거래가 모두 반영된 Blotter.<br>Middle Office 최민수 대리가 결제를 준비합니다.</div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 14: BLOTTER & SETTLEMENT ====== -->
+<div class="slide" data-slide="14">
+  <div class="slide-content">
+    <div class="section-time">14:00</div>
+    <div class="section-title">당일 Blotter &amp; Settlement</div>
+    <div class="section-desc">오전 체결 거래 전체 + Netting + 결제 방식 자동 분류.</div>
+
+    <div class="phase-tabs">
+      <button class="phase-tab asis active-tab" onclick="switchPhase(this,'blotter-tab')">Blotter</button>
+      <button class="phase-tab tobe" onclick="switchPhase(this,'netting-tab')">Netting</button>
+    </div>
+
+    <div class="scroll-area">
+      <div class="phase-content active-phase" id="blotter-tab">
+        <div style="font-size:12px;font-weight:700;color:#93c5fd;margin-bottom:8px">2026.03.05 Blotter &mdash; 전체 거래</div>
+        <table class="dt" style="margin-bottom:14px">
+          <thead><tr><th>Trade#</th><th>C/P</th><th>Type</th><th>Dir</th><th>Notional</th><th style="text-align:right">Rate</th><th style="text-align:right">PnL</th><th>Chain</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr>
+              <td style="font-family:'Inter',monospace;font-size:10px">T-0142</td>
+              <td style="font-weight:600">대한전자 (가칭)</td>
+              <td><span class="badge badge-yellow">3M FWD</span></td>
+              <td style="color:#6ee7b7;font-weight:600">BUY</td>
+              <td>$30M</td>
+              <td style="text-align:right;font-weight:600">1,438.25</td>
+              <td style="text-align:right;color:#6ee7b7;font-weight:600">+750만원</td>
+              <td><span class="badge badge-blue" style="font-size:9px">ORIGIN</span></td>
+              <td><span class="badge badge-blue">CONFIRMED</span></td>
+            </tr>
+            <tr>
+              <td style="font-family:'Inter',monospace;font-size:10px">T-0143</td>
+              <td style="font-weight:600">외환은행</td>
+              <td><span class="badge badge-yellow">3M FWD</span></td>
+              <td style="color:#fca5a5;font-weight:600">SELL</td>
+              <td>$30M</td>
+              <td style="text-align:right;font-weight:600">1,438.50</td>
+              <td style="text-align:right;color:var(--gray-500)">cover</td>
+              <td><span class="badge badge-purple" style="font-size:9px">HEDGE</span></td>
+              <td><span class="badge badge-blue">CONFIRMED</span></td>
+            </tr>
+            <tr>
+              <td style="font-family:'Inter',monospace;font-size:10px">T-0144</td>
+              <td style="font-weight:600">한성무역</td>
+              <td><span class="badge badge-yellow">3M FWD</span></td>
+              <td style="color:#6ee7b7;font-weight:600">BUY</td>
+              <td>$5M</td>
+              <td style="text-align:right;font-weight:600">1,438.00</td>
+              <td style="text-align:right;color:#6ee7b7;font-weight:600">+250만원</td>
+              <td><span class="badge badge-blue" style="font-size:9px">ORIGIN</span></td>
+              <td><span class="badge badge-blue">CONFIRMED</span></td>
+            </tr>
+            <tr>
+              <td style="font-family:'Inter',monospace;font-size:10px">T-0145</td>
+              <td style="font-weight:600">대한전자 (가칭)</td>
+              <td><span class="badge badge-purple">1M SWAP</span></td>
+              <td style="color:#fca5a5;font-weight:600">S/B</td>
+              <td>$10M</td>
+              <td style="text-align:right;font-weight:600">-2.20</td>
+              <td style="text-align:right;color:#6ee7b7;font-weight:600">+120만원</td>
+              <td></td>
+              <td><span class="badge badge-blue">CONFIRMED</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="font-size:12px;font-weight:700;color:#6ee7b7;margin-bottom:8px">상태 전이</div>
+        <div class="flow">
+          <div class="flow-box" data-delay="0" style="background:rgba(100,116,139,.15);color:#94a3b8;border:1px solid rgba(100,116,139,.3)">DRAFT<br><small style="font-size:10px">수정 가능</small></div>
+          <div class="flow-arr" data-delay="100">&rarr;</div>
+          <div class="flow-box" data-delay="200" style="background:rgba(37,99,235,.15);color:#93c5fd;border:1px solid rgba(37,99,235,.3)">CONFIRMED<br><small style="font-size:10px">삭제 불가</small></div>
+          <div class="flow-arr" data-delay="300">&rarr;</div>
+          <div class="flow-box" data-delay="400" style="background:rgba(5,150,105,.15);color:#6ee7b7;border:1px solid rgba(5,150,105,.3)">SETTLED<br><small style="font-size:10px">확정</small></div>
+        </div>
+      </div>
+
+      <div class="phase-content" id="netting-tab">
+        <div style="font-size:12px;font-weight:700;color:#6ee7b7;margin-bottom:10px">대한전자 (가칭) 동일 결제일 거래 &rarr; Netting</div>
+
+        <!-- Gross: 건별 결제 금액 테이블 -->
+        <div class="panel" style="border-left:3px solid rgba(252,165,165,.4);margin-bottom:14px">
+          <div class="panel-title" style="color:#fca5a5;font-size:12px">Gross (건별 결제) &mdash; 실제 주고받아야 할 금액</div>
+          <table class="dt" style="margin-bottom:8px">
+            <thead><tr><th>Trade#</th><th>Type</th><th style="text-align:right;color:#fca5a5">Pay</th><th style="text-align:right;color:#6ee7b7">Receive</th></tr></thead>
+            <tbody>
+              <tr>
+                <td style="font-family:'Inter',monospace;font-size:10px">T-0142</td>
+                <td><span class="badge badge-yellow">3M FWD</span> BUY $30M</td>
+                <td style="text-align:right;color:#fca5a5;font-weight:600">KRW ₩431.5억</td>
+                <td style="text-align:right;color:#6ee7b7;font-weight:600">USD $30M</td>
+              </tr>
+              <tr>
+                <td style="font-family:'Inter',monospace;font-size:10px">T-0145 Near</td>
+                <td><span class="badge badge-purple">1M SWAP</span> SELL $10M</td>
+                <td style="text-align:right;color:#fca5a5;font-weight:600">USD $10M</td>
+                <td style="text-align:right;color:#6ee7b7;font-weight:600">KRW ₩144.5억</td>
+              </tr>
+              <tr style="border-top:2px solid rgba(255,255,255,.1)">
+                <td colspan="2" style="font-weight:700;color:#fca5a5">Gross 합계</td>
+                <td style="text-align:right;color:#fca5a5;font-weight:700">KRW ₩431.5억 + USD $10M</td>
+                <td style="text-align:right;color:#6ee7b7;font-weight:700">USD $30M + KRW ₩144.5억</td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="padding:6px 10px;background:rgba(220,38,38,.08);border-radius:6px;font-size:11px;color:#fca5a5;text-align:center">
+            <strong>총 이동 금액: ₩576억 + $40M</strong> &mdash; 4건 개별 결제, 결제 리스크 &times;4
+          </div>
+        </div>
+
+        <!-- Netting: 순액 결제 결과 -->
+        <div class="panel" style="border-left:3px solid rgba(110,231,183,.4);margin-bottom:14px">
+          <div class="panel-title" style="color:#6ee7b7;font-size:12px">Netting (순액 결제) &mdash; 실제 주고받는 금액</div>
+          <div style="font-size:12px;color:var(--gray-300);line-height:2">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span><strong style="color:#6ee7b7">USD:</strong> Receive $30M &minus; Pay $10M</span>
+              <strong style="color:#6ee7b7;font-size:14px">= Net Receive $20M</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span><strong style="color:#fca5a5">KRW:</strong> Receive ₩144.5억 &minus; Pay ₩431.5억</span>
+              <strong style="color:#fca5a5;font-size:14px">= Net Pay ₩287억</strong>
+            </div>
+          </div>
+          <div style="margin-top:8px;padding:8px 12px;background:rgba(110,231,183,.08);border-radius:6px;font-size:11px;color:#6ee7b7;text-align:center">
+            <strong>1건 순액 결제: Pay ₩287억 / Receive $20M</strong>
+          </div>
+        </div>
+
+        <!-- Gross vs Net 비교 -->
+        <div class="two-col" style="gap:14px;margin-bottom:14px">
+          <div style="text-align:center;padding:12px;background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.15);border-radius:10px">
+            <div style="font-size:10px;color:#fca5a5;font-weight:600;margin-bottom:4px">GROSS 이동</div>
+            <div style="font-size:18px;font-weight:800;color:#fca5a5">₩576억 + $40M</div>
+            <div style="font-size:10px;color:var(--gray-500);margin-top:2px">4건 개별</div>
+          </div>
+          <div style="text-align:center;padding:12px;background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.15);border-radius:10px">
+            <div style="font-size:10px;color:#6ee7b7;font-weight:600;margin-bottom:4px">NET 이동</div>
+            <div style="font-size:18px;font-weight:800;color:#6ee7b7">₩287억 + $20M</div>
+            <div style="font-size:10px;color:var(--gray-500);margin-top:2px">1건 순액 <strong style="color:#6ee7b7">&darr; 50% 절감</strong></div>
+          </div>
+        </div>
+
+        <div class="benefit-point blue" data-delay="0"><span>&#10003;</span> Netting Group ID로 자동 그루핑. 동일 C/P + 동일 결제일 자동 인식.</div>
+        <div class="benefit-point blue" data-delay="100"><span>&#10003;</span> 결제 건수 4건 → <strong>1건</strong>. 이동 금액 <strong>~50% 절감</strong>. CLS/Bilateral 자동 분류.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 15: EOD ====== -->
+<div class="slide scene-slide" data-slide="15">
+  <div class="slide-content">
+    <div class="scene-time">16:00</div>
+    <div class="scene-title">End of Day</div>
+    <div class="scene-desc">하루 마감. 포지션 평가, 일일 P&L, 미래 캐시플로우를 확인합니다.</div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 16: EOD DETAIL ====== -->
+<div class="slide" data-slide="16">
+  <div class="slide-content">
+    <div class="section-time">16:00</div>
+    <div class="section-title">End of Day &mdash; P&L &amp; Cash Schedule</div>
+    <div class="section-desc">일일 실적 + 향후 결제 스케줄 + 통화별 자금 수지.</div>
+
+    <div class="scroll-area">
+      <div class="two-col" style="gap:16px;margin-bottom:16px">
+        <div class="panel">
+          <div class="panel-title" style="color:#6ee7b7">&#128200; 일일 P&L 요약</div>
+          <table class="dt">
+            <tr><td>Client Trades (3건)</td><td style="color:#6ee7b7;font-weight:700">+1,120만원</td></tr>
+            <tr><td>Interbank Cover (1건)</td><td style="color:var(--gray-300)">-750만원 (cost)</td></tr>
+            <tr><td>SWAP Carry</td><td style="color:#6ee7b7;font-weight:700">+120만원</td></tr>
+            <tr><td>Overnight Position MtM</td><td style="color:#6ee7b7;font-weight:700">+960만원</td></tr>
+            <tr style="background:rgba(37,99,235,.06)"><td style="font-weight:700">Daily Total</td><td style="font-weight:900;color:#6ee7b7;font-size:16px">+1,450만원</td></tr>
+          </table>
+        </div>
+        <div class="panel">
+          <div class="panel-title" style="color:#93c5fd">&#128176; Cash Balance (오늘)</div>
+          <div style="display:flex;gap:12px;margin-bottom:12px">
+            <div style="flex:1;padding:10px;background:rgba(110,231,183,.06);border-radius:8px;text-align:center">
+              <div style="font-size:10px;color:var(--gray-500)">USD Net</div>
+              <div style="font-size:20px;font-weight:800;color:#6ee7b7">+$20M</div>
+            </div>
+            <div style="flex:1;padding:10px;background:rgba(147,197,253,.06);border-radius:8px;text-align:center">
+              <div style="font-size:10px;color:var(--gray-500)">KRW Net</div>
+              <div style="font-size:20px;font-weight:800;color:#fca5a5">-₩287억</div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--gray-500)">SWAP Far Leg $10M 4/7 결제 예정. 유동성 충분.</div>
+        </div>
+      </div>
+
+      <div style="font-size:12px;font-weight:700;color:#c4b5fd;margin-bottom:8px">&#128197; 향후 결제 Schedule</div>
+      <table class="dt">
+        <thead><tr><th>결제일</th><th>Type</th><th>C/P</th><th>USD</th><th>KRW</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>3/7(금)</td><td>SWAP Near</td><td>대한전자 (가칭)</td><td style="color:#fca5a5">-$10M</td><td style="color:#6ee7b7">+₩144.5억</td><td><span class="badge badge-blue">CONFIRMED</span></td></tr>
+          <tr><td>6/5(금)</td><td>3M FWD</td><td>대한전자 (가칭)</td><td style="color:#6ee7b7">+$30M</td><td style="color:#fca5a5">-₩431.5억</td><td><span class="badge badge-yellow">PENDING</span></td></tr>
+          <tr><td>6/5(금)</td><td>3M FWD</td><td>한성무역</td><td style="color:#6ee7b7">+$5M</td><td style="color:#fca5a5">-₩71.9억</td><td><span class="badge badge-yellow">PENDING</span></td></tr>
+          <tr><td>4/7(월)</td><td>SWAP Far</td><td>대한전자 (가칭)</td><td style="color:#6ee7b7">+$10M</td><td style="color:#fca5a5">-₩144.28억</td><td><span class="badge badge-yellow">PENDING</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 17: ARCHITECTURE ====== -->
+<div class="slide" data-slide="17">
+  <div class="slide-content">
+    <div class="section-label">Architecture</div>
+    <div class="section-title">System Modules</div>
+    <div style="font-size:12px;color:var(--gray-500);margin-bottom:20px">오늘 하루 동안 사용된 모듈들 &mdash; 하나의 콘솔에서 통합 운영</div>
+    <div class="module-grid">
+      <div class="mod-card" data-delay="0"><div class="mod-id" style="color:#6ee7b7">M01</div><div class="mod-name">Curves</div><div class="mod-desc">IPS 스왑포인트 + 금리커브 부트스트랩. 09:00 자동 가동.</div></div>
+      <div class="mod-card" data-delay="100"><div class="mod-id" style="color:#93c5fd">M02</div><div class="mod-name">Calculator</div><div class="mod-desc">SPOT/FWD/SWAP 가격 계산기. 3-Layer 마진 자동 적용.</div></div>
+      <div class="mod-card" data-delay="200"><div class="mod-id" style="color:#fcd34d">M03</div><div class="mod-name">Client Pricing</div><div class="mod-desc">VIP~New 5단계 Tier (은행이 자유 설정). 09:15 호가에 사용.</div></div>
+      <div class="mod-card" data-delay="300"><div class="mod-id" style="color:#c4b5fd">M04</div><div class="mod-name">Blotter</div><div class="mod-desc">DRAFT→CONFIRMED→SETTLED. chain_id로 양면 거래 연결.</div></div>
+      <div class="mod-card" data-delay="400"><div class="mod-id" style="color:#fca5a5">M05</div><div class="mod-name">Settlement</div><div class="mod-desc">CLS/Bilateral 자동 분류. Netting Group 생성. 14:00 사용.</div></div>
+      <div class="mod-card" data-delay="500"><div class="mod-id" style="color:#f472b6">M06</div><div class="mod-name">Cash & Schedule</div><div class="mod-desc">통화별 Inflow/Outflow. 향후 결제 캘린더. 16:00 EOD 확인.</div></div>
+      <div class="mod-card" data-delay="600"><div class="mod-id" style="color:#6ee7b7">M07</div><div class="mod-name">Valuation</div><div class="mod-desc">MtM 평가 + PnL. Spot Delta. 08:30 Morning Check에 사용.</div></div>
+      <div class="mod-card" data-delay="700"><div class="mod-id" style="color:#93c5fd">M08</div><div class="mod-name">Client CRM</div><div class="mod-desc">5단계 Tier CRM. Tier 이력 + 거래 통계 + 승급 관리.</div></div>
+      <div class="mod-card" data-delay="800"><div class="mod-id" style="color:#fcd34d">M09</div><div class="mod-name">Config & RBAC</div><div class="mod-desc">Dealer/Sales/MO 역할 구분. Maker/Checker 이중 승인.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 18: IMPACT ====== -->
+<div class="slide" data-slide="18">
+  <div class="slide-content">
+    <div class="section-label">Impact</div>
+    <div class="section-title">도입 효과</div>
+    <div style="font-size:13px;color:var(--gray-500);margin-bottom:20px">오늘 하루에서 확인된 개선 효과</div>
+
+    <div class="scroll-area">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px">
+        <div class="panel" style="text-align:center;padding:20px">
+          <div style="font-size:11px;color:var(--gray-500);margin-bottom:8px">Morning Position Check</div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:10px">
+            <div><div style="font-size:11px;color:#fca5a5;font-weight:600">AS-IS</div><div style="font-size:24px;font-weight:800;color:#fca5a5">20분</div></div>
+            <div style="color:var(--gray-500)">&rarr;</div>
+            <div><div style="font-size:11px;color:#6ee7b7;font-weight:600">TO-BE</div><div style="font-size:24px;font-weight:800;color:#6ee7b7">즉시</div></div>
+          </div>
+        </div>
+        <div class="panel" style="text-align:center;padding:20px">
+          <div style="font-size:11px;color:var(--gray-500);margin-bottom:8px">호가 산출 (Client Quote)</div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:10px">
+            <div><div style="font-size:11px;color:#fca5a5;font-weight:600">AS-IS</div><div style="font-size:24px;font-weight:800;color:#fca5a5">5분</div></div>
+            <div style="color:var(--gray-500)">&rarr;</div>
+            <div><div style="font-size:11px;color:#6ee7b7;font-weight:600">TO-BE</div><div style="font-size:24px;font-weight:800;color:#6ee7b7">1분</div></div>
+          </div>
+        </div>
+        <div class="panel" style="text-align:center;padding:20px">
+          <div style="font-size:11px;color:var(--gray-500);margin-bottom:8px">거래 입력 & 반영</div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:10px">
+            <div><div style="font-size:11px;color:#fca5a5;font-weight:600">AS-IS</div><div style="font-size:24px;font-weight:800;color:#fca5a5">3곳</div></div>
+            <div style="color:var(--gray-500)">&rarr;</div>
+            <div><div style="font-size:11px;color:#6ee7b7;font-weight:600">TO-BE</div><div style="font-size:24px;font-weight:800;color:#6ee7b7">1회</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+        <div class="panel" style="text-align:center;padding:20px">
+          <div style="font-size:11px;color:var(--gray-500);margin-bottom:8px">Tier 마진 오적용</div>
+          <div style="font-size:32px;font-weight:900;color:#6ee7b7">0%</div>
+          <div style="font-size:10px;color:var(--gray-500);margin-top:4px">시스템 설정 = 사람 무관</div>
+        </div>
+        <div class="panel" style="text-align:center;padding:20px">
+          <div style="font-size:11px;color:var(--gray-500);margin-bottom:8px">데이터 소스</div>
+          <div style="font-size:32px;font-weight:900;color:#6ee7b7">Single</div>
+          <div style="font-size:10px;color:var(--gray-500);margin-top:4px">Excel 3곳 → 1곳 통합</div>
+        </div>
+        <div class="panel" style="text-align:center;padding:20px">
+          <div style="font-size:11px;color:var(--gray-500);margin-bottom:8px">감사 추적</div>
+          <div style="font-size:32px;font-weight:900;color:#6ee7b7">Full</div>
+          <div style="font-size:10px;color:var(--gray-500);margin-top:4px">모든 상태 변경 자동 기록</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 19: AI AGENT - LONG TAIL ====== -->
+<div class="slide" data-slide="19">
+  <div class="slide-content">
+    <div class="section-label">AI AGENT</div>
+    <div class="section-title">소규모 고객에도 VIP와 같은 경험을</div>
+    <div class="section-desc">AI Agent가 Tier 마진 적용, 호가 산출, 체결, 기록을 자동으로 처리합니다. Sales 인력 없이도 일관된 서비스.</div>
+
+    <div class="scroll-area">
+      <div class="two-col" style="gap:16px;margin-bottom:16px">
+        <div class="panel" style="border-left:3px solid rgba(220,38,38,.4)">
+          <div class="panel-title" style="color:#fca5a5">&#9888; 현재: 소규모 고객 = 방치</div>
+          <div style="font-size:12px;color:var(--gray-300);line-height:1.9">
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:4px;margin-bottom:4px"><span>VIP (대한전자 (가칭)급)</span><span style="color:#6ee7b7">전담 Sales + 즉시 호가</span></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:4px;margin-bottom:4px"><span>Standard (중견기업)</span><span style="color:#fcd34d">Sales가 여유 있을 때</span></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:4px;margin-bottom:4px"><span style="color:#fca5a5;font-weight:600">Basic/New (중소기업)</span><span style="color:#fca5a5;font-weight:600">전화하면 "나중에 연락드리겠습니다"</span></div>
+            <div style="margin-top:8px;padding:8px 12px;background:rgba(220,38,38,.08);border-radius:8px;font-size:11px;color:#fca5a5">
+              <strong>결과:</strong> 중소기업은 환전만 하고 선물환은 안 함. "어차피 우리한테 안 해줌."<br>
+              &rarr; 은행은 연간 &#8361;684조원 규모의 시장을 놓치고 있음.
+            </div>
+          </div>
+        </div>
+        <div class="panel" style="border-left:3px solid rgba(5,150,105,.4)">
+          <div class="panel-title" style="color:#6ee7b7">&#10003; KustodyFi AI Agent: 일관된 경험</div>
+          <div style="font-size:12px;color:var(--gray-300);line-height:1.9">
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:4px;margin-bottom:4px"><span>VIP (대한전자 (가칭)급)</span><span style="color:#6ee7b7">전담 Sales + 시스템 보조</span></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:4px;margin-bottom:4px"><span>Standard (중견기업)</span><span style="color:#6ee7b7">AI Agent + Sales 승인</span></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:4px;margin-bottom:4px"><span style="color:#6ee7b7;font-weight:600">Basic/New (중소기업)</span><span style="color:#6ee7b7;font-weight:600">AI Agent 자동 서비스</span></div>
+            <div style="margin-top:8px;padding:8px 12px;background:rgba(5,150,105,.08);border-radius:8px;font-size:11px;color:#6ee7b7">
+              <strong>AI Agent가 하는 일:</strong> Tier 마진 자동 적용 &rarr; 호가 산출 &rarr; 고객 응대 &rarr; 체결 &rarr; 기록<br>
+              &rarr; Sales 인력 추가 없이 수백 개 중소기업 동시 서비스 가능
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 24시간 AI Agent 활성화 -->
+      <div class="panel" style="border:1px solid rgba(217,119,6,.3);background:rgba(217,119,6,.04);margin-bottom:16px">
+        <div class="panel-title" style="color:#fcd34d">&#127760; 24시간 시장, 원하는 시점에 AI Agent ON</div>
+        <div style="display:flex;gap:0;margin-bottom:12px;border-radius:10px;overflow:hidden;height:56px">
+          <div style="flex:37.5;background:rgba(37,99,235,.15);display:flex;align-items:center;justify-content:center;flex-direction:column;border-right:2px solid rgba(255,255,255,.1)">
+            <div style="font-size:11px;font-weight:700;color:#93c5fd">09:00 ~ 18:00</div>
+            <div style="font-size:10px;color:var(--gray-500)">Dealer + Sales + 필요시 AI Agent</div>
+          </div>
+          <div style="flex:62.5;background:rgba(5,150,105,.12);display:flex;align-items:center;justify-content:center;flex-direction:column">
+            <div style="font-size:11px;font-weight:700;color:#6ee7b7">18:00 ~ 익일 09:00 (또는 24시간 언제든)</div>
+            <div style="font-size:10px;color:var(--gray-500)">AI Agent 활성화 &mdash; 은행이 원하는 시점에 ON</div>
+          </div>
+        </div>
+        <div style="padding:10px 14px;background:rgba(217,119,6,.08);border-radius:8px;font-size:12px;color:var(--gray-300);text-align:center">
+          <strong style="color:#fcd34d">은행이 선택합니다.</strong> 저녁 6시 이후부터 AI Agent를 켜면, 야간에도 호가 산출 &middot; Tier 마진 적용 &middot; 체결이 자동으로 이루어집니다.<br>
+          24시간 언제든 원하는 시점에 활성화. <strong style="color:#6ee7b7">인력 추가 없이 운영 시간을 확장.</strong>
+        </div>
+      </div>
+
+      <!-- Market Opportunity -->
+      <div class="panel" style="border:2px solid rgba(124,58,237,.3);background:rgba(124,58,237,.04);margin-bottom:16px">
+        <div class="panel-title" style="color:#c4b5fd">&#128200; 시장 기회: &#8361;1,800조 FX 시장의 38%</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;text-align:center">
+          <div>
+            <div style="font-size:10px;color:var(--gray-500)">국내 FX 시장</div>
+            <div style="font-size:28px;font-weight:900;color:var(--white)">&#8361;1,800조</div>
+            <div style="font-size:10px;color:var(--gray-500)">/년</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--gray-500)">현재 서비스되는 고객</div>
+            <div style="font-size:28px;font-weight:900;color:#93c5fd">62%</div>
+            <div style="font-size:10px;color:var(--gray-500)">대기업 + 중견기업</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--gray-500)">놓치고 있는 시장</div>
+            <div style="font-size:28px;font-weight:900;color:#fca5a5">38%</div>
+            <div style="font-size:10px;color:var(--gray-500)">~&#8361;684조 (중소기업)</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--gray-500)">AI Agent 도입 후</div>
+            <div style="font-size:28px;font-weight:900;background:var(--gradient-2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">+50%</div>
+            <div style="font-size:10px;color:var(--gray-500)">시장 규모 성장</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hbox" style="background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.15);color:var(--gray-300);text-align:center;font-size:13px">
+        <strong style="color:#93c5fd">핵심:</strong> VIP에겐 더 빠른 서비스, 중소기업에겐 <strong style="color:#6ee7b7">처음으로 가능한 서비스</strong>.<br>
+        AI Agent가 Sales의 업무를 대체하는 게 아니라, <strong style="color:#fcd34d">Sales가 갈 수 없는 곳에 서비스를 만드는 것</strong>.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 20: CLOSING ====== -->
+<div class="slide closing-slide" data-slide="20">
+  <div class="slide-content">
+    <div class="closing-title">FX Desk.<br>Reimagined.</div>
+    <div class="closing-desc">낮에는 콘솔에서, 저녁 6시 이후엔 AI Agent가.<br>소규모 고객 &times; 24시간 운영 &mdash; <strong>&#8361;1,800조 시장의 50% 성장</strong>.</div>
+    <div class="closing-stats">
+      <div><div class="stat-num">38%</div><div class="stat-label">놓치던 시장</div></div>
+      <div><div class="stat-num">AI Agent</div><div class="stat-label">일관된 서비스</div></div>
+      <div><div class="stat-num">+50%</div><div class="stat-label">시장 성장</div></div>
+    </div>
+    <div style="margin-top:40px;padding:18px 28px;background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.15);border-radius:14px;display:inline-block;opacity:0;animation:fadeUp .8s .7s forwards">
+      <div style="font-size:12px;color:var(--gray-300);line-height:1.8;text-align:left">
+        <strong style="color:#93c5fd">오늘 하루 요약</strong><br>
+        1. 08:30 Position Check &mdash; 포지션/P&L 즉시 확인<br>
+        2. 09:00 Market Open &mdash; 3-Layer 가격 자동 생성<br>
+        3. 09:15 대한전자 (가칭) 3M FWD $30M &mdash; 5단계 Tier 마진 자동, 1분 체결<br>
+        4. 09:17 인터뱅크 커버 &mdash; 양면 거래, chain_id 자동 연결<br>
+        5. 09:30 한성무역 $5M &mdash; Tier별 차등 가격 자동<br>
+        6. 10:00 SWAP 롤오버 &mdash; Even/Uneven 자동 관리<br>
+        7. 14:00 Settlement &mdash; Netting 자동, CLS/Bilateral 분류<br>
+        8. 16:00 EOD &mdash; P&L +1,450만원, Cash Schedule 확인
+      </div>
+    </div>
+    <div style="margin-top:32px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap;opacity:0;animation:fadeUp .8s .9s forwards">
+      <a href="mailto:inwoo.kang@kustodyfi.com?subject=KustodyFi FX Desk 데모 요청" style="padding:12px 28px;background:#2563eb;color:#fff;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;display:inline-flex;align-items:center;gap:8px">&#128200; FX Desk 데모 보기</a>
+      <a href="mailto:inwoo.kang@kustodyfi.com?subject=KustodyFi 미팅 요청" style="padding:12px 28px;background:rgba(255,255,255,.1);color:#fff;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;border:1px solid rgba(255,255,255,.2);display:inline-flex;align-items:center;gap:8px">&#128197; 15분 미팅 잡기</a>
+    </div>
+    <div style="margin-top:20px;font-size:14px;color:var(--gray-500);opacity:0;animation:fadeUp .8s 1.1s forwards">
+      KustodyFi Co., Ltd. &nbsp;|&nbsp; inwoo.kang@kustodyfi.com
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- Navigation -->
+<div class="nav-arrows">
+  <button class="nav-btn" onclick="prevSlide()">&#8592;</button>
+  <button class="nav-btn" onclick="nextSlide()">&#8594;</button>
+</div>
+<div class="slide-counter" id="slideCounter">1 / 21</div>
+<div class="keyboard-hint"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> 또는 클릭으로 이동</div>
+
+<script>
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide');
+  const totalSlides = slides.length;
+  const progressBar = document.getElementById('progressBar');
+  const slideCounter = document.getElementById('slideCounter');
+  let isTransitioning = false;
+
+  function updateProgress() {
+    progressBar.style.width = ((currentSlide) / (totalSlides - 1) * 100) + '%';
+    slideCounter.textContent = (currentSlide + 1) + ' / ' + totalSlides;
+  }
+
+  function animateElements(slide) {
+    const els = slide.querySelectorAll('.tl-item,.pain-point,.benefit-point,.flow-box,.flow-arr,.mod-card');
+    els.forEach(el => {
+      el.classList.remove('animated');
+      const delay = parseInt(el.getAttribute('data-delay') || '0');
+      setTimeout(() => el.classList.add('animated'), delay + 200);
+    });
+  }
+
+  function goToSlide(index) {
+    if (index < 0 || index >= totalSlides || isTransitioning) return;
+    isTransitioning = true;
+    const old = slides[currentSlide], next = slides[index];
+    if (index > currentSlide) { old.classList.add('exit-left'); old.classList.remove('active'); }
+    else { old.classList.remove('active','exit-left'); }
+    setTimeout(() => {
+      old.classList.remove('exit-left');
+      next.classList.add('active');
+      currentSlide = index;
+      updateProgress();
+      animateElements(next);
+      setTimeout(() => { isTransitioning = false; }, 400);
+    }, 100);
+  }
+
+  function nextSlide() { goToSlide(currentSlide + 1); }
+  function prevSlide() { goToSlide(currentSlide - 1); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+  });
+
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) { diff > 0 ? nextSlide() : prevSlide(); }
+  });
+
+  function switchPhase(btn, phaseId) {
+    const slide = btn.closest('.slide');
+    slide.querySelectorAll('.phase-tab').forEach(t => t.classList.remove('active-tab'));
+    btn.classList.add('active-tab');
+    slide.querySelectorAll('.phase-content').forEach(p => p.classList.remove('active-phase'));
+    document.getElementById(phaseId).classList.add('active-phase');
+    const phase = document.getElementById(phaseId);
+    const els = phase.querySelectorAll('.tl-item,.pain-point,.benefit-point,.flow-box,.flow-arr');
+    els.forEach(el => {
+      el.classList.remove('animated');
+      const delay = parseInt(el.getAttribute('data-delay') || '0');
+      setTimeout(() => el.classList.add('animated'), delay + 100);
+    });
+  }
+
+  updateProgress();
+  animateElements(slides[0]);
+</script>
+</body>
+</html>

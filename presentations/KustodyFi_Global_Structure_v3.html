@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KustodyFi — Global Corporate & Regulatory Structure</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{
+  --navy:#0D1B3E;--gold:#C9A84C;--gold-dim:rgba(201,168,76,0.35);--gold-glow:rgba(201,168,76,0.12);
+  --green:#34D399;--green-dim:rgba(52,211,153,0.18);--cyan:#67E8F9;--cyan-dim:rgba(103,232,249,0.18);
+  --orange:#FB923C;--orange-dim:rgba(251,146,60,0.18);--red-soft:#F87171;
+  --purple:#A78BFA;--purple-dim:rgba(167,139,250,0.15);
+  --pink:#F472B6;--pink-dim:rgba(244,114,182,0.15);
+  --bg:#080E1F;--text:#E2E8F0;--text-dim:#94A3B8;--border:rgba(255,255,255,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.header{padding:24px 32px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.header-left h1{font-size:18px;font-weight:700;color:var(--gold);letter-spacing:-0.3px}
+.header-left p{font-size:11px;color:var(--text-dim);margin-top:2px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:1.5px}
+.badge{font-size:9px;padding:3px 8px;border-radius:3px;background:rgba(248,113,113,0.15);color:var(--red-soft);font-weight:600;letter-spacing:0.5px;text-transform:uppercase;border:1px solid rgba(248,113,113,0.2)}
+.controls{display:flex;gap:6px;padding:12px 32px;flex-wrap:wrap}
+.layer-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--text-dim);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all 0.25s;user-select:none}
+.layer-btn:hover{border-color:rgba(255,255,255,0.2)}
+.layer-btn.active-money{background:var(--green-dim);border-color:var(--green);color:var(--green)}
+.layer-btn.active-info{background:var(--cyan-dim);border-color:var(--cyan);color:var(--cyan)}
+.layer-btn.active-license{background:var(--purple-dim);border-color:var(--purple);color:var(--purple)}
+.layer-btn.active-gov{background:var(--orange-dim);border-color:var(--orange);color:var(--orange)}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot-money{background:var(--green)}.dot-info{background:var(--cyan)}.dot-license{background:var(--purple)}.dot-gov{background:var(--orange)}
+.legend{display:flex;gap:20px;padding:8px 32px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text-dim)}
+.legend-line{width:20px;height:2px;border-radius:1px}
+.legend-dash{width:20px;height:0;border-top:2px dashed}
+
+.canvas-wrap{position:relative;width:100%;padding:16px;overflow-x:auto}
+.canvas{position:relative;width:1480px;min-height:980px;margin:0 auto}
+
+.zone{position:absolute;border-radius:10px;border:1px dashed}
+.zone-label{position:absolute;top:10px;left:14px;font-size:9px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:1.6px;font-weight:500}
+.zone-us{top:8px;left:8px;width:480px;height:400px;border-color:rgba(201,168,76,0.22);background:var(--gold-glow)}
+.zone-us .zone-label{color:var(--gold)}
+.zone-sg{top:8px;left:508px;width:390px;height:400px;border-color:rgba(103,232,249,0.15);background:rgba(103,232,249,0.03)}
+.zone-sg .zone-label{color:var(--cyan)}
+.zone-mm{top:8px;left:918px;width:554px;height:400px;border-color:rgba(244,114,182,0.2);background:rgba(244,114,182,0.03)}
+.zone-mm .zone-label{color:var(--pink)}
+.zone-opco{top:435px;left:8px;width:1464px;height:280px;border-color:rgba(52,211,153,0.15);background:rgba(52,211,153,0.03)}
+.zone-opco .zone-label{color:var(--green)}
+.zone-cust{top:740px;left:8px;width:1464px;height:230px;border-color:rgba(255,255,255,0.06);background:rgba(255,255,255,0.015)}
+.zone-cust .zone-label{color:var(--text-dim)}
+
+.entity{position:absolute;border-radius:8px;padding:12px 14px;border:1px solid var(--border);background:var(--navy);transition:all 0.3s;cursor:pointer;z-index:10}
+.entity:hover{border-color:rgba(255,255,255,0.18);transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,0.4)}
+.entity-name{font-size:12px;font-weight:600;margin-bottom:2px;color:#fff}
+.entity-role{font-size:9.5px;color:var(--text-dim);line-height:1.4}
+.entity-tag{display:inline-block;margin-top:6px;font-size:8px;padding:2px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;letter-spacing:0.4px;font-weight:500}
+.tag-holdco{background:var(--gold-dim);color:var(--gold)}
+.tag-seal{background:var(--purple-dim);color:var(--purple);border:1px solid rgba(167,139,250,0.25)}
+.tag-exchange{background:var(--cyan-dim);color:var(--cyan)}
+.tag-mm{background:var(--pink-dim);color:var(--pink);border:1px solid rgba(244,114,182,0.25)}
+.tag-opco{background:var(--green-dim);color:var(--green)}
+.tag-ext{background:rgba(255,255,255,0.06);color:var(--text-dim)}
+
+/* Positions — top row */
+.e-holdco{top:40px;left:40px;width:300px}
+.e-seal{top:210px;left:70px;width:370px;border-color:rgba(167,139,250,0.25);background:linear-gradient(135deg,rgba(167,139,250,0.06),var(--navy))}
+.e-exchange{top:40px;left:540px;width:320px}
+.e-sg-opco{top:210px;left:540px;width:320px}
+.e-mm{top:40px;left:960px;width:310px}
+
+/* OpCo row — 7 + scalable */
+.e-opco-kr{top:470px;left:25px;width:165px}
+.e-opco-sg{top:470px;left:205px;width:165px}
+.e-opco-lt{top:470px;left:385px;width:165px}
+.e-opco-jp{top:470px;left:565px;width:165px}
+.e-opco-uae{top:470px;left:745px;width:165px}
+.e-opco-br{top:470px;left:925px;width:165px}
+.e-opco-za{top:470px;left:1105px;width:175px}
+.e-opco-n{top:470px;left:1295px;width:155px}
+
+/* Customer row */
+.e-b2b{top:775px;left:200px;width:200px}
+.e-b2c{top:775px;left:620px;width:200px}
+.e-lp{top:775px;left:1100px;width:220px}
+
+svg.arrows{position:absolute;top:0;left:0;width:1480px;height:980px;pointer-events:none}
+svg.arrows path{transition:opacity 0.35s}
+.arrow-label{position:absolute;font-size:9px;font-family:'JetBrains Mono',monospace;padding:2px 6px;border-radius:3px;white-space:nowrap;pointer-events:none;transition:opacity 0.35s;letter-spacing:0.3px;font-weight:500;z-index:5}
+.label-money{background:rgba(52,211,153,0.12);color:var(--green)}
+.label-info{background:rgba(103,232,249,0.12);color:var(--cyan)}
+.label-license{background:rgba(167,139,250,0.12);color:var(--purple)}
+.label-gov{background:rgba(251,146,60,0.12);color:var(--orange)}
+.hidden{opacity:0!important;pointer-events:none}
+
+.detail-panel{position:fixed;top:0;right:-440px;width:420px;height:100vh;background:var(--navy);border-left:1px solid var(--border);padding:28px 20px;overflow-y:auto;transition:right 0.35s cubic-bezier(0.4,0,0.2,1);z-index:100;box-shadow:-12px 0 40px rgba(0,0,0,0.5)}
+.detail-panel.open{right:0}
+.detail-close{position:absolute;top:14px;right:14px;background:none;border:1px solid var(--border);color:var(--text-dim);width:26px;height:26px;border-radius:5px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center}
+.detail-close:hover{border-color:var(--text);color:var(--text)}
+.detail-panel h3{font-size:15px;font-weight:700;color:#fff;margin-bottom:4px}
+.detail-panel .detail-role{font-size:11px;color:var(--text-dim);margin-bottom:14px}
+.detail-section{margin-bottom:14px}
+.detail-section h4{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--gold);font-family:'JetBrains Mono',monospace;margin-bottom:6px}
+.detail-section p,.detail-section li{font-size:12px;line-height:1.55;color:var(--text)}
+.detail-section ul{list-style:none;padding:0}
+.detail-section li::before{content:'\2192\00a0';color:var(--gold)}
+.detail-section li{margin-bottom:3px}
+@media(max-width:1500px){.canvas-wrap{padding:12px 4px}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-left">
+    <h1>KustodyFi &mdash; Global Corporate &amp; Regulatory Structure</h1>
+    <p>Legal Advisory &middot; Multi-Entity Flow Diagram</p>
+  </div>
+  <span class="badge">Privileged &amp; Confidential</span>
+</div>
+<div class="controls">
+  <button class="layer-btn active-money" data-layer="money" onclick="toggleLayer('money')"><span class="dot dot-money"></span>Money Flow</button>
+  <button class="layer-btn active-info" data-layer="info" onclick="toggleLayer('info')"><span class="dot dot-info"></span>Info Flow</button>
+  <button class="layer-btn active-license" data-layer="license" onclick="toggleLayer('license')"><span class="dot dot-license"></span>IP / License</button>
+  <button class="layer-btn active-gov" data-layer="gov" onclick="toggleLayer('gov')"><span class="dot dot-gov"></span>Governance</button>
+</div>
+<div class="legend">
+  <div class="legend-item"><div class="legend-line" style="background:var(--green)"></div>Payment / Fee</div>
+  <div class="legend-item"><div class="legend-line" style="background:var(--cyan)"></div>Data (solid=up, dash=down)</div>
+  <div class="legend-item"><div class="legend-dash" style="border-color:var(--purple)"></div>IP / Software License</div>
+  <div class="legend-item"><div class="legend-dash" style="border-color:var(--orange)"></div>Equity / Governance</div>
+</div>
+
+<div class="canvas-wrap">
+<div class="canvas">
+  <div class="zone zone-us"><span class="zone-label">US (Delaware) &mdash; HQ</span></div>
+  <div class="zone zone-sg"><span class="zone-label">Singapore (MAS)</span></div>
+  <div class="zone zone-mm"><span class="zone-label">BVI / Cayman (Neutral)</span></div>
+  <div class="zone zone-opco"><span class="zone-label">Local Jurisdictions &mdash; Regulated OpCos (Customer-Facing Principals)</span></div>
+  <div class="zone zone-cust"><span class="zone-label">Customers &amp; External Counterparties</span></div>
+
+  <svg class="arrows" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="ah-m" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="none" stroke="var(--green)" stroke-width="1.2"/></marker>
+      <marker id="ah-i" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="none" stroke="var(--cyan)" stroke-width="1.2"/></marker>
+      <marker id="ah-l" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="none" stroke="var(--purple)" stroke-width="1.2"/></marker>
+      <marker id="ah-g" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="none" stroke="var(--orange)" stroke-width="1.2"/></marker>
+    </defs>
+
+    <!-- MONEY -->
+    <g class="layer-money">
+      <!-- Cust -> OpCos (representative) -->
+      <path d="M300,805 L108,620" stroke="var(--green)" stroke-width="1.3" fill="none" marker-end="url(#ah-m)" opacity="0.7"/>
+      <path d="M350,805 L468,620" stroke="var(--green)" stroke-width="1.2" fill="none" marker-end="url(#ah-m)" opacity="0.6"/>
+      <path d="M720,805 L648,620" stroke="var(--green)" stroke-width="1.2" fill="none" marker-end="url(#ah-m)" opacity="0.6"/>
+      <path d="M720,810 L828,620" stroke="var(--green)" stroke-width="1.2" fill="none" marker-end="url(#ah-m)" opacity="0.5"/>
+      <!-- OpCos -> SEAL (SEAL license fee) -->
+      <path d="M108,470 Q170,380 220,310" stroke="var(--green)" stroke-width="1.3" fill="none" marker-end="url(#ah-m)" opacity="0.8"/>
+      <path d="M288,470 Q280,380 260,310" stroke="var(--green)" stroke-width="1.2" fill="none" marker-end="url(#ah-m)" opacity="0.7"/>
+      <path d="M468,470 Q400,380 320,310" stroke="var(--green)" stroke-width="1.1" fill="none" marker-end="url(#ah-m)" opacity="0.55"/>
+      <path d="M648,470 Q480,380 360,310" stroke="var(--green)" stroke-width="1" fill="none" marker-end="url(#ah-m)" opacity="0.45"/>
+      <path d="M828,470 Q560,380 380,310" stroke="var(--green)" stroke-width="0.9" fill="none" marker-end="url(#ah-m)" opacity="0.35"/>
+      <path d="M1008,470 Q640,380 400,310" stroke="var(--green)" stroke-width="0.9" fill="none" marker-end="url(#ah-m)" opacity="0.3"/>
+      <path d="M1192,470 Q720,380 420,310" stroke="var(--green)" stroke-width="0.8" fill="none" marker-end="url(#ah-m)" opacity="0.25"/>
+      <!-- OpCos -> SG Exchange (Exec fee) -->
+      <path d="M190,490 Q450,420 660,200" stroke="var(--green)" stroke-width="1.5" fill="none" marker-end="url(#ah-m)" opacity="0.8"/>
+      <path d="M540,485 L690,200" stroke="var(--green)" stroke-width="1.2" fill="none" marker-end="url(#ah-m)" opacity="0.6"/>
+      <path d="M900,480 L750,200" stroke="var(--green)" stroke-width="1" fill="none" marker-end="url(#ah-m)" opacity="0.45"/>
+      <!-- SG Exchange -> HoldCo (SEAL fee) -->
+      <path d="M540,90 L340,80" stroke="var(--green)" stroke-width="1.5" fill="none" marker-end="url(#ah-m)" opacity="0.85"/>
+      <!-- SG Exchange -> LPs -->
+      <path d="M810,200 Q1050,480 1210,775" stroke="var(--green)" stroke-width="1.5" fill="none" marker-end="url(#ah-m)" opacity="0.8"/>
+      <!-- MM -> Exchange (liquidity) -->
+      <path d="M960,120 L860,120" stroke="var(--green)" stroke-width="1.3" fill="none" marker-end="url(#ah-m)" opacity="0.7" stroke-dasharray="4,3"/>
+    </g>
+
+    <!-- INFO -->
+    <g class="layer-info">
+      <!-- UP: OpCos -> SEAL -->
+      <path d="M95,470 Q155,380 195,310" stroke="var(--cyan)" stroke-width="1.8" fill="none" marker-end="url(#ah-i)" opacity="0.85"/>
+      <path d="M275,470 Q270,380 255,310" stroke="var(--cyan)" stroke-width="1.5" fill="none" marker-end="url(#ah-i)" opacity="0.7"/>
+      <path d="M455,470 Q390,380 315,310" stroke="var(--cyan)" stroke-width="1.3" fill="none" marker-end="url(#ah-i)" opacity="0.5"/>
+      <path d="M635,470 Q470,380 350,310" stroke="var(--cyan)" stroke-width="1.1" fill="none" marker-end="url(#ah-i)" opacity="0.4"/>
+      <path d="M815,470 Q550,380 375,310" stroke="var(--cyan)" stroke-width="1" fill="none" marker-end="url(#ah-i)" opacity="0.3"/>
+      <path d="M995,470 Q620,380 395,310" stroke="var(--cyan)" stroke-width="0.9" fill="none" marker-end="url(#ah-i)" opacity="0.25"/>
+      <path d="M1180,470 Q700,380 415,310" stroke="var(--cyan)" stroke-width="0.8" fill="none" marker-end="url(#ah-i)" opacity="0.2"/>
+      <!-- DOWN: SEAL -> OpCos -->
+      <path d="M175,310 Q140,380 115,470" stroke="var(--cyan)" stroke-width="1.8" fill="none" marker-end="url(#ah-i)" stroke-dasharray="5,3" opacity="0.85"/>
+      <path d="M235,310 Q260,380 280,470" stroke="var(--cyan)" stroke-width="1.5" fill="none" marker-end="url(#ah-i)" stroke-dasharray="5,3" opacity="0.7"/>
+      <path d="M295,310 Q380,380 460,470" stroke="var(--cyan)" stroke-width="1.3" fill="none" marker-end="url(#ah-i)" stroke-dasharray="5,3" opacity="0.5"/>
+      <path d="M330,310 Q470,380 640,470" stroke="var(--cyan)" stroke-width="1.1" fill="none" marker-end="url(#ah-i)" stroke-dasharray="5,3" opacity="0.4"/>
+      <path d="M355,310 Q560,380 820,470" stroke="var(--cyan)" stroke-width="1" fill="none" marker-end="url(#ah-i)" stroke-dasharray="5,3" opacity="0.3"/>
+      <path d="M380,310 Q640,380 1000,470" stroke="var(--cyan)" stroke-width="0.9" fill="none" marker-end="url(#ah-i)" stroke-dasharray="5,3" opacity="0.25"/>
+      <path d="M400,310 Q720,380 1185,470" stroke="var(--cyan)" stroke-width="0.8" fill="none" marker-end="url(#ah-i)" stroke-dasharray="5,3" opacity="0.2"/>
+      <!-- Exchange <-> SEAL -->
+      <path d="M540,150 Q470,190 430,230" stroke="var(--cyan)" stroke-width="1.5" fill="none" marker-end="url(#ah-i)" opacity="0.8"/>
+      <path d="M440,250 Q490,200 560,160" stroke="var(--cyan)" stroke-width="1.5" fill="none" marker-end="url(#ah-i)" stroke-dasharray="5,3" opacity="0.8"/>
+    </g>
+
+    <!-- LICENSE (IP) -->
+    <g class="layer-license">
+      <!-- HoldCo -> SEAL (SEAL IP) -->
+      <path d="M200,135 L230,210" stroke="var(--purple)" stroke-width="1.5" fill="none" marker-end="url(#ah-l)" stroke-dasharray="6,3" opacity="0.8"/>
+      <!-- OpCo KR -> other OpCos (TMS + AI Agent license) -->
+      <path d="M190,520 L250,520" stroke="var(--purple)" stroke-width="1.8" fill="none" marker-end="url(#ah-l)" stroke-dasharray="6,3" opacity="0.9"/>
+      <path d="M190,525 L430,525" stroke="var(--purple)" stroke-width="1.5" fill="none" marker-end="url(#ah-l)" stroke-dasharray="6,3" opacity="0.7"/>
+      <path d="M190,530 L610,530" stroke="var(--purple)" stroke-width="1.3" fill="none" marker-end="url(#ah-l)" stroke-dasharray="6,3" opacity="0.6"/>
+      <path d="M190,535 L790,535" stroke="var(--purple)" stroke-width="1.1" fill="none" marker-end="url(#ah-l)" stroke-dasharray="6,3" opacity="0.5"/>
+      <path d="M190,540 L970,540" stroke="var(--purple)" stroke-width="1" fill="none" marker-end="url(#ah-l)" stroke-dasharray="6,3" opacity="0.4"/>
+      <path d="M190,545 L1150,545" stroke="var(--purple)" stroke-width="0.9" fill="none" marker-end="url(#ah-l)" stroke-dasharray="6,3" opacity="0.3"/>
+      <!-- OpCo KR -> SG OpCo (TMS license) -->
+      <path d="M190,495 Q400,435 590,310" stroke="var(--purple)" stroke-width="1.3" fill="none" marker-end="url(#ah-l)" stroke-dasharray="6,3" opacity="0.6"/>
+    </g>
+
+    <!-- GOVERNANCE -->
+    <g class="layer-gov">
+      <path d="M340,70 L540,70" stroke="var(--orange)" stroke-width="1.5" fill="none" marker-end="url(#ah-g)" stroke-dasharray="7,3" opacity="0.85"/>
+      <path d="M190,135 L220,210" stroke="var(--orange)" stroke-width="1.2" fill="none" marker-end="url(#ah-g)" stroke-dasharray="7,3" opacity="0.6"/>
+      <path d="M340,100 L590,240" stroke="var(--orange)" stroke-width="1.2" fill="none" marker-end="url(#ah-g)" stroke-dasharray="7,3" opacity="0.5"/>
+      <path d="M340,60 L960,60" stroke="var(--orange)" stroke-width="1.2" fill="none" marker-end="url(#ah-g)" stroke-dasharray="7,3" opacity="0.6"/>
+      <!-- HoldCo -> all OpCos -->
+      <path d="M160,135 Q120,300 108,445" stroke="var(--orange)" stroke-width="1.1" fill="none" marker-end="url(#ah-g)" stroke-dasharray="7,3" opacity="0.5"/>
+      <path d="M200,135 Q250,310 288,445" stroke="var(--orange)" stroke-width="1" fill="none" marker-end="url(#ah-g)" stroke-dasharray="7,3" opacity="0.4"/>
+      <path d="M240,135 Q380,310 468,445" stroke="var(--orange)" stroke-width="1" fill="none" marker-end="url(#ah-g)" stroke-dasharray="7,3" opacity="0.35"/>
+      <path d="M260,135 Q460,310 648,445" stroke="var(--orange)" stroke-width="0.9" fill="none" marker-end="url(#ah-g)" stroke-dasharray="7,3" opacity="0.3"/>
+      <path d="M280,135 Q530,310 828,445" stroke="var(--orange)" stroke-width="0.9" fill="none" marker-end="url(#ah-g)" stroke-dasharray="7,3" opacity="0.25"/>
+      <path d="M300,135 Q600,310 1008,445" stroke="var(--orange)" stroke-width="0.8" fill="none" marker-end="url(#ah-g)" stroke-dasharray="7,3" opacity="0.22"/>
+      <path d="M320,135 Q670,310 1192,445" stroke="var(--orange)" stroke-width="0.8" fill="none" marker-end="url(#ah-g)" stroke-dasharray="7,3" opacity="0.2"/>
+    </g>
+  </svg>
+
+  <!-- LABELS -->
+  <div class="arrow-label label-money layer-money" style="top:360px;left:55px">SEAL Fee</div>
+  <div class="arrow-label label-money layer-money" style="top:385px;left:420px">Exec Fee</div>
+  <div class="arrow-label label-money layer-money" style="top:55px;left:380px">SEAL Fee</div>
+  <div class="arrow-label label-money layer-money" style="top:740px;left:25px">Fee/Spread</div>
+  <div class="arrow-label label-money layer-money" style="top:530px;left:1130px">Agency&rarr;LP</div>
+  <div class="arrow-label label-money layer-money" style="top:100px;left:870px;font-size:8px">Liquidity</div>
+
+  <div class="arrow-label label-info layer-info" style="top:375px;left:8px;font-size:8px;line-height:1.3">Audit&middot;Trade&middot;AML &uarr;</div>
+  <div class="arrow-label label-info layer-info" style="top:375px;left:280px;font-size:8px;line-height:1.3">&darr; Policy&middot;Risk&middot;Screen</div>
+  <div class="arrow-label label-info layer-info" style="top:178px;left:455px;font-size:8px">Log &harr; Policy</div>
+
+  <div class="arrow-label label-license layer-license" style="top:510px;left:145px;font-size:8px">TMS + AI Agent License &rarr;</div>
+  <div class="arrow-label label-license layer-license" style="top:158px;left:140px;font-size:8px">SEAL IP</div>
+
+  <div class="arrow-label label-gov layer-gov" style="top:44px;left:400px;font-size:8px">100% Own</div>
+  <div class="arrow-label label-gov layer-gov" style="top:36px;left:700px;font-size:8px">100% Own</div>
+  <div class="arrow-label label-gov layer-gov" style="top:300px;left:500px;font-size:8px">Sub</div>
+
+  <!-- ENTITIES -->
+  <div class="entity e-holdco" onclick="showDetail('holdco')">
+    <div class="entity-name">US HoldCo (Delaware C-Corp)</div>
+    <div class="entity-role">HQ &middot; Group Controller &middot; SEAL IP Owner<br>TP hub &middot; Equity holding</div>
+    <span class="entity-tag tag-holdco">HOLDCO / HQ</span>
+  </div>
+  <div class="entity e-seal" onclick="showDetail('seal')">
+    <div class="entity-name">SEAL Cloud</div>
+    <div class="entity-role">Policy-as-Code &middot; Compliance Hub<br>Audit Trail &middot; AML Screening<br>Immutable Logs &middot; Fail-Closed</div>
+    <span class="entity-tag tag-seal">SEAL</span>
+    <span class="entity-tag tag-seal" style="margin-left:3px">INFO HUB</span>
+  </div>
+  <div class="entity e-exchange" onclick="showDetail('exchange')">
+    <div class="entity-name">SG Exchange Sub</div>
+    <div class="entity-role">Agency Execution &middot; Hedge Hub<br>MAS MPI + CMS<br>Stablecoin FX Futures</div>
+    <span class="entity-tag tag-exchange">EXCHANGE</span>
+    <span class="entity-tag tag-exchange" style="margin-left:3px">MAS</span>
+  </div>
+  <div class="entity e-sg-opco" onclick="showDetail('sg-opco')">
+    <div class="entity-name">SG OpCo</div>
+    <div class="entity-role">Customer-facing (APAC)<br>MAS PS Act &middot; Separate from Exchange</div>
+    <span class="entity-tag tag-opco">OPCO</span>
+    <span class="entity-tag tag-exchange" style="margin-left:3px">MAS</span>
+  </div>
+  <div class="entity e-mm" onclick="showDetail('mm')">
+    <div class="entity-name">MM Co (Market Making)</div>
+    <div class="entity-role">Independent Market Maker<br>LP to Exchange &middot; Prop Trading<br>Ring-fenced from Exchange</div>
+    <span class="entity-tag tag-mm">MM</span>
+    <span class="entity-tag tag-mm" style="margin-left:3px">INDEPENDENT</span>
+  </div>
+
+  <!-- OpCo row: KR, SG, LT, JP, UAE, BR, ZA, ... -->
+  <div class="entity e-opco-kr" onclick="showDetail('opco-kr')">
+    <div class="entity-name">OpCo Korea</div>
+    <div class="entity-role">Principal &middot; VASP &middot; 전금법<br><b>TMS+AI Agent IP Licensor</b></div>
+    <span class="entity-tag tag-opco">OPCO</span>
+    <span class="entity-tag tag-seal" style="margin-left:3px">TMS IP</span>
+  </div>
+  <div class="entity e-opco-sg" onclick="showDetail('opco-sg')">
+    <div class="entity-name">OpCo Singapore</div>
+    <div class="entity-role">= SG OpCo above<br>APAC customers</div>
+    <span class="entity-tag tag-opco">OPCO</span>
+  </div>
+  <div class="entity e-opco-lt" onclick="showDetail('opco-lt')">
+    <div class="entity-name">OpCo Lithuania</div>
+    <div class="entity-role">MiCA CASP<br>EU 27 Passporting</div>
+    <span class="entity-tag tag-opco">OPCO</span>
+    <span class="entity-tag tag-exchange" style="margin-left:3px">MiCA</span>
+  </div>
+  <div class="entity e-opco-jp" onclick="showDetail('opco-jp')">
+    <div class="entity-name">OpCo Japan</div>
+    <div class="entity-role">JFSA VASP<br>Japan FX market</div>
+    <span class="entity-tag tag-opco">OPCO</span>
+  </div>
+  <div class="entity e-opco-uae" onclick="showDetail('opco-uae')">
+    <div class="entity-name">OpCo UAE</div>
+    <div class="entity-role">VARA / ADGM<br>MENA + South Asia</div>
+    <span class="entity-tag tag-opco">OPCO</span>
+  </div>
+  <div class="entity e-opco-br" onclick="showDetail('opco-br')">
+    <div class="entity-name">OpCo Brazil</div>
+    <div class="entity-role">BCB VASP<br>LatAm Hub</div>
+    <span class="entity-tag tag-opco">OPCO</span>
+  </div>
+  <div class="entity e-opco-za" onclick="showDetail('opco-za')">
+    <div class="entity-name">OpCo South Africa</div>
+    <div class="entity-role">FSCA CASP<br>Africa Hub</div>
+    <span class="entity-tag tag-opco">OPCO</span>
+  </div>
+  <div class="entity e-opco-n" onclick="showDetail('opco-n')">
+    <div class="entity-name">OpCo &mdash; ...</div>
+    <div class="entity-role">Scalable template</div>
+    <span class="entity-tag tag-opco">OPCO</span>
+  </div>
+
+  <div class="entity e-b2b" onclick="showDetail('b2b')">
+    <div class="entity-name">B2B Corporates</div>
+    <div class="entity-role">FX hedging &middot; Treasury &middot; Cross-border</div>
+    <span class="entity-tag tag-ext">CUSTOMER</span>
+  </div>
+  <div class="entity e-b2c" onclick="showDetail('b2c')">
+    <div class="entity-name">B2C Users</div>
+    <div class="entity-role">Retail FX &middot; Remittance</div>
+    <span class="entity-tag tag-ext">CUSTOMER</span>
+  </div>
+  <div class="entity e-lp" onclick="showDetail('lp')">
+    <div class="entity-name">External Liquidity</div>
+    <div class="entity-role">Banks &middot; LPs &middot; Venues</div>
+    <span class="entity-tag tag-ext">LP / VENUE</span>
+  </div>
+</div>
+</div>
+
+<div class="detail-panel" id="detailPanel">
+  <button class="detail-close" onclick="closeDetail()">&#10005;</button>
+  <div id="detailContent"></div>
+</div>
+
+<script>
+const layers={money:true,info:true,license:true,gov:true};
+function toggleLayer(n){layers[n]=!layers[n];document.querySelector(`[data-layer="${n}"]`).classList.toggle(`active-${n}`);document.querySelectorAll(`.layer-${n}`).forEach(e=>e.classList.toggle('hidden',!layers[n]))}
+
+const D={
+holdco:{name:'US HoldCo (Delaware C-Corp)',role:'HQ · Group Controller · SEAL IP Owner',sections:[
+  {title:'Structure',text:'Delaware C-Corp. HQ and parent of all subsidiaries. Post-Seed flip from Korean entity using 상증법 보충적평가 timing.'},
+  {title:'IP Owned',items:['SEAL (Security & Execution Audit Layer) — policy-as-code','StableFX platform architecture','Exchange ticker trademarks (USD+ISO+X)']},
+  {title:'Revenue',items:['SEAL license fee from all OpCos + Exchange (TP-compliant)','Platform fee (tiered)','Intercompany management fee']},
+  {title:'Governance',text:'100% equity owner of: SG Exchange, SG OpCo, MM Co, and all OpCos worldwide (OpCo Korea post-flip).'},
+  {title:'Data Principle',text:'Aggregated financial reporting only. No customer-level data.'}
+]},
+seal:{name:'SEAL Cloud',role:'Policy-as-Code · Compliance & Audit Hub',sections:[
+  {title:'Architecture',text:'Centralized compliance intelligence under US HoldCo IP. Fail-closed design.'},
+  {title:'Inbound (from OpCos)',items:['Trade events (tokenized)','AML/KYC screening requests','Compliance logs','Immutable audit trail']},
+  {title:'Outbound (to OpCos)',items:['Policy decisions (approve/deny/escalate)','Risk alerts','AML screening results','Regulatory reporting templates']},
+  {title:'Exchange Integration',items:['In: Execution logs, market data, order audit','Out: Execution policy, limit enforcement, LP access control']},
+  {title:'Privacy',text:'Customer funding rates (r_KRW, r_USD), identity, pricing spread NEVER transit in plaintext. Tokenized refs + metadata only.'},
+  {title:'TP Basis',text:'SEAL = core IP justifying license fees. Without SEAL, no entity operates.'}
+]},
+exchange:{name:'SG Exchange Sub',role:'Agency Execution · Stablecoin FX Futures',sections:[
+  {title:'Structure',text:'Singapore sub of US HoldCo. MAS MPI + CMS.'},
+  {title:'Function',items:['Agency-only — no principal risk','Net exposure tickets from OpCos','Routes hedges to LPs','Stablecoin FX Futures (e.g. USDCKRW)']},
+  {title:'MM Co Separation',text:'Exchange and MM Co are legally separate. Exchange = venue; MM Co = independent LP. No preferential treatment. SEAL enforces via policy-as-code.'},
+  {title:'Revenue',items:['Execution fee (bps, tiered)','Futures fee (Maker 0.5bp + Taker 1bp)']},
+  {title:'Cost',text:'SEAL license fee to US HoldCo.'}
+]},
+'sg-opco':{name:'SG OpCo',role:'Customer-facing APAC Principal',sections:[
+  {title:'Structure',text:'Separate SG entity from Exchange. MAS PS Act. Wholly-owned by US HoldCo.'},
+  {title:'Purpose',text:'Customer-facing for APAC. Regulatory + TP isolation from Exchange.'},
+  {title:'TMS License',text:'Receives TMS + AI Agent license from OpCo Korea.'}
+]},
+mm:{name:'MM Co (Market Making)',role:'Independent Market Maker',sections:[
+  {title:'Structure',text:'BVI/Cayman entity. Wholly-owned by US HoldCo but operationally independent.'},
+  {title:'Function',items:['Proprietary MM on KustodyFi Exchange','Independent LP — same treatment as external LPs','May also provide liquidity on external venues']},
+  {title:'Ring-fencing',text:'Separate P&L, risk limits, compliance. SEAL enforces no information asymmetry, no preferential access.'},
+  {title:'Regulatory',text:'Neutral jurisdiction avoids conflict-of-interest with local regulators.'}
+]},
+'opco-kr':{name:'OpCo Korea',role:'Principal · VASP · TMS+AI IP Licensor',sections:[
+  {title:'Structure',text:'Korean 주식회사. Seed entity → US HoldCo subsidiary post-flip. Inwoo retains 1 share for TIPS.'},
+  {title:'Licenses',items:['VASP (법무법인 정솔)','전금법','PG license']},
+  {title:'TMS + AI Agent IP',text:'OpCo Korea OWNS TMS software + AI Agent IP. Licenses to all other OpCos + SG OpCo. Second TP-defensible revenue stream separate from SEAL.'},
+  {title:'License Structure',items:['TMS core modules (M02-M13)','AI Agent (6 core in Pro, advanced in Enterprise)','Per-OpCo fee by user count/volume']},
+  {title:'Revenue',items:['SaaS (Ent ₩600만 → Starter ₩10만/mo)','MNF (FY29~)','TMS/AI license fees from other OpCos','Customer fee/spread as Principal']}
+]},
+'opco-sg':{name:'OpCo Singapore',role:'= SG OpCo (above)',sections:[
+  {title:'Note',text:'This is the same entity as SG OpCo shown in the Singapore zone above. Listed in OpCo row for completeness — the actual entity sits in SG jurisdiction with MAS PS Act license.'}
+]},
+'opco-lt':{name:'OpCo Lithuania (EU)',role:'MiCA CASP · EU Passporting',sections:[
+  {title:'Structure',text:'Lithuanian UAB. Wholly-owned by US HoldCo.'},
+  {title:'License',text:'MiCA CASP via Bank of Lithuania. EU passporting to all 27 member states.'},
+  {title:'Why Lithuania',items:['Early MiCA adopter (April 2025)','Low setup cost (2-3x cheaper than Estonia/Cyprus)','Strong fintech hub','15-16% corp tax, 5% for small entities','Remote setup possible']},
+  {title:'TMS',text:'TMS + AI Agent license from OpCo Korea. Standard SEAL integration.'}
+]},
+'opco-jp':{name:'OpCo Japan',role:'JFSA Licensed · Japan FX Market',sections:[
+  {title:'Structure',text:'Japanese entity. Wholly-owned by US HoldCo.'},
+  {title:'License',text:'JFSA (Financial Services Agency) VASP registration. Japan has mature crypto regulation with strict reserve and AML requirements.'},
+  {title:'Why Japan',items:['3rd largest FX market globally','Mature crypto framework (revised PSA + FIEA)','Strong institutional demand (banks, trading houses)','JPY stablecoin opportunity','Cultural proximity to Korean HQ team']},
+  {title:'TMS',text:'TMS + AI Agent license from OpCo Korea. Standard SEAL integration.'}
+]},
+'opco-uae':{name:'OpCo UAE',role:'VARA/ADGM · MENA+South Asia',sections:[
+  {title:'Structure',text:'UAE entity (DIFC or ADGM). Wholly-owned by US HoldCo.'},
+  {title:'License',text:'VARA (Dubai) or FSRA (ADGM) virtual asset license.'},
+  {title:'Coverage',items:['Gulf (Saudi, Qatar, Bahrain)','South Asia (India, Pakistan, Bangladesh)','North Africa (Egypt, Morocco)']},
+  {title:'Strategic',text:'Global crypto hub. Strong trade corridors. 0% corp tax in free zones.'}
+]},
+'opco-br':{name:'OpCo Brazil',role:'BCB VASP · LatAm Hub',sections:[
+  {title:'Structure',text:'Brazilian entity. Wholly-owned by US HoldCo.'},
+  {title:'License',text:'BCB VASP license. Phased 2025-26.'},
+  {title:'Why Brazil',items:['Largest LatAm crypto market','BCB licensing more structured than Mexico','Stablecoin usage surging','Beachhead for Argentina, Chile, Colombia']}
+]},
+'opco-za':{name:'OpCo South Africa',role:'FSCA CASP · Africa Hub',sections:[
+  {title:'Structure',text:'South African entity. Wholly-owned by US HoldCo.'},
+  {title:'License',text:'FSCA CASP license. 248+ already granted — mature framework.'},
+  {title:'Why SA',items:['Most mature African crypto regulation','Travel Rule enforcement live','Gateway to Sub-Saharan Africa','Kenya/Ghana/Nigeria served from SA initially']}
+]},
+'opco-n':{name:'OpCo Template',role:'Scalable',sections:[
+  {title:'Model',text:'3-layer: TMS → Gateway → Exchange. New market = OpCo + local license + SEAL + TMS (licensed from OpCo Korea).'}
+]},
+b2b:{name:'B2B Corporates',role:'Primary Segment',sections:[
+  {title:'GTM',items:['Free FX calc → Paid SaaS → MNF → Futures']},
+  {title:'Value',text:'Eliminate bank info asymmetry on FX pricing.'}
+]},
+b2c:{name:'B2C Users',role:'Project Hermes (Future)',sections:[
+  {title:'Phase',text:'Post B2B+Exchange. Retail FX & remittance. 24/7, T+0.'}
+]},
+lp:{name:'External Liquidity',role:'Banks · LPs · Venues',sections:[
+  {title:'Note',text:'Counterparty to SG Exchange + MM Co. No direct OpCo/customer visibility.'}
+]}
+};
+
+function showDetail(id){const d=D[id];if(!d)return;let h=`<h3>${d.name}</h3><div class="detail-role">${d.role}</div>`;d.sections.forEach(s=>{h+=`<div class="detail-section"><h4>${s.title}</h4>`;if(s.text)h+=`<p>${s.text}</p>`;if(s.items)h+='<ul>'+s.items.map(i=>`<li>${i}</li>`).join('')+'</ul>';h+='</div>'});document.getElementById('detailContent').innerHTML=h;document.getElementById('detailPanel').classList.add('open')}
+function closeDetail(){document.getElementById('detailPanel').classList.remove('open')}
+document.addEventListener('click',e=>{const p=document.getElementById('detailPanel');if(p.classList.contains('open')&&!p.contains(e.target)&&!e.target.closest('.entity'))closeDetail()});
+</script>
+</body>
+</html>

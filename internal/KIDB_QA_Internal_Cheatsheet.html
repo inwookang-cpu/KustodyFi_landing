@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KIDB Q&A 내부용 치트시트</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Inter:wght@400;600&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Noto Sans KR','Inter',sans-serif; background:#0f172a; color:#e2e8f0; padding:40px; line-height:1.7; }
+  .container { max-width:900px; margin:0 auto; }
+  .header { margin-bottom:40px; padding-bottom:24px; border-bottom:2px solid #1e293b; }
+  .header h1 { font-size:28px; font-weight:700; color:#fff; margin-bottom:8px; }
+  .header .meta { font-size:13px; color:#64748b; }
+  .header .meta strong { color:#f59e0b; }
+  .section { margin-bottom:36px; }
+  .section-title { font-size:18px; font-weight:700; color:#7c3aed; margin-bottom:16px; padding-left:12px; border-left:3px solid #7c3aed; }
+  .section-title.green { color:#059669; border-color:#059669; }
+  .section-title.blue { color:#2563eb; border-color:#2563eb; }
+  .section-title.red { color:#dc2626; border-color:#dc2626; }
+  .qa-card { background:#1e293b; border-radius:12px; padding:20px 24px; margin-bottom:16px; border:1px solid #334155; }
+  .qa-card.from-meeting { border-left:4px solid #f59e0b; }
+  .qa-card.prepared { border-left:4px solid #64748b; }
+  .qa-badge { display:inline-block; font-size:10px; font-weight:600; padding:2px 8px; border-radius:4px; margin-bottom:8px; }
+  .badge-meeting { background:rgba(245,158,11,0.2); color:#fbbf24; }
+  .badge-prepared { background:rgba(100,116,139,0.3); color:#94a3b8; }
+  .qa-q { font-size:15px; font-weight:700; color:#fff; margin-bottom:10px; }
+  .qa-a { font-size:13px; color:#cbd5e1; }
+  .qa-a strong { color:#fff; }
+  .qa-a .highlight { color:#6ee7b7; font-weight:600; }
+  .qa-a .warn { color:#fca5a5; font-weight:600; }
+  .qa-a .info { color:#93c5fd; font-weight:600; }
+  .note { background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:8px; padding:14px 18px; font-size:12px; color:#fcd34d; margin-top:8px; }
+  .note::before { content:"💡 "; }
+  .divider { height:1px; background:#1e293b; margin:32px 0; }
+  @media print { body { background:#fff; color:#1a1a1a; } .qa-card { background:#f8fafc; border-color:#e2e8f0; } }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>KIDB Q&A 내부용 치트시트</h1>
+    <div class="meta">
+      미팅일: 2026.03.17 &nbsp;|&nbsp; 참석: KIDB (오윤정 대표, 부사장, 정훈 전무) × KustodyFi (강인우 대표)<br>
+      <strong>⚠ 내부 전용 — 외부 공유 금지</strong>
+    </div>
+  </div>
+
+  <!-- ====== 미팅에서 실제 나온 질문 ====== -->
+  <div class="section">
+    <div class="section-title red">미팅에서 실제 나온 질문 & 우려</div>
+
+    <div class="qa-card from-meeting">
+      <div class="qa-badge badge-meeting">미팅 중 발언</div>
+      <div class="qa-q">"우리는 FX에 대해 인가된 거지, 스테이블코인이나 디지털자산에 대해 인가된 건 아니다"</div>
+      <div class="qa-a">
+        <strong>맥락:</strong> KIDB가 온체인 NDF 파트너십에 대해 본인들의 인가 범위를 명확히 선 그은 발언.<br><br>
+        <strong>대응:</strong> Stage 1~2는 <span class="highlight">블록체인과 무관한 순수 데이터 인프라 + 기업 프라이싱</span>임을 재확인. 온체인 NDF 거래소(Stage 3)는 싱가포르 자회사에서 MAS 라이선스로 운영. KIDB는 거래소 운영 주체가 아니라 <span class="info">보고 채널 + 데이터 파트너</span>.<br><br>
+        <strong>향후:</strong> 스테이블코인 관련 인가가 풀리는 시점에 맞춰 다시 논의. 지금은 이 주제를 push하지 않는 게 좋음.
+      </div>
+      <div class="note">KIDB가 "승인을 받으려면 그건 또 다른 문제"라고 했음. 규제가 선행되어야 한다는 인식. 우리가 먼저 거래소를 만들어서 실수요를 증명한 후 접근하는 순서가 맞음.</div>
+    </div>
+
+    <div class="qa-card from-meeting">
+      <div class="qa-badge badge-meeting">미팅 중 발언</div>
+      <div class="qa-q">"데이터가 퍼블릭에 나가는 게 가능한지는 체크를 해봐야"</div>
+      <div class="qa-a">
+        <strong>맥락:</strong> 가격 데이터를 외부 서비스에 노출하는 것에 대한 내부 컴플라이언스 확인 필요.<br><br>
+        <strong>대응:</strong> "가격만 보여주는 거면 가능은 한데"라고도 했으므로 완전 거절은 아님. <span class="highlight">고객 정보 마스킹 + 가격 데이터만 활용</span>이면 가능성 열려 있음.<br><br>
+        <strong>향후:</strong> 정훈 전무님과 기술 미팅에서 구체적으로 어떤 데이터가 나갈 수 있는지 범위 협의.
+      </div>
+      <div class="note">"Powered by KIDB" 표기도 내부 확인 전까지는 강조하지 말 것. 프레젠테이션에 "(표기 여부 협의)"로 이미 수정 완료.</div>
+    </div>
+
+    <div class="qa-card from-meeting">
+      <div class="qa-badge badge-meeting">미팅 중 발언</div>
+      <div class="qa-q">"저희와 뭘 할 수 있는 건 좀 나중에 얘기겠네요. 바로 4월, 5월은 좀 어렵다"</div>
+      <div class="qa-a">
+        <strong>맥락:</strong> 단기 액션은 어렵다는 명확한 시그널. 소화할 시간이 필요.<br><br>
+        <strong>대응:</strong> 타임라인을 강요하지 않음. <span class="highlight">LOI + 정기 경과 공유(월 1회 이메일)</span>로 관계 유지. POC 시점은 AI Agent 준비 완료 후 양사 합의.<br><br>
+        <strong>향후:</strong> 3Q 이후 프로덕트가 나오면 데모와 함께 재접근.
+      </div>
+    </div>
+
+    <div class="qa-card from-meeting">
+      <div class="qa-badge badge-meeting">미팅 중 발언</div>
+      <div class="qa-q">"중개사니까 늘 앞에 나가서 할 필요도 없고, 두 번째 정도로 가는 게"</div>
+      <div class="qa-a">
+        <strong>맥락:</strong> 중개사 특성상 선발주자(first mover)가 되는 것을 회피. 업종 자체가 다 같이 움직여야 뭘 할 수 있음.<br><br>
+        <strong>대응:</strong> KIDB를 front에 세우지 않는 구조로 설계. <span class="highlight">KustodyFi가 기업 시장에서 먼저 움직이고, KIDB는 데이터만 제공</span>하는 역할로 포지셔닝.<br><br>
+        <strong>향후:</strong> 다른 중개사(IP 등)도 같이 움직이면 KIDB 참여 부담이 줄어듦. 멀티소스 전략과 연결.
+      </div>
+      <div class="note">IP 부사장님도 만났는데 "관심은 있으나 MBP 하고 있는 게 있다"고 함. 조만간 업데이트된 덱으로 재접근 예정.</div>
+    </div>
+
+    <div class="qa-card from-meeting">
+      <div class="qa-badge badge-meeting">미팅 중 발언</div>
+      <div class="qa-q">"API를 만들 수도 없는 게, 우리가 플랫폼이 있어서 가격을 넣는 게 아니라 사람이 말로 하는 거"</div>
+      <div class="qa-a">
+        <strong>맥락:</strong> KIDB는 전자 플랫폼이 없음. 보이스 브로킹 기반이라 데이터 피드 API 자체가 존재하지 않음.<br><br>
+        <strong>대응:</strong> <span class="highlight">KustodyFi가 수신 서비스를 직접 구축</span>. KIDB가 API를 만들 필요 없음. AI Agent가 호가를 수집하는 방식으로 접근. KIDB 측은 AI Agent 도입 시 보안 세팅만 필요.<br><br>
+        <strong>향후:</strong> 정훈 전무님과 구체적인 데이터 수신 프로세스 협의. 내부 시스템에서 취합·배포하는 시점에 데이터를 가져오는 방식 검토.
+      </div>
+      <div class="note">KIDB도 "안 할 이유가 없어 보이고요"라고 했음. 기술적 허들이 낮아지면 참여 의지는 있는 것으로 판단.</div>
+    </div>
+
+    <div class="qa-card from-meeting">
+      <div class="qa-badge badge-meeting">미팅 중 발언</div>
+      <div class="qa-q">"한국자금중개는 본인들이 직접 하겠다는 입장이었다"</div>
+      <div class="qa-a">
+        <strong>맥락:</strong> 우리 대표가 한국자금중개를 만났을 때 MBP로 이해하고 직접 하겠다고 한 사례 공유. KIDB 측은 이를 듣고 반응 관찰.<br><br>
+        <strong>대응:</strong> KIDB에게는 <span class="warn">"한국자금중개와 다른 결"</span>임을 강조. 우리는 MBP가 아니라 기업향 프라이싱 + AI Agent. KIDB가 직접 하지 않아도 업무 범위가 확장되는 구조.<br><br>
+        <strong>향후:</strong> 한국자금중개가 직접 만드는 것과 우리 서비스의 차이점을 명확히 정리해둘 것.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ====== 사전 준비 Q&A ====== -->
+  <div class="section">
+    <div class="section-title blue">사전 준비 Q&A (미팅에서 안 나왔으나 향후 대비)</div>
+
+    <div class="qa-card prepared">
+      <div class="qa-badge badge-prepared">대비용</div>
+      <div class="qa-q">"우리 데이터가 기업한테 가면 은행들이 싫어하지 않나?"</div>
+      <div class="qa-a">
+        이미 KMB/SMBS 웹에서 IRS/CRS 데이터를 공개 중. 기업이 접근 못 하는 게 아니라 <span class="highlight">해석을 못 하는 것</span>.<br>
+        오히려 기업이 시장가를 이해하면 <span class="info">거래 의사결정이 빨라져 거래량이 증가</span> — 은행에도 이득.
+      </div>
+    </div>
+
+    <div class="qa-card prepared">
+      <div class="qa-badge badge-prepared">대비용</div>
+      <div class="qa-q">"KustodyFi가 망하면?"</div>
+      <div class="qa-a">
+        KustodyFi가 AI Agent를 먼저 완성한 후 POC를 시작하므로 KIDB 투입 최소, 비용 제로. <span class="highlight">Downside가 거의 없는 구조</span>.<br>
+        POC 시점은 양사 합의로 결정하며, Stage 2 진입도 POC 결과 확인 후 KIDB가 결정.
+      </div>
+    </div>
+
+    <div class="qa-card prepared">
+      <div class="qa-badge badge-prepared">대비용</div>
+      <div class="qa-q">"우리한테 직접적인 이득이 뭔데?"</div>
+      <div class="qa-a">
+        <span class="highlight">즉시:</span> KIDB 인터뱅크 데이터가 기업 고객에게 도달.<br>
+        <span class="info">중기:</span> AI Agent로 브로커 업무 효율화 + 기업 사용 데이터로 상품 기획 근거 확보.<br>
+        <span class="warn">장기:</span> 데이터 사업 RS. TP ICAP Parameta는 연 ₩5,000억+ — KIDB도 동일한 데이터 자산을 이미 보유 중.
+      </div>
+    </div>
+
+    <div class="qa-card prepared">
+      <div class="qa-badge badge-prepared">대비용</div>
+      <div class="qa-q">"KIDB가 직접 하면 되지, 왜 KustodyFi가 필요한가?"</div>
+      <div class="qa-a">
+        KIDB의 핵심 역량은 <strong>인터뱅크 중개와 데이터</strong>. 기업 프라이싱 엔진, AI Agent는 <span class="info">기술 스택이 완전히 다른 영역</span>.<br>
+        직접 개발하면 1~2년 + 전문 인력 채용이 필요. KustodyFi와 협업하면 AI Agent가 준비된 상태에서 빠르게 기업 시장 진출 — KIDB는 데이터만 제공하고 기업 도달은 KustodyFi가 책임.
+      </div>
+    </div>
+
+    <div class="qa-card prepared">
+      <div class="qa-badge badge-prepared">대비용</div>
+      <div class="qa-q">"블록체인, 스테이블코인 — 리스크 아닌가?"</div>
+      <div class="qa-a">
+        Stage 1~2는 <strong>블록체인과 무관</strong>. 순수 데이터 인프라 + 기업 프라이싱.<br>
+        On-chain NDF 거래소는 Stage 3 (싱가포르 자회사), MAS 라이선스 하에서 운영. KIDB는 거래소의 <span class="highlight">보고 채널 + 데이터 파트너</span>이지, 블록체인 운영 주체가 아님.
+      </div>
+    </div>
+
+    <div class="qa-card prepared">
+      <div class="qa-badge badge-prepared">대비용</div>
+      <div class="qa-q">"규제 이슈는 없나? 스타트업과 협력해도 괜찮나?"</div>
+      <div class="qa-a">
+        Stage 1은 <strong>데이터 피드 제공</strong> — 기존 데이터 유통과 동일한 업무 범위 내.<br>
+        Stage 2도 기업 고객에게 프라이싱 정보를 제공하는 것이므로 규제 이슈 없음.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ====== 핵심 포인트 ====== -->
+  <div class="section">
+    <div class="section-title green">후속 미팅 핵심 포인트</div>
+
+    <div class="qa-card" style="border-left:4px solid #059669;">
+      <div class="qa-q">KIDB에게 절대 하면 안 되는 것</div>
+      <div class="qa-a">
+        ✗ &nbsp; 타임라인 압박 (4월/5월 바로 하자)<br>
+        ✗ &nbsp; 온체인/스테이블코인 규제 논의를 먼저 꺼내기<br>
+        ✗ &nbsp; "Powered by KIDB" 확정처럼 말하기<br>
+        ✗ &nbsp; KIDB에게 API 개발을 요구하기<br>
+        ✗ &nbsp; 선발주자 역할을 맡기기
+      </div>
+    </div>
+
+    <div class="qa-card" style="border-left:4px solid #059669;">
+      <div class="qa-q">KIDB에게 해야 하는 것</div>
+      <div class="qa-a">
+        ✓ &nbsp; 월 1회 경과 공유 이메일 (AI Agent 개발 현황, 기업 온보딩 수)<br>
+        ✓ &nbsp; 정훈 전무님과 데이터 수신 프로세스 별도 기술 미팅<br>
+        ✓ &nbsp; 다른 중개사(IP 등)도 참여시켜 KIDB의 부담 분산<br>
+        ✓ &nbsp; AI Agent 데모가 준비되면 바로 공유<br>
+        ✓ &nbsp; "우리가 다 만들어서 보여드리겠다" 톤 유지
+      </div>
+    </div>
+
+    <div class="qa-card" style="border-left:4px solid #059669;">
+      <div class="qa-q">긍정 시그널 정리</div>
+      <div class="qa-a">
+        ✓ &nbsp; "재밌었어요" — 흥미 있음<br>
+        ✓ &nbsp; "안 할 이유가 없어 보이고요" — 데이터 제공에 열려 있음<br>
+        ✓ &nbsp; "경과를 공유해 주시고" — 관계 유지 의사<br>
+        ✓ &nbsp; LOI 검토 수락 — "보내주시면 검토해서 말씀드리겠습니다"<br>
+        ✓ &nbsp; "좋은 인력 잘 모으셨네요" — 팀에 대한 긍정 평가
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

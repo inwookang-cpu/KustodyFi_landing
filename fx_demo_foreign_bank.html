@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KustodyFi — Foreign Bank FX Desk: Wrong-Way Risk & Smart Counterparty Filtering</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600;700;800&display=swap');
+  :root {
+    --primary: #0ea5e9; --primary-dark: #0284c7; --accent: #8b5cf6;
+    --success: #059669; --warning: #d97706; --danger: #dc2626;
+    --dark: #0f172a; --gray-900: #1e293b; --gray-700: #334155;
+    --gray-500: #64748b; --gray-300: #cbd5e1; --gray-100: #f1f5f9; --white: #ffffff;
+    --gradient-fb: linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%);
+    --gradient-safe: linear-gradient(135deg, #059669 0%, #0ea5e9 100%);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Noto Sans KR','Inter',sans-serif; background:var(--dark); color:var(--white); overflow:hidden; height:100vh; width:100vw; }
+
+  .progress-bar { position:fixed; top:0; left:0; height:4px; background:var(--gradient-fb); z-index:1000; transition:width .5s cubic-bezier(.4,0,.2,1); }
+  .slide-counter { position:fixed; bottom:30px; right:40px; font-size:14px; color:var(--gray-500); font-weight:500; z-index:100; font-family:'Inter',monospace; }
+  .nav-arrows { position:fixed; bottom:30px; left:50%; transform:translateX(-50%); display:flex; gap:16px; z-index:100; }
+  .nav-btn { width:48px; height:48px; border-radius:50%; border:2px solid rgba(255,255,255,.15); background:rgba(255,255,255,.05); color:var(--white); font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .3s; backdrop-filter:blur(10px); }
+  .nav-btn:hover { background:rgba(255,255,255,.15); border-color:rgba(255,255,255,.3); transform:scale(1.1); }
+  .keyboard-hint { position:fixed; bottom:30px; left:40px; font-size:12px; color:var(--gray-500); z-index:100; display:flex; align-items:center; gap:8px; }
+  kbd { display:inline-block; padding:2px 8px; border-radius:4px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); font-family:'Inter',monospace; font-size:11px; }
+
+  .slides-container { width:100vw; height:100vh; position:relative; }
+  .slide { position:absolute; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; opacity:0; transform:translateX(80px); transition:all .7s cubic-bezier(.4,0,.2,1); pointer-events:none; padding:60px 80px; }
+  .slide.active { opacity:1; transform:translateX(0); pointer-events:auto; }
+  .slide.exit-left { opacity:0; transform:translateX(-80px); }
+  .slide-content { max-width:1200px; width:100%; }
+
+  .cover-slide { background:radial-gradient(ellipse at 30% 50%,rgba(14,165,233,.15) 0%,transparent 60%),radial-gradient(ellipse at 70% 50%,rgba(139,92,246,.1) 0%,transparent 60%),var(--dark); }
+  .cover-logo { font-size:16px; font-weight:700; letter-spacing:6px; color:var(--primary); text-transform:uppercase; margin-bottom:32px; opacity:0; animation:fadeUp .8s .3s forwards; }
+  .cover-title { font-size:48px; font-weight:900; line-height:1.2; margin-bottom:24px; opacity:0; animation:fadeUp .8s .5s forwards; }
+  .cover-title .hl { background:var(--gradient-fb); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .cover-sub { font-size:17px; color:var(--gray-500); margin-bottom:40px; opacity:0; animation:fadeUp .8s .7s forwards; line-height:1.7; }
+  .cover-meta { margin-top:40px; font-size:13px; color:var(--gray-500); opacity:0; animation:fadeUp .8s 1.3s forwards; }
+
+  .scene-slide { text-align:center; }
+  .scene-time { font-size:64px; font-weight:900; background:var(--gradient-fb); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1; margin-bottom:12px; opacity:0; animation:scaleIn .6s .2s forwards; }
+  .scene-title { font-size:36px; font-weight:800; margin-bottom:12px; opacity:0; animation:fadeUp .6s .4s forwards; }
+  .scene-desc { font-size:15px; color:var(--gray-500); opacity:0; animation:fadeUp .6s .6s forwards; max-width:700px; margin:0 auto; line-height:1.7; }
+
+  .section-label { font-size:13px; font-weight:600; letter-spacing:4px; color:var(--primary); text-transform:uppercase; margin-bottom:8px; }
+  .section-label.danger { color:var(--danger); }
+  .section-label.safe { color:var(--success); }
+  .section-title { font-size:32px; font-weight:800; margin-bottom:8px; line-height:1.3; }
+  .section-desc { font-size:14px; color:var(--gray-500); margin-bottom:24px; line-height:1.6; }
+
+  .phase-tabs { display:flex; gap:4px; margin-bottom:24px; background:rgba(255,255,255,.05); border-radius:12px; padding:4px; width:fit-content; }
+  .phase-tab { padding:10px 24px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; transition:all .3s; color:var(--gray-500); border:none; background:transparent; }
+  .phase-tab.active-tab { color:var(--white); }
+  .phase-tab.asis.active-tab { background:rgba(220,38,38,.2); color:#fca5a5; }
+  .phase-tab.tobe.active-tab { background:rgba(14,165,233,.2); color:#7dd3fc; }
+  .phase-content { display:none; }
+  .phase-content.active-phase { display:block; animation:fadeIn .5s; }
+
+  .tl { position:relative; padding-left:32px; }
+  .tl::before { content:''; position:absolute; left:7px; top:8px; bottom:8px; width:2px; background:rgba(255,255,255,.08); border-radius:2px; }
+  .tl-item { position:relative; margin-bottom:14px; opacity:0; transform:translateX(20px); }
+  .tl-item.animated { opacity:1; transform:translateX(0); transition:all .4s; }
+  .tl-item::before { content:''; position:absolute; left:-29px; top:8px; width:12px; height:12px; border-radius:50%; border:2px solid var(--primary); background:var(--dark); }
+  .tl-item.safe-dot::before { border-color:var(--success); }
+  .tl-item.danger-dot::before { border-color:var(--danger); }
+  .tl-time { font-size:12px; font-weight:600; color:var(--primary); margin-bottom:3px; font-family:'Inter',monospace; }
+  .tl-who { display:inline-block; font-size:10px; font-weight:700; padding:1px 6px; border-radius:4px; margin-bottom:4px; }
+  .tl-who.dealer { background:rgba(110,231,183,.12); color:#6ee7b7; }
+  .tl-who.risk { background:rgba(147,197,253,.12); color:#93c5fd; }
+  .tl-who.system { background:rgba(196,181,253,.12); color:#c4b5fd; }
+  .tl-who.hq { background:rgba(252,211,77,.12); color:#fcd34d; }
+
+  .pain-point { display:flex; align-items:flex-start; gap:8px; font-size:12px; color:#fca5a5; padding:8px 14px; background:rgba(220,38,38,.08); border-radius:8px; border-left:3px solid rgba(220,38,38,.4); margin-bottom:6px; opacity:0; transform:translateX(20px); }
+  .pain-point.animated { opacity:1; transform:translateX(0); transition:all .4s; }
+  .benefit-point { display:flex; align-items:flex-start; gap:8px; font-size:12px; padding:8px 14px; border-radius:8px; border-left:3px solid; margin-bottom:6px; opacity:0; transform:translateX(20px); }
+  .benefit-point.animated { opacity:1; transform:translateX(0); transition:all .4s; }
+  .benefit-point.blue { color:#7dd3fc; background:rgba(14,165,233,.08); border-left-color:rgba(14,165,233,.4); }
+  .benefit-point.green { color:#6ee7b7; background:rgba(5,150,105,.08); border-left-color:rgba(5,150,105,.4); }
+
+  .dt { width:100%; border-collapse:collapse; font-size:12px; }
+  .dt th { text-align:left; padding:8px 12px; background:rgba(14,165,233,.1); color:#7dd3fc; font-weight:600; font-size:11px; letter-spacing:.5px; border-bottom:1px solid rgba(255,255,255,.08); }
+  .dt td { padding:8px 12px; border-bottom:1px solid rgba(255,255,255,.04); color:var(--gray-300); }
+  .dt tr:hover td { background:rgba(255,255,255,.02); }
+  .dt.danger-header th { background:rgba(220,38,38,.1); color:#fca5a5; }
+
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+  .panel { background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.06); border-radius:14px; padding:20px; }
+  .panel-title { font-size:13px; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+
+  .badge { display:inline-block; padding:2px 8px; border-radius:6px; font-size:10px; font-weight:600; }
+  .badge-green { background:rgba(5,150,105,.15); color:#6ee7b7; }
+  .badge-blue { background:rgba(14,165,233,.15); color:#7dd3fc; }
+  .badge-yellow { background:rgba(217,119,6,.15); color:#fcd34d; }
+  .badge-red { background:rgba(220,38,38,.15); color:#fca5a5; }
+  .badge-purple { background:rgba(139,92,246,.15); color:#c4b5fd; }
+  .badge-wwr { background:rgba(220,38,38,.25); color:#fca5a5; border:1px solid rgba(220,38,38,.4); }
+  .badge-safe { background:rgba(5,150,105,.25); color:#6ee7b7; border:1px solid rgba(5,150,105,.4); }
+
+  .quote-card { background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:16px; text-align:center; opacity:0; transform:scale(.9); }
+  .quote-card.animated { opacity:1; transform:scale(1); transition:all .4s; }
+  .quote-card.best { border:2px solid rgba(5,150,105,.5); background:rgba(5,150,105,.06); }
+  .quote-card.filtered { border:2px solid rgba(220,38,38,.3); background:rgba(220,38,38,.04); opacity:.5; }
+  .quote-card .bank-name { font-size:14px; font-weight:700; margin-bottom:4px; }
+  .quote-card .quote-rate { font-size:28px; font-weight:900; margin:8px 0; }
+  .quote-card .quote-detail { font-size:11px; color:var(--gray-500); line-height:1.5; }
+
+  .hbox { padding:12px 18px; border-radius:10px; font-size:12px; }
+
+  .scroll-area { max-height:calc(100vh - 220px); overflow-y:auto; padding-right:8px; }
+  .scroll-area::-webkit-scrollbar { width:4px; }
+  .scroll-area::-webkit-scrollbar-track { background:transparent; }
+  .scroll-area::-webkit-scrollbar-thumb { background:rgba(255,255,255,.1); border-radius:4px; }
+
+  .closing-slide { background:radial-gradient(ellipse at 50% 50%,rgba(14,165,233,.12) 0%,transparent 60%),var(--dark); text-align:center; }
+  .closing-title { font-size:48px; font-weight:900; margin-bottom:20px; background:var(--gradient-fb); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; opacity:0; animation:fadeUp .8s .3s forwards; }
+  .closing-desc { font-size:18px; color:var(--gray-500); max-width:700px; margin:0 auto 40px; line-height:1.7; opacity:0; animation:fadeUp .8s .5s forwards; }
+  .closing-stats { display:flex; justify-content:center; gap:60px; opacity:0; animation:fadeUp .8s .7s forwards; }
+  .stat-num { font-size:42px; font-weight:800; background:var(--gradient-fb); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .stat-label { font-size:14px; color:var(--gray-500); margin-top:4px; }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  @keyframes scaleIn { from{opacity:0;transform:scale(.5)} to{opacity:1;transform:scale(1)} }
+
+  @media(max-width:900px) {
+    .slide{padding:40px 32px} .cover-title{font-size:34px} .section-title{font-size:24px}
+    .two-col,.three-col{grid-template-columns:1fr} .closing-stats{flex-wrap:wrap;gap:32px}
+    .scene-time{font-size:48px}
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+<div class="slides-container" id="slidesContainer">
+
+<!-- ====== SLIDE 0: COVER ====== -->
+<div class="slide cover-slide active" data-slide="0">
+  <div class="slide-content">
+    <div class="cover-logo">KUSTODYFI</div>
+    <h1 class="cover-title">Foreign Bank FX Desk:<br><span class="hl">Wrong-Way Risk &amp; Smart Filtering</span></h1>
+    <p class="cover-sub">외국계 은행 서울지점의 FX Swap 운영.<br>Wrong-Way Risk 때문에 상대방을 가려야 하는데, 지금은 수작업입니다.<br>시스템이 WWR을 자동 필터링하고, AI Agent가 24시간 운영합니다.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;opacity:0;animation:fadeUp .8s .85s forwards">
+      <div class="hbox" style="background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);color:#fca5a5;font-size:13px;font-weight:600">&#9888; Wrong-Way Risk 자동 필터링</div>
+      <div class="hbox" style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.2);color:#6ee7b7;font-size:13px;font-weight:600">&#127919; 시스템이 제안, 담당자가 승인</div>
+      <div class="hbox" style="background:rgba(14,165,233,.08);border:1px solid rgba(14,165,233,.2);color:#7dd3fc;font-size:13px;font-weight:600">&#127760; AI Agent &mdash; 24시간 운영</div>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:16px;opacity:0;animation:fadeUp .8s 1.0s forwards">
+      <div class="hbox" style="background:rgba(110,231,183,.08);border:1px solid rgba(110,231,183,.2);color:#6ee7b7"><strong>Dealer</strong> David Kim</div>
+      <div class="hbox" style="background:rgba(147,197,253,.08);border:1px solid rgba(147,197,253,.2);color:#93c5fd"><strong>Risk</strong> Sarah Park</div>
+      <div class="hbox" style="background:rgba(252,211,77,.08);border:1px solid rgba(252,211,77,.2);color:#fcd34d"><strong>HQ</strong> Singapore / London</div>
+    </div>
+    <div class="cover-meta">Confidential &nbsp;|&nbsp; March 2026 &nbsp;|&nbsp; KustodyFi Co., Ltd.</div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 1: SCENE - THE PROBLEM ====== -->
+<div class="slide scene-slide" data-slide="1">
+  <div class="slide-content">
+    <div class="scene-time">Wrong-Way Risk</div>
+    <div class="scene-title">왜 FX Swap Seller를 가려야 하는가</div>
+    <div class="scene-desc">
+      FX Swap B/S (Buy Spot, Sell Forward)에서 USD를 빌려주는 상대방이<br>
+      한국 기업이면 &mdash; 원화 약세 시 <strong style="color:#fca5a5">Exposure 증가</strong>와 <strong style="color:#fca5a5">상대방 신용 악화</strong>가 동시에 발생합니다.<br><br>
+      <span style="color:#fca5a5;font-weight:600">이것이 Wrong-Way Risk입니다.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 2: WWR EXPLAINED ====== -->
+<div class="slide" data-slide="2">
+  <div class="slide-content">
+    <div class="section-label danger">WRONG-WAY RISK</div>
+    <div class="section-title">FX Swap에서 WWR이 발생하는 구조</div>
+    <div class="section-desc">KRW 약세 &rarr; Exposure &uarr; + Counterparty Credit &darr; = Wrong-Way Risk</div>
+
+    <div class="scroll-area">
+      <div class="two-col" style="margin-bottom:16px">
+        <div class="panel" style="border-left:3px solid rgba(220,38,38,.4)">
+          <div class="panel-title" style="color:#fca5a5">&#9888; 한국 기업과 FX Swap B/S</div>
+          <div style="font-size:12px;color:var(--gray-300);line-height:1.9">
+            <div style="margin-bottom:8px"><strong style="color:#fca5a5">시나리오: KRW 급격한 약세 (1,400 &rarr; 1,500)</strong></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:4px;margin-bottom:4px"><span>우리 은행 Exposure</span><span style="color:#fca5a5;font-weight:700">&uarr; 증가</span></div>
+            <div style="font-size:11px;color:var(--gray-500);margin-bottom:8px;padding-left:12px">Forward Leg에서 상대방이 USD를 갚아야 하는데, KRW 기준 부담 증가</div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:4px;margin-bottom:4px"><span>상대방 신용</span><span style="color:#fca5a5;font-weight:700">&darr; 악화</span></div>
+            <div style="font-size:11px;color:var(--gray-500);margin-bottom:8px;padding-left:12px">한국 기업은 수입 비용 증가, 달러 부채 부담 증가 &rarr; 디폴트 확률 상승</div>
+            <div style="padding:8px 12px;background:rgba(220,38,38,.1);border-radius:8px;font-size:11px;color:#fca5a5;font-weight:600;text-align:center">
+              Exposure &uarr; &times; Default Probability &uarr; = <strong>WWR</strong>
+            </div>
+          </div>
+        </div>
+        <div class="panel" style="border-left:3px solid rgba(5,150,105,.4)">
+          <div class="panel-title" style="color:#6ee7b7">&#10004; 외국계 은행과 FX Swap B/S</div>
+          <div style="font-size:12px;color:var(--gray-300);line-height:1.9">
+            <div style="margin-bottom:8px"><strong style="color:#6ee7b7">같은 시나리오: KRW 급격한 약세</strong></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:4px;margin-bottom:4px"><span>우리 은행 Exposure</span><span style="color:#fca5a5;font-weight:700">&uarr; 증가</span></div>
+            <div style="font-size:11px;color:var(--gray-500);margin-bottom:8px;padding-left:12px">동일하게 Exposure는 증가</div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:4px;margin-bottom:4px"><span>상대방 신용</span><span style="color:#6ee7b7;font-weight:700">&rarr; 유지/개선</span></div>
+            <div style="font-size:11px;color:var(--gray-500);margin-bottom:8px;padding-left:12px">외국계 은행은 KRW 약세와 무관한 글로벌 신용. 오히려 USD 자산 가치 상승</div>
+            <div style="padding:8px 12px;background:rgba(5,150,105,.08);border-radius:8px;font-size:11px;color:#6ee7b7;font-weight:600;text-align:center">
+              Exposure &uarr; &times; Default Probability &rarr; = <strong>No WWR</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hbox" style="background:rgba(14,165,233,.06);border:1px solid rgba(14,165,233,.15);color:var(--gray-300);text-align:center;font-size:13px;font-weight:600">
+        <strong style="color:#7dd3fc">결론:</strong> FX Swap Seller(B/S)를 찾을 때, <strong style="color:#6ee7b7">외국계 은행만 필터링</strong>하면 WWR을 구조적으로 제거할 수 있습니다.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 3: SCENE - CURRENT PAIN ====== -->
+<div class="slide scene-slide" data-slide="3">
+  <div class="slide-content">
+    <div class="scene-time">AS-IS</div>
+    <div class="scene-title">지금은 어떻게 하고 있는가</div>
+    <div class="scene-desc">
+      David Kim 딜러가 FX Swap B/S를 할 때,<br>
+      상대방 목록을 머릿속으로 필터링하고, 전화로 하나씩 확인합니다.<br><br>
+      <span style="color:#fca5a5">"본사 리스크 정책상 한국 기업은 안 되는데... 이 은행은 되나?"</span>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 4: AS-IS WORKFLOW ====== -->
+<div class="slide" data-slide="4">
+  <div class="slide-content">
+    <div class="section-label danger">AS-IS</div>
+    <div class="section-title">수작업 Counterparty 필터링</div>
+    <div class="section-desc">FX Swap B/S $50M &mdash; 상대방을 골라야 합니다. 지금은 이렇게 합니다.</div>
+
+    <div class="scroll-area">
+      <div class="tl">
+        <div class="tl-item danger-dot" data-delay="0">
+          <div class="tl-time">Step 1 &mdash; 상대방 목록 확인</div>
+          <span class="tl-who dealer">DEALER</span>
+          <div class="tl-text">David: 머릿속으로 거래 가능한 은행 목록 정리. "A은행은 한국계니까 WWR... B은행은 외국계인데 한도가..."</div>
+        </div>
+        <div class="tl-item danger-dot" data-delay="100">
+          <div class="tl-time">Step 2 &mdash; 본사 정책 확인</div>
+          <span class="tl-who hq">HQ RISK</span>
+          <div class="tl-text">싱가포르 본사 Risk 팀에 이메일: "이 상대방 리스트로 FX Swap 가능한지 확인 부탁." <span style="color:#fca5a5">답변 대기 30분~2시간.</span></div>
+        </div>
+        <div class="tl-item danger-dot" data-delay="200">
+          <div class="tl-time">Step 3 &mdash; Credit Limit 확인</div>
+          <span class="tl-who risk">RISK</span>
+          <div class="tl-text">Sarah: 각 상대방별 Credit Limit 잔여 확인. <span style="color:#fca5a5">별도 엑셀에서 수기 확인.</span> "C은행은 한도 $30M 남아있고..."</div>
+        </div>
+        <div class="tl-item danger-dot" data-delay="300">
+          <div class="tl-time">Step 4 &mdash; 전화 호가</div>
+          <span class="tl-who dealer">DEALER</span>
+          <div class="tl-text">필터링된 2~3곳에 순차적으로 전화. "3M B/S $50M 스왑포인트 얼마에 주실 수 있어요?"</div>
+        </div>
+        <div class="tl-item danger-dot" data-delay="400">
+          <div class="tl-time">Step 5 &mdash; 체결 + 수기 기록</div>
+          <span class="tl-who dealer">DEALER</span>
+          <div class="tl-text">체결 후 엑셀 기록. WWR 체크 결과, Credit Limit 사용 내역 별도 보고.</div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px">
+        <div class="pain-point" data-delay="500"><span>&#10060;</span> <strong>상대방 필터링이 담당자 기억에 의존.</strong> "이 은행은 한국계인가 외국계인가?" 실수 가능.</div>
+        <div class="pain-point" data-delay="600"><span>&#10060;</span> <strong>본사 승인 대기 30분~2시간.</strong> 시장이 움직이는 동안 대기.</div>
+        <div class="pain-point" data-delay="700"><span>&#10060;</span> <strong>Credit Limit 수기 확인.</strong> 엑셀 파일이 최신이 아닐 수 있음.</div>
+        <div class="pain-point" data-delay="800"><span>&#10060;</span> <strong>감사 증적 부족.</strong> "왜 이 상대방을 선택했는가?"에 대한 기록이 없음.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 5: SCENE - TO-BE ====== -->
+<div class="slide scene-slide" data-slide="5">
+  <div class="slide-content">
+    <div class="scene-time">TO-BE</div>
+    <div class="scene-title">시스템이 필터링, 담당자가 승인</div>
+    <div class="scene-desc">
+      KustodyFi가 WWR 프로필, Credit Limit, 본사 정책을<br>
+      <strong style="color:#6ee7b7">자동으로 필터링</strong>하고, 적격 상대방에게만 RFQ를 발송합니다.
+    </div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 6: TO-BE WORKFLOW ====== -->
+<div class="slide" data-slide="6">
+  <div class="slide-content">
+    <div class="section-label safe">TO-BE</div>
+    <div class="section-title">Smart Counterparty Filtering + RFQ</div>
+    <div class="section-desc">FX Swap B/S $50M &mdash; 시스템이 WWR 필터링 + Credit Limit 체크 + RFQ 발송까지.</div>
+
+    <div class="scroll-area">
+      <div class="tl" style="margin-bottom:16px">
+        <div class="tl-item safe-dot" data-delay="0">
+          <div class="tl-time" style="color:#6ee7b7">Step 1 &mdash; RFQ 생성 (10초)</div>
+          <span class="tl-who dealer">DEALER</span>
+          <div class="tl-text">David: 콘솔에서 <strong>[FX Swap B/S] [3M] [$50M]</strong> 입력.</div>
+        </div>
+        <div class="tl-item safe-dot" data-delay="100">
+          <div class="tl-time" style="color:#6ee7b7">Step 2 &mdash; 자동 필터링 (즉시)</div>
+          <span class="tl-who system">SYSTEM</span>
+          <div class="tl-text">
+            시스템이 자동 필터링:<br>
+            <span class="badge badge-red" style="margin:2px">WWR Filter</span> 한국계 기업 &rarr; 제외<br>
+            <span class="badge badge-blue" style="margin:2px">Credit Limit</span> 잔여 한도 $50M 미만 &rarr; 제외<br>
+            <span class="badge badge-purple" style="margin:2px">HQ Policy</span> 본사 블랙리스트 &rarr; 제외<br>
+            <strong style="color:#6ee7b7">적격 상대방 4곳 자동 선별.</strong>
+          </div>
+        </div>
+        <div class="tl-item safe-dot" data-delay="200">
+          <div class="tl-time" style="color:#6ee7b7">Step 3 &mdash; RFQ 동시 발송 (1클릭)</div>
+          <span class="tl-who dealer">DEALER</span>
+          <div class="tl-text">David: 필터링 결과 확인 &rarr; <strong>[RFQ 발송]</strong> 클릭. 4곳에 동시 발송. <strong style="color:#6ee7b7">통화 0건.</strong></div>
+        </div>
+        <div class="tl-item safe-dot" data-delay="300">
+          <div class="tl-time" style="color:#6ee7b7">Step 4 &mdash; 견적 수신 + Best 선택 (1분)</div>
+          <span class="tl-who system">SYSTEM</span>
+          <div class="tl-text">4곳 견적 수신. Best Price 자동 하이라이트. David: <strong>[체결]</strong> 클릭.</div>
+        </div>
+        <div class="tl-item safe-dot" data-delay="400">
+          <div class="tl-time" style="color:#6ee7b7">Step 5 &mdash; 자동 기록 (즉시)</div>
+          <span class="tl-who system">SYSTEM</span>
+          <div class="tl-text">체결 기록 + WWR 필터링 로그 + Credit Limit 사용 업데이트 + Best Execution 증적 &mdash; <strong style="color:#6ee7b7">모두 자동.</strong></div>
+        </div>
+      </div>
+
+      <div style="margin-top:8px">
+        <div class="benefit-point green" data-delay="500"><span>&#10003;</span> <strong>WWR 필터링이 시스템에 내장.</strong> 담당자 기억이 아닌 정책 기반 자동 적용.</div>
+        <div class="benefit-point green" data-delay="600"><span>&#10003;</span> <strong>본사 승인 대기 제로.</strong> HQ 정책이 시스템에 사전 설정. 실시간 반영.</div>
+        <div class="benefit-point green" data-delay="700"><span>&#10003;</span> <strong>Credit Limit 실시간.</strong> 체결 즉시 한도 차감. 엑셀 대조 불필요.</div>
+        <div class="benefit-point green" data-delay="800"><span>&#10003;</span> <strong>감사 증적 완벽.</strong> "왜 이 상대방인가?" &rarr; WWR Filter + Limit + HQ Policy 로그 자동.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 7: LIVE RFQ WITH FILTERING ====== -->
+<div class="slide" data-slide="7">
+  <div class="slide-content">
+    <div class="section-label safe">LIVE RFQ</div>
+    <div class="section-title">FX Swap B/S $50M &mdash; WWR 필터링 적용</div>
+    <div class="section-desc">전체 8곳 상대방 중 WWR + Credit Limit 필터링 후 4곳에만 RFQ 발송.</div>
+
+    <div class="scroll-area">
+      <!-- Filtering summary -->
+      <div class="panel" style="border:1px solid rgba(220,38,38,.2);background:rgba(220,38,38,.04);margin-bottom:16px;padding:14px">
+        <div class="panel-title" style="color:#fca5a5;font-size:12px">&#128683; 필터링으로 제외된 상대방</div>
+        <table class="dt danger-header" style="font-size:11px">
+          <thead><tr><th>상대방</th><th>유형</th><th>제외 사유</th><th>WWR</th></tr></thead>
+          <tbody>
+            <tr><td>국민은행</td><td>한국계 은행</td><td style="color:#fca5a5">WWR &mdash; KRW 약세 시 신용 연동</td><td><span class="badge badge-wwr">HIGH</span></td></tr>
+            <tr><td>우리은행</td><td>한국계 은행</td><td style="color:#fca5a5">WWR &mdash; KRW 약세 시 신용 연동</td><td><span class="badge badge-wwr">HIGH</span></td></tr>
+            <tr><td>대한화학 (가칭)</td><td>한국 기업</td><td style="color:#fca5a5">WWR + Credit Rating BBB-</td><td><span class="badge badge-wwr">VERY HIGH</span></td></tr>
+            <tr><td>Barclays</td><td>외국계 은행</td><td style="color:#fcd34d">Credit Limit 잔여 $20M &lt; $50M</td><td><span class="badge badge-safe">LOW</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Eligible counterparties -->
+      <div style="font-size:12px;font-weight:700;color:#6ee7b7;margin-bottom:12px">&#10004; 적격 상대방 &mdash; RFQ 발송 (4곳)</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
+        <div class="quote-card" data-delay="0">
+          <div class="bank-name" style="color:var(--gray-300)">Citi</div>
+          <div style="font-size:10px;color:var(--gray-500)"><span class="badge badge-safe" style="font-size:8px">WWR LOW</span></div>
+          <div style="font-size:10px;color:var(--gray-500)">응답: 35초</div>
+          <div class="quote-rate" style="font-size:22px">-6.80</div>
+          <div class="quote-detail">3M Swap Points<br>Limit 잔여: $120M</div>
+        </div>
+        <div class="quote-card" data-delay="200">
+          <div class="bank-name" style="color:var(--gray-300)">JP Morgan</div>
+          <div style="font-size:10px;color:var(--gray-500)"><span class="badge badge-safe" style="font-size:8px">WWR LOW</span></div>
+          <div style="font-size:10px;color:var(--gray-500)">응답: 28초</div>
+          <div class="quote-rate" style="font-size:22px">-6.65</div>
+          <div class="quote-detail">3M Swap Points<br>Limit 잔여: $200M</div>
+        </div>
+        <div class="quote-card best" data-delay="400">
+          <div style="font-size:10px;font-weight:700;color:#6ee7b7;margin-bottom:2px">&#9733; BEST</div>
+          <div class="bank-name" style="color:#6ee7b7">HSBC</div>
+          <div style="font-size:10px;color:var(--gray-500)"><span class="badge badge-safe" style="font-size:8px">WWR LOW</span></div>
+          <div style="font-size:10px;color:var(--gray-500)">응답: 41초</div>
+          <div class="quote-rate" style="font-size:22px;color:#6ee7b7">-6.50</div>
+          <div class="quote-detail">3M Swap Points<br>Limit 잔여: $180M</div>
+          <div style="margin-top:8px"><button style="background:var(--gradient-safe);border:none;color:white;padding:6px 20px;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer">체결</button></div>
+        </div>
+        <div class="quote-card" data-delay="600">
+          <div class="bank-name" style="color:var(--gray-300)">Standard Chartered</div>
+          <div style="font-size:10px;color:var(--gray-500)"><span class="badge badge-safe" style="font-size:8px">WWR LOW</span></div>
+          <div style="font-size:10px;color:var(--gray-500)">응답: 52초</div>
+          <div class="quote-rate" style="font-size:22px">-6.70</div>
+          <div class="quote-detail">3M Swap Points<br>Limit 잔여: $90M</div>
+        </div>
+      </div>
+
+      <div class="hbox" style="background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.15);color:var(--gray-300);text-align:center;font-size:12px">
+        <strong style="color:#6ee7b7">절감:</strong> Best(-6.50) vs Worst(-6.80) = <strong style="color:#6ee7b7">0.30 &times; $50M = 1,500만원</strong> &nbsp;|&nbsp; WWR 제거 + Credit Limit 준수 + 감사 증적 자동
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 8: FILTER CONFIG ====== -->
+<div class="slide" data-slide="8">
+  <div class="slide-content">
+    <div class="section-label">CONFIGURATION</div>
+    <div class="section-title">필터 설정 &mdash; 은행이 자유롭게 구성</div>
+    <div class="section-desc">WWR 기준, Credit Limit, HQ 정책 &mdash; 모두 콘솔에서 설정. 본사 정책 변경 시 즉시 반영.</div>
+
+    <div class="scroll-area">
+      <div class="three-col" style="margin-bottom:16px">
+        <div class="panel" style="border-top:3px solid #dc2626">
+          <div class="panel-title" style="color:#fca5a5">&#9888; WWR Filter</div>
+          <div style="font-size:11px;color:var(--gray-300);line-height:1.8">
+            <div style="font-weight:700;margin-bottom:4px">Counterparty Type 기준:</div>
+            <div>&bull; <span style="color:#fca5a5">Korean Corporate</span> &rarr; Block</div>
+            <div>&bull; <span style="color:#fca5a5">Korean Bank</span> &rarr; Block / Warn</div>
+            <div>&bull; <span style="color:#6ee7b7">Foreign Bank</span> &rarr; Allow</div>
+            <div>&bull; <span style="color:#6ee7b7">Sovereign / SSA</span> &rarr; Allow</div>
+            <div style="margin-top:8px;font-size:10px;color:var(--gray-500)">&#9881; 은행이 Block/Warn/Allow 직접 설정<br>CCY별, Product별 차등 적용 가능</div>
+          </div>
+        </div>
+        <div class="panel" style="border-top:3px solid #0ea5e9">
+          <div class="panel-title" style="color:#7dd3fc">&#128176; Credit Limit</div>
+          <div style="font-size:11px;color:var(--gray-300);line-height:1.8">
+            <div style="font-weight:700;margin-bottom:4px">실시간 한도 관리:</div>
+            <div>&bull; 상대방별 Total Limit 설정</div>
+            <div>&bull; Product별 Sub-Limit</div>
+            <div>&bull; Tenor별 Limit (1M/3M/6M/1Y)</div>
+            <div>&bull; 체결 시 즉시 한도 차감</div>
+            <div style="margin-top:8px;font-size:10px;color:var(--gray-500)">&#9881; 한도 부족 시 자동 제외<br>Limit 사용률 대시보드 제공</div>
+          </div>
+        </div>
+        <div class="panel" style="border-top:3px solid #8b5cf6">
+          <div class="panel-title" style="color:#c4b5fd">&#127760; HQ Policy</div>
+          <div style="font-size:11px;color:var(--gray-300);line-height:1.8">
+            <div style="font-weight:700;margin-bottom:4px">본사 정책 연동:</div>
+            <div>&bull; Blacklist (거래 불가 상대방)</div>
+            <div>&bull; Watchlist (추가 승인 필요)</div>
+            <div>&bull; Country Limit (국가별 한도)</div>
+            <div>&bull; Concentration Limit</div>
+            <div style="margin-top:8px;font-size:10px;color:var(--gray-500)">&#9881; 본사에서 원격으로 정책 업데이트<br>서울지점 콘솔에 실시간 반영</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hbox" style="background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.15);color:var(--gray-300);text-align:center;font-size:12px">
+        <strong style="color:#c4b5fd">핵심:</strong> 필터 규칙은 은행이 100% 자유롭게 설정. KustodyFi는 규칙을 <strong style="color:#6ee7b7">자동으로 실행</strong>할 뿐.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 9: AI AGENT 24H ====== -->
+<div class="slide" data-slide="9">
+  <div class="slide-content">
+    <div class="section-label">AI AGENT</div>
+    <div class="section-title">24시간 운영 &mdash; 원하는 시점에 AI Agent ON</div>
+    <div class="section-desc">외국계 은행은 런던/뉴욕/도쿄 본사와 시차가 있습니다. AI Agent로 운영 시간을 확장.</div>
+
+    <div class="scroll-area">
+      <div class="panel" style="border:1px solid rgba(14,165,233,.3);background:rgba(14,165,233,.04);margin-bottom:16px">
+        <div class="panel-title" style="color:#7dd3fc">&#127760; 운영 시간 확장</div>
+        <div style="display:flex;gap:0;margin-bottom:12px;border-radius:10px;overflow:hidden;height:56px">
+          <div style="flex:37.5;background:rgba(14,165,233,.15);display:flex;align-items:center;justify-content:center;flex-direction:column;border-right:2px solid rgba(255,255,255,.1)">
+            <div style="font-size:11px;font-weight:700;color:#7dd3fc">09:00 ~ 18:00</div>
+            <div style="font-size:10px;color:var(--gray-500)">Dealer + Risk + 필요시 AI Agent</div>
+          </div>
+          <div style="flex:62.5;background:rgba(5,150,105,.12);display:flex;align-items:center;justify-content:center;flex-direction:column">
+            <div style="font-size:11px;font-weight:700;color:#6ee7b7">18:00 ~ 익일 09:00 (또는 24시간 언제든)</div>
+            <div style="font-size:10px;color:var(--gray-500)">AI Agent 활성화 &mdash; 은행이 원하는 시점에 ON</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--gray-300);line-height:1.8;padding:0 8px">
+          <div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:4px;margin-bottom:4px"><span>런던 본사 요청 (한국 시간 18:00~)</span><span style="color:#6ee7b7">AI Agent 자동 응대</span></div>
+          <div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:4px;margin-bottom:4px"><span>뉴욕 본사 요청 (한국 시간 22:00~)</span><span style="color:#6ee7b7">AI Agent 자동 응대</span></div>
+          <div style="display:flex;justify-content:space-between"><span>야간 시장 기회 포착</span><span style="color:#6ee7b7">AI Agent + WWR 필터 자동 적용</span></div>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-bottom:16px">
+        <div class="panel">
+          <div class="panel-title" style="color:#7dd3fc">AI Agent가 하는 일</div>
+          <div style="font-size:12px;color:var(--gray-300);line-height:1.8">
+            &bull; WWR 필터 + Credit Limit + HQ 정책 <strong>자동 적용</strong><br>
+            &bull; RFQ 생성 + 적격 상대방에 자동 발송<br>
+            &bull; 견적 수신 + Best Price 자동 선별<br>
+            &bull; 사전 설정된 범위 내 자동 체결 또는 <strong>담당자에게 알림</strong><br>
+            &bull; 체결 기록 + 감사 증적 자동 생성
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title" style="color:#fcd34d">AI Agent가 안 하는 일</div>
+          <div style="font-size:12px;color:var(--gray-300);line-height:1.8">
+            &bull; <span style="color:#fca5a5">정책 밖 거래 임의 실행</span> &mdash; 불가<br>
+            &bull; <span style="color:#fca5a5">Credit Limit 초과</span> &mdash; 불가<br>
+            &bull; <span style="color:#fca5a5">WWR 필터 우회</span> &mdash; 불가<br>
+            &bull; <span style="color:#fca5a5">설정 범위 밖 가격 체결</span> &mdash; 알림만<br>
+            &bull; 모든 행동이 <strong style="color:#6ee7b7">감사 로그에 기록</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="hbox" style="background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.15);color:var(--gray-300);text-align:center;font-size:13px">
+        <strong style="color:#6ee7b7">AI Agent = 정책을 완벽히 지키는 야간 딜러.</strong> 실수도, 피로도, 정책 위반도 없습니다.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 10: IMPACT ====== -->
+<div class="slide" data-slide="10">
+  <div class="slide-content">
+    <div class="section-label safe">IMPACT</div>
+    <div class="section-title">도입 효과</div>
+    <div style="font-size:13px;color:var(--gray-500);margin-bottom:20px">외국계 은행 서울지점 기준</div>
+
+    <div class="scroll-area">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px">
+        <div class="panel" style="text-align:center;padding:24px">
+          <div style="font-size:11px;color:var(--gray-500);margin-bottom:8px">Counterparty 필터링</div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:10px">
+            <div><div style="font-size:11px;color:#fca5a5;font-weight:600">AS-IS</div><div style="font-size:24px;font-weight:800;color:#fca5a5">수작업</div></div>
+            <div style="color:var(--gray-500)">&rarr;</div>
+            <div><div style="font-size:11px;color:#6ee7b7;font-weight:600">TO-BE</div><div style="font-size:24px;font-weight:800;color:#6ee7b7">자동</div></div>
+          </div>
+          <div style="font-size:10px;color:var(--gray-500);margin-top:4px">WWR + Limit + HQ Policy</div>
+        </div>
+        <div class="panel" style="text-align:center;padding:24px">
+          <div style="font-size:11px;color:var(--gray-500);margin-bottom:8px">본사 승인 대기</div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:10px">
+            <div><div style="font-size:11px;color:#fca5a5;font-weight:600">AS-IS</div><div style="font-size:24px;font-weight:800;color:#fca5a5">2시간</div></div>
+            <div style="color:var(--gray-500)">&rarr;</div>
+            <div><div style="font-size:11px;color:#6ee7b7;font-weight:600">TO-BE</div><div style="font-size:24px;font-weight:800;color:#6ee7b7">0분</div></div>
+          </div>
+          <div style="font-size:10px;color:var(--gray-500);margin-top:4px">정책이 시스템에 사전 설정</div>
+        </div>
+        <div class="panel" style="text-align:center;padding:24px">
+          <div style="font-size:11px;color:var(--gray-500);margin-bottom:8px">운영 시간</div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:10px">
+            <div><div style="font-size:11px;color:#fca5a5;font-weight:600">AS-IS</div><div style="font-size:24px;font-weight:800;color:#fca5a5">9h</div></div>
+            <div style="color:var(--gray-500)">&rarr;</div>
+            <div><div style="font-size:11px;color:#6ee7b7;font-weight:600">TO-BE</div><div style="font-size:24px;font-weight:800;color:#6ee7b7">24h</div></div>
+          </div>
+          <div style="font-size:10px;color:var(--gray-500);margin-top:4px">AI Agent로 운영 시간 확장</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+        <div class="panel" style="text-align:center;padding:24px">
+          <div style="font-size:11px;color:var(--gray-500);margin-bottom:8px">WWR 사고 위험</div>
+          <div style="font-size:36px;font-weight:900;color:#6ee7b7">0%</div>
+          <div style="font-size:10px;color:var(--gray-500);margin-top:4px">시스템 레벨 차단</div>
+        </div>
+        <div class="panel" style="text-align:center;padding:24px">
+          <div style="font-size:11px;color:var(--gray-500);margin-bottom:8px">감사 증적</div>
+          <div style="font-size:36px;font-weight:900;color:#6ee7b7">Full</div>
+          <div style="font-size:10px;color:var(--gray-500);margin-top:4px">WWR 필터 로그 + 체결 근거</div>
+        </div>
+        <div class="panel" style="text-align:center;padding:24px">
+          <div style="font-size:11px;color:var(--gray-500);margin-bottom:8px">가격 경쟁 절감</div>
+          <div style="font-size:36px;font-weight:900;color:#6ee7b7">+30%</div>
+          <div style="font-size:10px;color:var(--gray-500);margin-top:4px">다자 견적 비교 효과</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SLIDE 11: CLOSING ====== -->
+<div class="slide closing-slide" data-slide="11">
+  <div class="slide-content">
+    <div class="closing-title">Wrong-Way Risk.<br>Solved by System.</div>
+    <div class="closing-desc">FX Swap Seller를 수작업으로 가리는 시대는 끝났습니다.<br>WWR 필터링 + Credit Limit + HQ 정책을 시스템이 자동 적용.<br><strong>AI Agent가 24시간, 정책을 완벽히 지키며 운영합니다.</strong></div>
+    <div class="closing-stats">
+      <div><div class="stat-num">WWR</div><div class="stat-label">자동 필터링</div></div>
+      <div><div class="stat-num">24h</div><div class="stat-label">AI Agent 운영</div></div>
+      <div><div class="stat-num">0</div><div class="stat-label">정책 위반</div></div>
+    </div>
+    <div style="margin-top:32px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap;opacity:0;animation:fadeUp .8s .9s forwards">
+      <a href="mailto:inwoo.kang@kustodyfi.com?subject=KustodyFi Foreign Bank FX 데모 요청" style="padding:12px 28px;background:#0ea5e9;color:#fff;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;display:inline-flex;align-items:center;gap:8px">&#128200; FX Desk 데모 보기</a>
+      <a href="mailto:inwoo.kang@kustodyfi.com?subject=KustodyFi 미팅 요청" style="padding:12px 28px;background:rgba(255,255,255,.1);color:#fff;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;border:1px solid rgba(255,255,255,.2);display:inline-flex;align-items:center;gap:8px">&#128197; 15분 미팅 잡기</a>
+    </div>
+    <div style="margin-top:20px;font-size:14px;color:var(--gray-500);opacity:0;animation:fadeUp .8s 1.1s forwards">
+      KustodyFi Co., Ltd. &nbsp;|&nbsp; inwoo.kang@kustodyfi.com
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- Navigation -->
+<div class="nav-arrows">
+  <button class="nav-btn" onclick="prevSlide()">&#8592;</button>
+  <button class="nav-btn" onclick="nextSlide()">&#8594;</button>
+</div>
+<div class="slide-counter" id="slideCounter">1 / 12</div>
+<div class="keyboard-hint"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> 또는 클릭으로 이동</div>
+
+<script>
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide');
+  const totalSlides = slides.length;
+  const progressBar = document.getElementById('progressBar');
+  const slideCounter = document.getElementById('slideCounter');
+  let isTransitioning = false;
+
+  function updateProgress() {
+    progressBar.style.width = ((currentSlide) / (totalSlides - 1) * 100) + '%';
+    slideCounter.textContent = (currentSlide + 1) + ' / ' + totalSlides;
+  }
+
+  function animateElements(slide) {
+    const els = slide.querySelectorAll('.tl-item,.pain-point,.benefit-point,.quote-card');
+    els.forEach(el => {
+      el.classList.remove('animated');
+      const delay = parseInt(el.getAttribute('data-delay') || '0');
+      setTimeout(() => el.classList.add('animated'), delay + 200);
+    });
+  }
+
+  function goToSlide(index) {
+    if (index < 0 || index >= totalSlides || isTransitioning) return;
+    isTransitioning = true;
+    const old = slides[currentSlide], next = slides[index];
+    if (index > currentSlide) { old.classList.add('exit-left'); old.classList.remove('active'); }
+    else { old.classList.remove('active','exit-left'); }
+    setTimeout(() => {
+      old.classList.remove('exit-left');
+      next.classList.add('active');
+      currentSlide = index;
+      updateProgress();
+      animateElements(next);
+      setTimeout(() => { isTransitioning = false; }, 400);
+    }, 100);
+  }
+
+  function nextSlide() { goToSlide(currentSlide + 1); }
+  function prevSlide() { goToSlide(currentSlide - 1); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+  });
+
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) { diff > 0 ? nextSlide() : prevSlide(); }
+  });
+
+  function switchPhase(btn, phaseId) {
+    const slide = btn.closest('.slide');
+    slide.querySelectorAll('.phase-tab').forEach(t => t.classList.remove('active-tab'));
+    btn.classList.add('active-tab');
+    slide.querySelectorAll('.phase-content').forEach(p => p.classList.remove('active-phase'));
+    document.getElementById(phaseId).classList.add('active-phase');
+    const phase = document.getElementById(phaseId);
+    const els = phase.querySelectorAll('.tl-item,.pain-point,.benefit-point,.quote-card');
+    els.forEach(el => {
+      el.classList.remove('animated');
+      const delay = parseInt(el.getAttribute('data-delay') || '0');
+      setTimeout(() => el.classList.add('animated'), delay + 100);
+    });
+  }
+
+  updateProgress();
+  animateElements(slides[0]);
+</script>
+</body>
+</html>

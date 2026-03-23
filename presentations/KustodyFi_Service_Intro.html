@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KustodyFi Service Introduction</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap');
+
+  :root {
+    --accent: #00D4AA;
+    --accent-dim: rgba(0, 212, 170, 0.15);
+    --accent-glow: rgba(0, 212, 170, 0.3);
+    --bg: #0a0e17;
+    --bg-card: #111827;
+    --bg-card-hover: #1a2332;
+    --text: #e8ecf1;
+    --text-dim: #8899aa;
+    --text-muted: #556677;
+    --border: rgba(255,255,255,0.06);
+    --danger: #ff4d6a;
+    --warn: #ffaa33;
+    --blue: #4d8bff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-snap-type: y mandatory;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+
+  body {
+    font-family: 'Noto Sans KR', 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .slide {
+    min-height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 80px;
+    scroll-snap-align: start;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide-inner {
+    max-width: 1200px;
+    width: 100%;
+    z-index: 2;
+  }
+
+  /* Slide counter */
+  .slide-counter {
+    position: fixed;
+    bottom: 28px;
+    right: 40px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--text-muted);
+    z-index: 100;
+    letter-spacing: 1px;
+  }
+
+  .nav-hint {
+    position: fixed;
+    bottom: 28px;
+    left: 40px;
+    font-size: 12px;
+    color: var(--text-muted);
+    z-index: 100;
+    opacity: 0.6;
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), #00ffcc);
+    z-index: 200;
+    transition: width 0.3s ease;
+  }
+
+  /* Typography */
+  h1 {
+    font-size: 3.2rem;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -1.5px;
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -1px;
+    margin-bottom: 12px;
+  }
+
+  h3 {
+    font-size: 1.35rem;
+    font-weight: 600;
+    line-height: 1.35;
+    margin-bottom: 8px;
+  }
+
+  .accent { color: var(--accent); }
+  .dim { color: var(--text-dim); }
+  .muted { color: var(--text-muted); }
+  .danger { color: var(--danger); }
+  .warn { color: var(--warn); }
+  .blue { color: var(--blue); }
+
+  .subtitle {
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: var(--text-dim);
+    margin-bottom: 32px;
+    line-height: 1.6;
+  }
+
+  .label {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    padding: 4px 12px;
+    border: 1px solid rgba(0,212,170,0.3);
+    border-radius: 4px;
+  }
+
+  /* Cards */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    transition: all 0.25s ease;
+  }
+
+  .card:hover {
+    border-color: rgba(0,212,170,0.2);
+    background: var(--bg-card-hover);
+  }
+
+  .card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+
+  .card p, .card li {
+    font-size: 0.92rem;
+    color: var(--text-dim);
+    line-height: 1.65;
+  }
+
+  .card-icon {
+    font-size: 1.6rem;
+    margin-bottom: 14px;
+    display: block;
+  }
+
+  .card-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--accent-dim);
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Code block */
+  .code-block {
+    background: #0d1117;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 24px 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: #c9d1d9;
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  .code-block .prompt { color: var(--accent); }
+  .code-block .comment { color: #546e7a; }
+  .code-block .string { color: #a5d6ff; }
+  .code-block .num { color: #ffaa33; }
+
+  /* Comparison table */
+  .compare-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .compare-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+  }
+
+  .compare-card.highlight {
+    border-color: var(--accent);
+    background: linear-gradient(135deg, rgba(0,212,170,0.05), rgba(0,212,170,0.02));
+    box-shadow: 0 0 30px rgba(0,212,170,0.08);
+  }
+
+  .compare-card h3 { font-size: 1rem; }
+  .compare-card p { font-size: 0.88rem; color: var(--text-dim); line-height: 1.6; }
+
+  .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .tag-green { background: rgba(0,212,170,0.15); color: var(--accent); }
+  .tag-red { background: rgba(255,77,106,0.15); color: var(--danger); }
+  .tag-blue { background: rgba(77,139,255,0.15); color: var(--blue); }
+  .tag-yellow { background: rgba(255,170,51,0.15); color: var(--warn); }
+
+  /* Pain point */
+  .pain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 28px; }
+
+  .pain-item {
+    background: rgba(255,77,106,0.04);
+    border: 1px solid rgba(255,77,106,0.12);
+    border-radius: 10px;
+    padding: 18px 22px;
+  }
+
+  .pain-item h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--danger);
+    margin-bottom: 4px;
+  }
+
+  .pain-item p {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+
+  .solution-box {
+    background: rgba(0,212,170,0.05);
+    border: 1px solid rgba(0,212,170,0.15);
+    border-radius: 10px;
+    padding: 18px 24px;
+  }
+
+  .solution-box p {
+    font-size: 0.92rem;
+    color: var(--text-dim);
+  }
+
+  /* Cover BG */
+  .cover-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 70% 40%, rgba(0,212,170,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 20% 70%, rgba(77,139,255,0.04) 0%, transparent 60%);
+    z-index: 0;
+  }
+
+  .grid-line {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 60px 60px;
+    z-index: 0;
+  }
+
+  /* Landscape chart */
+  .landscape {
+    position: relative;
+    width: 100%;
+    height: 420px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .landscape-axis-x, .landscape-axis-y {
+    position: absolute;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  .landscape-dot {
+    position: absolute;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 11.5px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: transform 0.2s;
+    cursor: default;
+  }
+
+  .landscape-dot:hover { transform: scale(1.08); }
+
+  .landscape-dot.kustodyfi {
+    background: var(--accent);
+    color: #0a0e17;
+    font-weight: 800;
+    font-size: 13px;
+    box-shadow: 0 0 24px rgba(0,212,170,0.4);
+    z-index: 10;
+  }
+
+  .landscape-dot.competitor {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-dim);
+  }
+
+  /* Stage timeline */
+  .stage-timeline {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    position: relative;
+  }
+
+  .stage-item {
+    padding: 28px;
+    border: 1px solid var(--border);
+    position: relative;
+  }
+
+  .stage-item:first-child { border-radius: 12px 0 0 12px; }
+  .stage-item:last-child { border-radius: 0 12px 12px 0; }
+
+  .stage-item.active {
+    background: rgba(0,212,170,0.05);
+    border-color: rgba(0,212,170,0.2);
+  }
+
+  /* Flow */
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    font-size: 0.92rem;
+  }
+
+  .flow-arrow {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .flow-box {
+    padding: 8px 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.88rem;
+    white-space: nowrap;
+  }
+
+  .flow-box.accent-box {
+    border-color: rgba(0,212,170,0.3);
+    background: rgba(0,212,170,0.06);
+  }
+
+  .divider {
+    width: 60px;
+    height: 2px;
+    background: var(--accent);
+    margin: 24px 0;
+  }
+
+  .bottom-note {
+    margin-top: 32px;
+    padding: 16px 24px;
+    background: rgba(0,212,170,0.04);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    font-size: 0.92rem;
+    color: var(--text-dim);
+  }
+
+  /* Command list */
+  .cmd-list {
+    list-style: none;
+    margin-top: 16px;
+  }
+
+  .cmd-list li {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 6px 0;
+    font-size: 0.9rem;
+  }
+
+  .cmd-list code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    background: rgba(0,212,170,0.08);
+    padding: 3px 10px;
+    border-radius: 5px;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  .cmd-list .desc {
+    color: var(--text-dim);
+  }
+
+  /* GTM funnel */
+  .gtm-stages {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+  }
+
+  .gtm-stage {
+    padding: 28px;
+    border: 1px solid var(--border);
+    text-align: center;
+    position: relative;
+  }
+
+  .gtm-stage:first-child { border-radius: 12px 0 0 12px; }
+  .gtm-stage:last-child { border-radius: 0 12px 12px 0; }
+
+  .gtm-stage h3 { font-size: 1rem; }
+  .gtm-stage p { font-size: 0.85rem; color: var(--text-dim); }
+
+  .gtm-arrow {
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--accent);
+    font-size: 1.2rem;
+    z-index: 5;
+  }
+
+  /* Cover special */
+  .cover-title {
+    font-size: 4.2rem;
+    font-weight: 900;
+    letter-spacing: -2.5px;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #ffffff 30%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 20px;
+  }
+
+  .cover-sub {
+    font-size: 1.35rem;
+    color: var(--text-dim);
+    font-weight: 400;
+    margin-bottom: 8px;
+  }
+
+  .cover-pills {
+    display: flex;
+    gap: 10px;
+    margin-top: 28px;
+    margin-bottom: 12px;
+  }
+
+  .cover-pill {
+    padding: 8px 20px;
+    background: rgba(0,212,170,0.08);
+    border: 1px solid rgba(0,212,170,0.2);
+    border-radius: 100px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+  }
+
+  .cover-deck {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin-top: 20px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* Contact */
+  .contact-block {
+    text-align: center;
+  }
+
+  .contact-block h1 {
+    font-size: 3.6rem;
+    background: linear-gradient(135deg, #fff 20%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+
+  .contact-tagline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+    color: var(--accent);
+    letter-spacing: 2px;
+    margin-bottom: 40px;
+  }
+
+  .contact-info {
+    font-size: 1rem;
+    color: var(--text-dim);
+    line-height: 2;
+  }
+
+  .contact-info a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .contact-info strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* 7 step pipeline */
+  .pipeline-steps {
+    display: flex;
+    gap: 4px;
+    margin: 16px 0;
+    flex-wrap: wrap;
+  }
+
+  .pipeline-step {
+    padding: 6px 14px;
+    background: rgba(0,212,170,0.06);
+    border: 1px solid rgba(0,212,170,0.15);
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .pipeline-step::after {
+    content: ' \2192';
+    margin-left: 4px;
+    opacity: 0.5;
+  }
+
+  .pipeline-step:last-child::after {
+    content: '';
+  }
+
+  /* Pillar cards for Slide 2 */
+  .pillar-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 32px 28px;
+    transition: all 0.25s ease;
+    border-top: 3px solid var(--accent);
+  }
+
+  .pillar-card:hover {
+    background: var(--bg-card-hover);
+    border-color: rgba(0,212,170,0.15);
+    transform: translateY(-2px);
+  }
+
+  .pillar-card h3 {
+    font-size: 1.15rem;
+    margin-bottom: 4px;
+  }
+
+  .pillar-card .pillar-sub {
+    font-size: 0.82rem;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+
+  .pillar-card ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .pillar-card li {
+    font-size: 0.88rem;
+    color: var(--text-dim);
+    padding: 4px 0;
+    padding-left: 16px;
+    position: relative;
+  }
+
+  .pillar-card li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 12px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0.5;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .slide { padding: 40px 28px; }
+    .grid-3, .compare-row, .stage-timeline, .gtm-stages { grid-template-columns: 1fr; }
+    .grid-2, .grid-4, .pain-grid { grid-template-columns: 1fr; }
+    h1 { font-size: 2.2rem; }
+    .cover-title { font-size: 2.8rem; }
+    .cover-pills { flex-wrap: wrap; }
+    .landscape { height: 500px; }
+    .pipeline-steps { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+<div class="slide-counter" id="slideCounter">01 / 15</div>
+<div class="nav-hint" id="navHint">&uarr; &darr; Arrow Keys or Click to Navigate</div>
+
+<!-- ============================================================ -->
+<!-- SLIDE 1: COVER -->
+<!-- ============================================================ -->
+<div class="slide" id="slide1">
+  <div class="cover-bg"></div>
+  <div class="grid-line"></div>
+  <div class="slide-inner" style="max-width:900px;">
+    <div class="cover-title">KustodyFi Services</div>
+    <div class="cover-sub">AI-native FX Treasury &amp; Execution Infrastructure</div>
+    <div class="cover-pills">
+      <div class="cover-pill">StableFX</div>
+      <div class="cover-pill">SEAL</div>
+      <div class="cover-pill">Chat</div>
+    </div>
+    <div class="cover-deck">서비스 소개서</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SLIDE 2: PLATFORM OVERVIEW -->
+<!-- ============================================================ -->
+<div class="slide" id="slide2">
+  <div class="slide-inner">
+    <span class="label">Platform Overview</span>
+    <h2>KustodyFi = <span class="accent">사람의 시장</span>을 AI Agent가<br>실행할 수 있게 만드는 <span class="accent">레일</span></h2>
+    <div class="divider"></div>
+    <div class="grid-3" style="margin-top:28px;">
+      <div class="pillar-card">
+        <h3>StableFX</h3>
+        <div class="pillar-sub">공정가치 산출 &middot; Pricing Plane</div>
+        <ul>
+          <li>기준가격 (Reference Rate)</li>
+          <li>이론가 계산</li>
+          <li>시장가 대비 투명화</li>
+          <li>최적 상품 가이드</li>
+        </ul>
+      </div>
+      <div class="pillar-card">
+        <h3>SEAL</h3>
+        <div class="pillar-sub">내부 통제 &middot; Control Plane</div>
+        <ul>
+          <li>실시간 라인 관리</li>
+          <li>거래 전 사전 검증</li>
+          <li>권한 / 정책 / 감사</li>
+          <li>정산 자동화</li>
+        </ul>
+      </div>
+      <div class="pillar-card">
+        <h3>Chat</h3>
+        <div class="pillar-sub">거래 플랫폼 &middot; Execution Plane</div>
+        <ul>
+          <li>주문 큐 &amp; 타임스탬프</li>
+          <li>기준시간 통일</li>
+          <li>CRM 통합</li>
+          <li>동시 비딩</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SLIDE 3: STABLEFX — PRICING PLANE -->
+<!-- ============================================================ -->
+<div class="slide" id="slide3">
+  <div class="slide-inner">
+    <span class="label">StableFX</span>
+    <h2>AI가 호출 가능한 <span class="accent">Pricing Plane</span></h2>
+    <p class="subtitle">사람이 가격을 만드는 시장에, 검증 가능한 기준가격을 설정합니다</p>
+    <div class="grid-4">
+      <div class="card">
+        <div class="card-num">1</div>
+        <h3>단일 Reference Rate</h3>
+        <p>인터뱅크 기반 기준금리 + Swap Point 이론가 제공. 시장 전체를 관통하는 하나의 기준.</p>
+      </div>
+      <div class="card">
+        <div class="card-num">2</div>
+        <h3>맞춤형 가격 계산</h3>
+        <p>기업별 funding cost 입력 &rarr; 실제 접근 가능한 이론가 도출. 내 조건에 맞는 가격.</p>
+      </div>
+      <div class="card">
+        <div class="card-num">3</div>
+        <h3>Swap vs Spot 비교</h3>
+        <p>전문가 없이도 금융공학적 판단이 가능한 대시보드. 어떤 상품이 유리한지 즉시 확인.</p>
+      </div>
+      <div class="card">
+        <div class="card-num">4</div>
+        <h3>프로그래머블 가격</h3>
+        <p>API로 이론가 배포 &rarr; AI Agent 연동 ready. 코드로 가격을 읽고, 판단하고, 실행.</p>
+      </div>
+    </div>
+    <div class="bottom-note">
+      StableFX는 <strong>'정보비대칭 해소 도구'</strong>가 아니라 <strong class="accent">'프로그래머블한 가격 레이어'</strong>입니다.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SLIDE 4: STABLEFX CLI DEMO -->
+<!-- ============================================================ -->
+<div class="slide" id="slide4">
+  <div class="slide-inner">
+    <span class="label">StableFX CLI</span>
+    <h2>터미널에서 바로 확인하는 <span class="accent">Reference Rate</span></h2>
+    <div class="grid-2" style="margin-top:24px; gap:28px; align-items:start;">
+      <div>
+        <div class="code-block"><span class="prompt">$</span> stablefx usdkrw
+
+<span class="comment">USDKRW Spot</span>
+<span class="comment">  Trade: 2026-03-21  Value Date: 2026-03-24</span>
+  Tenor    Maturity   Days         Bid         Ask    Mid(Val)
+  =====  ==========  =====  ==========  ==========  ==========
+   SPOT  2026-03-24      3  <span class="num">  1,485.30</span>  <span class="num">  1,485.40</span>  <span class="num">  1,485.40</span></div>
+        <div style="margin-top:16px; padding:12px 16px; background:rgba(77,139,255,0.06); border:1px solid rgba(77,139,255,0.15); border-radius:8px;">
+          <span style="font-size:0.85rem; color:var(--blue);">Slack bot 연동: <code style="background:rgba(77,139,255,0.12); padding:2px 8px; border-radius:4px; font-size:12px; color:var(--blue);">/stablefx usdkrw</code></span>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin-bottom:16px;">Available Commands</h3>
+        <ul class="cmd-list">
+          <li><code>stablefx usdkrw</code> <span class="desc">&mdash; mid price</span></li>
+          <li><code>stablefx usdkrw fwd 1M</code> <span class="desc">&mdash; forward outright</span></li>
+          <li><code>stablefx usdkrw termstructure</code> <span class="desc">&mdash; swap points term</span></li>
+          <li><code>stablefx usdkrw full</code> <span class="desc">&mdash; full structure + implied yields</span></li>
+          <li><code>stablefx usd df 4/16</code> <span class="desc">&mdash; discount factor</span></li>
+          <li><code>stablefx krw zrate 4/16</code> <span class="desc">&mdash; zero rate</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SLIDE 5: SEAL — CONTROL PLANE -->
+<!-- ============================================================ -->
+<div class="slide" id="slide5">
+  <div class="slide-inner">
+    <span class="label">SEAL</span>
+    <h2>AI Agent가 실행해도 되는 상태를 만드는 <span class="accent">Control Plane</span></h2>
+    <p class="subtitle">권한 &middot; 한도 &middot; 승인 &middot; 감사 증적이 코드에 내장돼야 AI에게 실행을 온전히 맡길 수 있습니다</p>
+    <div class="grid-4">
+      <div class="card">
+        <div class="card-num">1</div>
+        <h3>Policy Engine</h3>
+        <p>권한 &middot; 한도 &middot; 라인 자동 검증. Agent/Human 동일 룰 적용. 예외 없는 정책 실행.</p>
+      </div>
+      <div class="card">
+        <div class="card-num">2</div>
+        <h3>Audit Trail</h3>
+        <p>거래 전/중/후 감사 로그. 타임스탬프 &middot; 승인자 &middot; 변경이력. 완전한 추적 가능성.</p>
+      </div>
+      <div class="card">
+        <div class="card-num">3</div>
+        <h3>Dual Approval</h3>
+        <p>Human-in-the-Loop 다단계 승인. AI 자율실행 + 사람 최종 승인. 신뢰와 효율의 균형.</p>
+      </div>
+      <div class="card">
+        <div class="card-num">4</div>
+        <h3>Fail-closed</h3>
+        <p>기본값 = 차단. 허용은 명시적 승인만. Break-glass 비상 프로토콜 탑재.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SLIDE 6: EXECUTION CUSTODY -->
+<!-- ============================================================ -->
+<div class="slide" id="slide6">
+  <div class="slide-inner">
+    <span class="label">Execution Custody</span>
+    <h2>키 보관이 아니라 <span class="accent">실행 경로</span>를 통제합니다</h2>
+    <div class="compare-row" style="margin-top:28px;">
+      <div class="compare-card">
+        <span class="tag tag-yellow" style="margin-bottom:12px;">Legacy</span>
+        <h3 style="margin-top:8px;">Key Custody</h3>
+        <p style="margin-top:4px; margin-bottom:10px; font-size:0.8rem; color:var(--text-muted);">HSM Vault, BitGo</p>
+        <p>"키를 어떻게 <strong>보관</strong>하는가?"</p>
+        <p style="margin-top:10px;"><span class="danger" style="font-size:0.82rem; font-weight:600;">한계:</span> <span style="font-size:0.85rem; color:var(--text-dim);">키 접근하면 실행 통제 불가</span></p>
+      </div>
+      <div class="compare-card">
+        <span class="tag tag-blue" style="margin-bottom:12px;">Current</span>
+        <h3 style="margin-top:8px;">MPC Custody</h3>
+        <p style="margin-top:4px; margin-bottom:10px; font-size:0.8rem; color:var(--text-muted);">Fireblocks, Fordefi</p>
+        <p>"키를 어떻게 <strong>분산</strong>하는가?"</p>
+        <p style="margin-top:10px;"><span class="danger" style="font-size:0.82rem; font-weight:600;">한계:</span> <span style="font-size:0.85rem; color:var(--text-dim);">임계값 충족 = 서명 가능</span></p>
+      </div>
+      <div class="compare-card highlight">
+        <span class="tag tag-green" style="margin-bottom:12px;">KustodyFi</span>
+        <h3 style="margin-top:8px;">Execution Custody</h3>
+        <p style="margin-top:4px; margin-bottom:10px; font-size:0.8rem; color:var(--accent);">KustodyFi SEAL</p>
+        <p>"자산 이동 경로를 어떻게 <strong class="accent">통제</strong>하는가?"</p>
+      </div>
+    </div>
+    <div style="margin-top:8px;">
+      <p style="font-size:0.88rem; color:var(--text-dim); margin-bottom:12px;">7단계 결정론적 검증 파이프라인:</p>
+      <div class="pipeline-steps">
+        <span class="pipeline-step">Delegation</span>
+        <span class="pipeline-step">Policy</span>
+        <span class="pipeline-step">Risk</span>
+        <span class="pipeline-step">Simulation</span>
+        <span class="pipeline-step">Mandate</span>
+        <span class="pipeline-step">Billing</span>
+        <span class="pipeline-step">Evidence</span>
+      </div>
+    </div>
+    <div class="bottom-note" style="margin-top:24px;">
+      MPC는 <strong>Key</strong>를 분산합니다. Execution Custody는 <strong class="accent">Execution Gate</strong>를 독점합니다.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SLIDE 7: PAIN POINT — BUY-SIDE -->
+<!-- ============================================================ -->
+<div class="slide" id="slide7">
+  <div class="slide-inner">
+    <span class="label">Pain Point &mdash; Buy-side</span>
+    <h2>기업이 겪는 <span class="danger">FX 거래의 구조적 문제</span></h2>
+    <div class="pain-grid" style="margin-top:24px;">
+      <div class="pain-item">
+        <h4>기준가격 통일 불가</h4>
+        <p>은행마다 기준이 다르고, 이론가를 알 수 없음</p>
+      </div>
+      <div class="pain-item">
+        <h4>비딩 비교 불가</h4>
+        <p>시간/매체 제각각, 감사 대응 복잡</p>
+      </div>
+      <div class="pain-item">
+        <h4>비효율적 거래</h4>
+        <p>Swap 대신 Spot 매도+매수 따로 실행</p>
+      </div>
+      <div class="pain-item">
+        <h4>전문인력 수급 어려움</h4>
+        <p>금융공학적 판단 자체가 불가능</p>
+      </div>
+    </div>
+    <div class="solution-box">
+      <p><strong class="accent">Solution &rarr;</strong> StableFX <strong>단일 Reference Rate</strong> + Chat <strong>동시 비딩</strong> + <strong>최적 상품 가이드</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SLIDE 8: PAIN POINT — BROKER -->
+<!-- ============================================================ -->
+<div class="slide" id="slide8">
+  <div class="slide-inner">
+    <span class="label">Pain Point &mdash; Broker</span>
+    <h2>브로커가 겪는 <span class="danger">운영 리스크</span></h2>
+    <div class="pain-grid" style="margin-top:24px;">
+      <div class="pain-item">
+        <h4>라인 관리 지옥</h4>
+        <p>은행별 거래한도가 매일 바뀜</p>
+      </div>
+      <div class="pain-item">
+        <h4>주문 우선순위 불명확</h4>
+        <p>채팅 기반, 기준시간 없음</p>
+      </div>
+      <div class="pain-item">
+        <h4>CRM-채팅 분리</h4>
+        <p>각각 따로 관리, 수동 입력 필요</p>
+      </div>
+      <div class="pain-item">
+        <h4>라인 미통보 리스크</h4>
+        <p>거래 후 "안 됨" 통보 &rarr; 책임 이슈</p>
+      </div>
+    </div>
+    <div class="solution-box">
+      <p><strong class="accent">Solution &rarr;</strong> SEAL <strong>실시간 라인 관리</strong> + Chat <strong>타임스탬프/큐 관리</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SLIDE 9: PAIN POINT — SELL-SIDE -->
+<!-- ============================================================ -->
+<div class="slide" id="slide9">
+  <div class="slide-inner">
+    <span class="label">Pain Point &mdash; Sell-side</span>
+    <h2>은행이 겪는 <span class="danger">비효율과 리스크</span></h2>
+    <div class="pain-grid" style="margin-top:24px;">
+      <div class="pain-item">
+        <h4>동시다발적 고객 대응 어려움</h4>
+        <p>인력 기반 처리 한계</p>
+      </div>
+      <div class="pain-item">
+        <h4>기준 가격 불일치</h4>
+        <p>Margin에 대한 소모적 논쟁</p>
+      </div>
+      <div class="pain-item">
+        <h4>라인체크 리스크</h4>
+        <p>거래 후 재확인 &rarr; 책임 이슈 발생</p>
+      </div>
+      <div class="pain-item">
+        <h4>Settlement 인력 과다</h4>
+        <p>수작업 정산 &rarr; Human Error 빈발</p>
+      </div>
+    </div>
+    <div class="solution-box">
+      <p><strong class="accent">Solution &rarr;</strong> Chat <strong>주문 큐</strong> + StableFX <strong>스프레드 가시화</strong> + SEAL <strong>정산 자동화</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SLIDE 10: GTM 전략 -->
+<!-- ============================================================ -->
+<div class="slide" id="slide10">
+  <div class="slide-inner">
+    <span class="label">Go-to-Market</span>
+    <h2>GTM 전략: <span class="accent">무료로 유입, SaaS로 전환, 거래로 확장</span></h2>
+    <div class="divider"></div>
+    <div class="gtm-stages" style="margin-top:24px;">
+      <div class="gtm-stage" style="background:rgba(0,212,170,0.03);">
+        <span class="gtm-arrow">&rarr;</span>
+        <div class="card-num" style="margin:0 auto 12px;">1</div>
+        <h3>StableFX PLG Calculator</h3>
+        <p style="margin-top:8px;">FX 계산기 무료 제공<br>&rarr; 자연 유입</p>
+        <div style="margin-top:14px;">
+          <span class="tag tag-green">Low CAC</span>
+          <span class="tag tag-green" style="margin-left:4px;">Scalable</span>
+        </div>
+      </div>
+      <div class="gtm-stage" style="background:rgba(77,139,255,0.03);">
+        <span class="gtm-arrow">&rarr;</span>
+        <div class="card-num" style="margin:0 auto 12px; background:rgba(77,139,255,0.15); color:var(--blue);">2</div>
+        <h3>TMS 온보딩 + Direct Sales</h3>
+        <p style="margin-top:8px;">Cash Schedule 등록<br>&rarr; SaaS 유료 전환</p>
+        <div style="margin-top:14px;">
+          <span class="tag tag-blue">CBO Direct</span>
+          <span class="tag tag-blue" style="margin-left:4px;">회계법인 채널</span>
+        </div>
+      </div>
+      <div class="gtm-stage" style="background:rgba(255,170,51,0.03);">
+        <div class="card-num" style="margin:0 auto 12px; background:rgba(255,170,51,0.15); color:var(--warn);">3</div>
+        <h3>Multi-bank RFQ</h3>
+        <p style="margin-top:8px;">은행/증권사 경쟁 호가<br>&rarr; 거래 실행</p>
+        <div style="margin-top:14px;">
+          <span class="tag tag-yellow">Transaction Fee</span>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-note" style="margin-top:28px; text-align:center; font-size:1.05rem; font-weight:600;">
+      <span class="accent">무료</span>로 유입 &rarr; <span class="blue">SaaS</span>로 전환 &rarr; <span class="warn">거래</span>로 확장
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SLIDE 11: TMS → EXCHANGE -->
+<!-- ============================================================ -->
+<div class="slide" id="slide11">
+  <div class="slide-inner">
+    <span class="label">TMS &rarr; Exchange</span>
+    <h2>TMS 인프라가 <span class="accent">거래소의 전제조건</span>입니다</h2>
+    <div class="divider"></div>
+    <div style="margin-top:20px;">
+      <div class="flow-row">
+        <div class="flow-box accent-box">StableFX</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-box">거래소 Mark Price &middot; 정산 기준가</div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-box accent-box">SEAL</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-box">LP/고객 리스크 관리 &middot; Compliance</div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-box accent-box">Chat + OMS</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-box">오더북 유동성 설계</div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-box accent-box">고객 Pool</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-box">거래소 Day 1 Taker 물량</div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-box accent-box">Cash Schedule</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-box">선물 계약 설계 (tenor &middot; size &middot; CCY)</div>
+      </div>
+    </div>
+    <div class="bottom-note" style="margin-top:28px;">
+      TMS 없이 거래소를 열면 <strong class="danger">빈 오더북</strong>. 고객 &middot; 데이터 &middot; 가격 인프라가 거래소 <strong class="accent">Day 1의 전제조건</strong>입니다.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SLIDE 12: ON-CHAIN FUTURES -->
+<!-- ============================================================ -->
+<div class="slide" id="slide12">
+  <div class="slide-inner">
+    <span class="label">On-chain Futures</span>
+    <h2>기존 NDF의 구조적 한계를 <span class="accent">On-chain</span>으로 해결</h2>
+    <div class="grid-2" style="margin-top:24px; gap:24px;">
+      <div>
+        <h3 style="margin-bottom:16px;"><span class="danger">Problem:</span> Bilateral OTC, CLS 밖</h3>
+        <div class="card" style="margin-bottom:12px;">
+          <p style="font-size:0.9rem; color:var(--text-dim);">CLS = <strong>18개 통화</strong>만 PvP 지원<br>KRW / INR / TWD <span class="danger">미지원</span></p>
+        </div>
+        <div class="card">
+          <p style="font-size:0.9rem; color:var(--text-dim);"><strong class="warn">$2.2T/day</strong> = Settlement Risk 노출<br>Counterparty 리스크 상존</p>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin-bottom:16px;"><span class="accent">Solution:</span> KustodyFi On-chain Futures</h3>
+        <div class="card" style="border-color:rgba(0,212,170,0.15); margin-bottom:8px;">
+          <p style="font-size:0.9rem;"><span class="accent" style="font-weight:600;">Collateralized Settlement</span><br><span class="dim">LP가 stablecoin margin을 smart contract에 lock</span></p>
+        </div>
+        <div class="card" style="border-color:rgba(0,212,170,0.15); margin-bottom:8px;">
+          <p style="font-size:0.9rem;"><span class="accent" style="font-weight:600;">T+0 Instant Settlement</span><br><span class="dim">정산 즉시 발생, 대기 없음</span></p>
+        </div>
+        <div class="card" style="border-color:rgba(0,212,170,0.15); margin-bottom:8px;">
+          <p style="font-size:0.9rem;"><span class="accent" style="font-weight:600;">On-chain Transparency</span><br><span class="dim">모든 포지션 공개, 검증 가능</span></p>
+        </div>
+        <div class="card" style="border-color:rgba(0,212,170,0.15);">
+          <p style="font-size:0.9rem;"><span class="accent" style="font-weight:600;">Capital Efficiency</span><br><span class="dim">통합 margin pool로 자본 효율 극대화</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SLIDE 13: 확장 전략 -->
+<!-- ============================================================ -->
+<div class="slide" id="slide13">
+  <div class="slide-inner">
+    <span class="label">Expansion Strategy</span>
+    <h2>한번 구축한 레일 위에 <span class="accent">자산만 바꾸면</span> 확장</h2>
+    <div class="stage-timeline" style="margin-top:28px;">
+      <div class="stage-item active">
+        <span class="tag tag-green" style="margin-bottom:12px;">Stage 1</span>
+        <h3>FX Forward / NDF</h3>
+        <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:8px;">2026 &mdash; 2028</p>
+        <p style="font-size:0.88rem; color:var(--text-dim);">StableFX + SEAL + Chat<br>KRW NDF &rarr; C1A 확장</p>
+      </div>
+      <div class="stage-item">
+        <span class="tag tag-blue" style="margin-bottom:12px;">Stage 2</span>
+        <h3>채권 / RP / 머니마켓</h3>
+        <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:8px;">2028 &mdash; 2029</p>
+        <p style="font-size:0.88rem; color:var(--text-dim);">같은 엔진, 자산 클래스만 추가</p>
+      </div>
+      <div class="stage-item">
+        <span class="tag tag-yellow" style="margin-bottom:12px;">Stage 3</span>
+        <h3>AI Agent 실행 인프라</h3>
+        <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:8px;">2029+</p>
+        <p style="font-size:0.88rem; color:var(--text-dim);">Programmable FX 표준<br>Multi-asset Treasury</p>
+      </div>
+    </div>
+    <div class="bottom-note" style="margin-top:28px;">
+      한번 구축한 레일 위에 자산만 바꾸면 확장 <strong class="accent">한계비용 &asymp; 0</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SLIDE 14: COMPETITIVE LANDSCAPE -->
+<!-- ============================================================ -->
+<div class="slide" id="slide14">
+  <div class="slide-inner">
+    <span class="label">Competitive Landscape</span>
+    <h2>이 공백에 있던 플레이어는 <span class="accent">없었습니다</span></h2>
+    <div class="landscape" style="margin-top:24px;">
+      <!-- Axes -->
+      <div class="landscape-axis-x" style="bottom:12px; left:50%; transform:translateX(-50%);">Single Bank / Closed &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&larr;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&rarr;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Multi-venue / On-chain</div>
+      <div class="landscape-axis-y" style="left:14px; top:50%; transform:translateY(-50%) rotate(-90deg); white-space:nowrap;">부분 커버 &nbsp;&larr;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&rarr;&nbsp; Full Stack</div>
+
+      <!-- Grid lines -->
+      <div style="position:absolute; left:50%; top:0; bottom:0; width:1px; background:rgba(255,255,255,0.04);"></div>
+      <div style="position:absolute; top:50%; left:0; right:0; height:1px; background:rgba(255,255,255,0.04);"></div>
+
+      <!-- Competitors -->
+      <div class="landscape-dot competitor" style="left:18%; top:65%;">360T / FXall</div>
+      <div class="landscape-dot competitor" style="left:22%; top:72%;">BGC / TP ICAP</div>
+      <div class="landscape-dot competitor" style="left:25%; top:28%;">Kyriba / SAP TRM</div>
+      <div class="landscape-dot competitor" style="left:68%; top:62%;">Fireblocks</div>
+      <div class="landscape-dot competitor" style="left:75%; top:70%;">dYdX / Hyperliquid</div>
+      <div class="landscape-dot competitor" style="left:45%; top:52%;">핀테크</div>
+
+      <!-- KustodyFi -->
+      <div class="landscape-dot kustodyfi" style="right:12%; top:18%;">KustodyFi</div>
+
+      <!-- Gap indicator -->
+      <div style="position:absolute; right:10%; top:32%; width:120px; text-align:center; font-size:11px; color:var(--accent); opacity:0.7; font-weight:500; letter-spacing:1px;">THE GAP</div>
+      <svg style="position:absolute; right:14%; top:25%; opacity:0.15;" width="80" height="80" viewBox="0 0 80 80" fill="none">
+        <circle cx="40" cy="40" r="38" stroke="var(--accent)" stroke-width="2" stroke-dasharray="6 4"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SLIDE 15: CONTACT -->
+<!-- ============================================================ -->
+<div class="slide" id="slide15">
+  <div class="cover-bg"></div>
+  <div class="grid-line"></div>
+  <div class="slide-inner">
+    <div class="contact-block">
+      <h1>KustodyFi</h1>
+      <div class="contact-tagline">Code the Law. Move the Money.</div>
+      <div class="divider" style="margin:28px auto;"></div>
+      <div class="contact-info">
+        <p><strong>강인우 (Inwoo Kang)</strong> &nbsp;|&nbsp; CEO &amp; Co-Founder</p>
+        <p><a href="mailto:inwoo.kang@kustodyfi.com">inwoo.kang@kustodyfi.com</a></p>
+        <p><a href="mailto:sales@kustodyfi.com">sales@kustodyfi.com</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  const counter = document.getElementById('slideCounter');
+  const progressBar = document.getElementById('progressBar');
+  const navHint = document.getElementById('navHint');
+
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  function updateUI() {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    progressBar.style.width = progress + '%';
+
+    let currentSlide = 1;
+    slides.forEach(function(slide, i) {
+      const rect = slide.getBoundingClientRect();
+      if (rect.top <= window.innerHeight * 0.5) {
+        currentSlide = i + 1;
+      }
+    });
+    counter.textContent = pad(currentSlide) + ' / ' + pad(total);
+
+    if (scrollTop > 100) {
+      navHint.style.opacity = '0';
+    } else {
+      navHint.style.opacity = '0.6';
+    }
+  }
+
+  window.addEventListener('scroll', updateUI, { passive: true });
+  updateUI();
+
+  document.addEventListener('keydown', function(e) {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    let currentIndex = 0;
+    slides.forEach(function(slide, i) {
+      if (slide.getBoundingClientRect().top <= window.innerHeight * 0.5) {
+        currentIndex = i;
+      }
+    });
+
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') {
+      e.preventDefault();
+      if (currentIndex < total - 1) {
+        slides[currentIndex + 1].scrollIntoView({ behavior: 'smooth' });
+      }
+    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      if (currentIndex > 0) {
+        slides[currentIndex - 1].scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  });
+
+  // Click navigation (click on lower half = next, upper half = prev)
+  document.addEventListener('click', function(e) {
+    // Don't navigate on link clicks
+    if (e.target.closest('a')) return;
+
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    let currentIndex = 0;
+    slides.forEach(function(slide, i) {
+      if (slide.getBoundingClientRect().top <= window.innerHeight * 0.5) {
+        currentIndex = i;
+      }
+    });
+
+    if (e.clientY > window.innerHeight * 0.5) {
+      if (currentIndex < total - 1) {
+        slides[currentIndex + 1].scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      if (currentIndex > 0) {
+        slides[currentIndex - 1].scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>

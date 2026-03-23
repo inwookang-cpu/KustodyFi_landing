@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KustodyFi × SMBS(서울외국환중개) — 파트너십 제안</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --primary-light: #dbeafe;
+    --accent: #7c3aed;
+    --accent-light: #ede9fe;
+    --success: #059669;
+    --success-light: #d1fae5;
+    --warning: #d97706;
+    --warning-light: #fef3c7;
+    --danger: #dc2626;
+    --danger-light: #fee2e2;
+    --dark: #0f172a;
+    --gray-900: #1e293b;
+    --gray-700: #334155;
+    --gray-500: #64748b;
+    --gray-300: #cbd5e1;
+    --gray-100: #f1f5f9;
+    --white: #ffffff;
+    --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-2: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    --gradient-3: linear-gradient(135deg, #059669 0%, #2563eb 100%);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', 'Inter', sans-serif;
+    background: var(--dark);
+    color: var(--white);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* ===== PROGRESS BAR ===== */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 4px;
+    background: var(--gradient-2);
+    z-index: 1000;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* ===== SLIDE COUNTER ===== */
+  .slide-counter {
+    position: fixed;
+    bottom: 30px;
+    right: 40px;
+    font-size: 14px;
+    color: var(--gray-500);
+    font-weight: 500;
+    z-index: 100;
+    font-family: 'Inter', monospace;
+  }
+
+  /* ===== NAV ARROWS ===== */
+  .nav-arrows {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 16px;
+    z-index: 100;
+  }
+  .nav-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.05);
+    color: var(--white);
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    backdrop-filter: blur(10px);
+  }
+  .nav-btn:hover {
+    background: rgba(255,255,255,0.15);
+    border-color: rgba(255,255,255,0.3);
+    transform: scale(1.1);
+  }
+
+  /* ===== SLIDES CONTAINER ===== */
+  .slides-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+  }
+
+  .slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateX(80px);
+    transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    padding: 60px 80px;
+  }
+  .slide.active {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+  .slide.exit-left {
+    opacity: 0;
+    transform: translateX(-80px);
+  }
+
+  .slide-content {
+    max-width: 1200px;
+    width: 100%;
+  }
+
+  /* ===== COVER SLIDE ===== */
+  .cover-slide {
+    background: radial-gradient(ellipse at 30% 50%, rgba(37,99,235,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 50%, rgba(124,58,237,0.1) 0%, transparent 60%),
+                var(--dark);
+  }
+  .cover-logo {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 6px;
+    color: var(--primary);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+  }
+  .cover-title {
+    font-size: 52px;
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.5s forwards;
+  }
+  .cover-title .highlight {
+    background: var(--gradient-2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--gray-500);
+    font-weight: 400;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.7s forwards;
+  }
+  .cover-flow {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.9s forwards;
+  }
+  .cover-flow-item {
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .flow-stage1 { background: rgba(5,150,105,0.15); color: #6ee7b7; border: 1px solid rgba(5,150,105,0.3); }
+  .flow-stage2 { background: rgba(37,99,235,0.15); color: #93c5fd; border: 1px solid rgba(37,99,235,0.3); }
+  .flow-stage3 { background: rgba(124,58,237,0.15); color: #c4b5fd; border: 1px solid rgba(124,58,237,0.3); }
+  .flow-arrow { color: var(--gray-500); font-size: 24px; }
+  .cover-meta {
+    margin-top: 48px;
+    font-size: 13px;
+    color: var(--gray-500);
+    opacity: 0;
+    animation: fadeUp 0.8s 1.1s forwards;
+  }
+
+  /* ===== SECTION STYLES ===== */
+  .overview-slide {
+    background: radial-gradient(ellipse at 50% 0%, rgba(37,99,235,0.08) 0%, transparent 50%), var(--dark);
+  }
+  .section-label {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    color: var(--primary);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-size: 42px;
+    font-weight: 800;
+    margin-bottom: 40px;
+    line-height: 1.3;
+  }
+  .section-title-sm {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 32px;
+    line-height: 1.3;
+  }
+
+  /* ===== OVERVIEW CARDS ===== */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .overview-grid.cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .overview-grid.cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .overview-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 32px 28px;
+    transition: all 0.4s;
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  .overview-card.animated { opacity: 1; transform: translateY(0); }
+  .overview-card:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); transform: translateY(-4px) !important; }
+  .card-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+  .card-icon.red { background: rgba(220,38,38,0.15); }
+  .card-icon.blue { background: rgba(37,99,235,0.15); }
+  .card-icon.purple { background: rgba(124,58,237,0.15); }
+  .card-icon.green { background: rgba(5,150,105,0.15); }
+  .card-icon.orange { background: rgba(217,119,6,0.15); }
+  .card-number {
+    font-size: 36px;
+    font-weight: 900;
+    margin-bottom: 8px;
+    background: var(--gradient-2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .card-number.green-num {
+    background: var(--gradient-3);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .card-title { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+  .card-desc { font-size: 14px; color: var(--gray-500); line-height: 1.7; }
+
+  /* ===== TWO COLUMN ===== */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  .col-panel {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    padding: 24px;
+  }
+  .col-panel.border-green { border-left: 3px solid var(--success); }
+  .col-panel.border-blue { border-left: 3px solid var(--primary); }
+  .col-panel.border-purple { border-left: 3px solid var(--accent); }
+  .col-panel.border-red { border-left: 3px solid var(--danger); }
+  .col-panel.border-orange { border-left: 3px solid var(--warning); }
+  .col-panel-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .col-panel-body {
+    font-size: 13px;
+    color: var(--gray-300);
+    line-height: 1.8;
+  }
+  .col-panel-body ul {
+    list-style: none;
+    padding: 0;
+  }
+  .col-panel-body li {
+    padding: 4px 0;
+    padding-left: 16px;
+    position: relative;
+  }
+  .col-panel-body li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--gray-500);
+  }
+
+  /* ===== DATA TABLE ===== */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 13px;
+  }
+  .data-table th {
+    text-align: left;
+    padding: 10px 14px;
+    background: rgba(37,99,235,0.1);
+    color: #93c5fd;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .data-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--gray-300);
+  }
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .data-table tr.highlight-row td {
+    background: rgba(124,58,237,0.08);
+    color: #c4b5fd;
+    font-weight: 600;
+  }
+
+  /* ===== FLOW DIAGRAM ===== */
+  .flow-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+  }
+  .flow-box {
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  .flow-box.animated { opacity: 1; transform: scale(1); }
+  .flow-box.green { background: rgba(5,150,105,0.15); color: #6ee7b7; border: 1px solid rgba(5,150,105,0.3); }
+  .flow-box.blue { background: rgba(37,99,235,0.15); color: #93c5fd; border: 1px solid rgba(37,99,235,0.3); }
+  .flow-box.purple { background: rgba(124,58,237,0.15); color: #c4b5fd; border: 1px solid rgba(124,58,237,0.3); }
+  .flow-box.orange { background: rgba(217,119,6,0.15); color: #fcd34d; border: 1px solid rgba(217,119,6,0.3); }
+  .flow-box.dark { background: rgba(100,116,139,0.15); color: #94a3b8; border: 1px solid rgba(100,116,139,0.3); }
+  .flow-arrow-icon { color: var(--gray-500); font-size: 18px; opacity: 0; }
+  .flow-arrow-icon.animated { opacity: 1; }
+
+  /* ===== BENEFIT / PAIN POINTS ===== */
+  .benefit-points {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .benefit-point {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    border-left: 3px solid;
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  .benefit-point.animated { opacity: 1; transform: translateX(0); }
+  .benefit-point.blue {
+    color: #93c5fd;
+    background: rgba(37,99,235,0.08);
+    border-left-color: rgba(37,99,235,0.4);
+  }
+  .benefit-point.green {
+    color: #6ee7b7;
+    background: rgba(5,150,105,0.08);
+    border-left-color: rgba(5,150,105,0.4);
+  }
+  .benefit-point.purple {
+    color: #c4b5fd;
+    background: rgba(124,58,237,0.08);
+    border-left-color: rgba(124,58,237,0.4);
+  }
+  .benefit-point.orange {
+    color: #fcd34d;
+    background: rgba(217,119,6,0.08);
+    border-left-color: rgba(217,119,6,0.4);
+  }
+  .benefit-point.red {
+    color: #fca5a5;
+    background: rgba(220,38,38,0.08);
+    border-left-color: rgba(220,38,38,0.4);
+  }
+
+  /* ===== BOTTOM MESSAGE BOX ===== */
+  .bottom-msg {
+    margin-top: 28px;
+    padding: 16px 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.8s forwards;
+  }
+  .bottom-msg.blue-msg {
+    background: rgba(37,99,235,0.08);
+    border: 1px solid rgba(37,99,235,0.2);
+    color: #93c5fd;
+  }
+  .bottom-msg.purple-msg {
+    background: rgba(124,58,237,0.08);
+    border: 1px solid rgba(124,58,237,0.2);
+    color: #c4b5fd;
+  }
+  .bottom-msg.green-msg {
+    background: rgba(5,150,105,0.08);
+    border: 1px solid rgba(5,150,105,0.2);
+    color: #6ee7b7;
+  }
+
+  /* ===== BIG NUMBER ===== */
+  .big-number-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 28px;
+  }
+  .big-number-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 28px 24px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .big-number-card.animated { opacity: 1; transform: translateY(0); }
+  .big-num {
+    font-size: 40px;
+    font-weight: 900;
+    background: var(--gradient-2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+    font-family: 'Inter', sans-serif;
+  }
+  .big-num-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-300);
+    margin-bottom: 6px;
+  }
+  .big-num-desc {
+    font-size: 12px;
+    color: var(--gray-500);
+    line-height: 1.5;
+  }
+
+  /* ===== TIMELINE HORIZONTAL ===== */
+  .h-timeline {
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+    margin: 20px 0;
+  }
+  .h-timeline-item {
+    flex: 1;
+    padding: 16px;
+    border-top: 3px solid;
+    position: relative;
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  .h-timeline-item.animated { opacity: 1; transform: translateY(0); }
+  .h-timeline-item::after {
+    content: '→';
+    position: absolute;
+    right: -8px;
+    top: 16px;
+    color: var(--gray-500);
+    font-size: 16px;
+  }
+  .h-timeline-item:last-child::after { display: none; }
+  .h-timeline-item.green-border { border-top-color: var(--success); }
+  .h-timeline-item.blue-border { border-top-color: var(--primary); }
+  .h-timeline-item.purple-border { border-top-color: var(--accent); }
+  .h-timeline-item.orange-border { border-top-color: var(--warning); }
+  .h-timeline-week {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 6px;
+    font-family: 'Inter', monospace;
+  }
+  .h-timeline-text {
+    font-size: 13px;
+    color: var(--gray-300);
+    line-height: 1.5;
+  }
+
+  /* ===== ARCHITECTURE DIAGRAM ===== */
+  .arch-diagram {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+    margin: 20px 0;
+  }
+  .arch-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .arch-box {
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    min-width: 200px;
+  }
+  .arch-box.kf {
+    background: rgba(37,99,235,0.15);
+    color: #93c5fd;
+    border: 1px solid rgba(37,99,235,0.3);
+  }
+  .arch-box.smbs {
+    background: rgba(5,150,105,0.15);
+    color: #6ee7b7;
+    border: 1px solid rgba(5,150,105,0.3);
+  }
+  .arch-box.exchange {
+    background: rgba(124,58,237,0.15);
+    color: #c4b5fd;
+    border: 1px solid rgba(124,58,237,0.3);
+  }
+  .arch-box.gov {
+    background: rgba(217,119,6,0.15);
+    color: #fcd34d;
+    border: 1px solid rgba(217,119,6,0.3);
+  }
+  .arch-arrow-v {
+    font-size: 24px;
+    color: var(--gray-500);
+    text-align: center;
+  }
+
+  /* ===== PHASE CARDS ===== */
+  .phase-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .phase-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 28px 24px;
+    border-top: 3px solid;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .phase-card.animated { opacity: 1; transform: translateY(0); }
+  .phase-card.green-top { border-top-color: var(--success); }
+  .phase-card.blue-top { border-top-color: var(--primary); }
+  .phase-card.purple-top { border-top-color: var(--accent); }
+  .phase-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    font-family: 'Inter', monospace;
+  }
+  .phase-label.green { color: #6ee7b7; }
+  .phase-label.blue { color: #93c5fd; }
+  .phase-label.purple { color: #c4b5fd; }
+  .phase-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .phase-desc {
+    font-size: 13px;
+    color: var(--gray-500);
+    line-height: 1.7;
+  }
+
+  /* ===== Q&A CARDS ===== */
+  .qa-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .qa-item {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    padding: 20px 24px;
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  .qa-item.animated { opacity: 1; transform: translateY(0); }
+  .qa-question {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--white);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .qa-answer {
+    font-size: 13px;
+    color: var(--gray-300);
+    line-height: 1.8;
+    padding-left: 24px;
+  }
+
+  /* ===== ACTION ITEMS ===== */
+  .action-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .action-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 20px 24px;
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  .action-item.animated { opacity: 1; transform: translateX(0); }
+  .action-num {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: var(--gradient-2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .action-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--gray-300);
+  }
+  .action-text strong {
+    color: var(--white);
+  }
+
+  /* ===== TEAM BAR ===== */
+  .team-bar {
+    margin-top: 24px;
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    font-size: 12px;
+    color: var(--gray-500);
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 0.6s 1.0s forwards;
+  }
+  .team-bar strong {
+    color: var(--gray-300);
+  }
+
+  /* ===== RISK VS UPSIDE ===== */
+  .risk-panel {
+    background: rgba(220,38,38,0.04);
+    border: 1px solid rgba(220,38,38,0.15);
+  }
+  .upside-panel {
+    background: rgba(5,150,105,0.04);
+    border: 1px solid rgba(5,150,105,0.15);
+  }
+
+  /* ===== CLOSING SLIDE ===== */
+  .closing-slide {
+    background: radial-gradient(ellipse at 50% 50%, rgba(37,99,235,0.12) 0%, transparent 60%), var(--dark);
+    text-align: center;
+  }
+  .closing-title {
+    font-size: 48px;
+    font-weight: 900;
+    margin-bottom: 20px;
+    background: var(--gradient-2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+  }
+  .closing-desc {
+    font-size: 18px;
+    color: var(--gray-500);
+    max-width: 600px;
+    margin: 0 auto 40px;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.5s forwards;
+  }
+  .closing-stats {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.7s forwards;
+  }
+  .stat-item { text-align: center; }
+  .stat-number {
+    font-size: 42px;
+    font-weight: 800;
+    background: var(--gradient-2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .stat-label { font-size: 14px; color: var(--gray-500); margin-top: 4px; }
+  .closing-contact {
+    margin-top: 48px;
+    font-size: 14px;
+    color: var(--gray-500);
+    opacity: 0;
+    animation: fadeUp 0.8s 0.9s forwards;
+  }
+
+  /* ===== SCROLL AREA ===== */
+  .scroll-area {
+    max-height: calc(100vh - 220px);
+    overflow-y: auto;
+    padding-right: 8px;
+  }
+  .scroll-area::-webkit-scrollbar { width: 4px; }
+  .scroll-area::-webkit-scrollbar-track { background: transparent; }
+  .scroll-area::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+  /* ===== KEYBOARD HINT ===== */
+  .keyboard-hint {
+    position: fixed;
+    bottom: 30px;
+    left: 40px;
+    font-size: 12px;
+    color: var(--gray-500);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  kbd {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    font-family: 'Inter', monospace;
+    font-size: 11px;
+  }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.5); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* ===== RESPONSIVE — TABLET ===== */
+  @media (max-width: 900px) {
+    .slide { padding: 40px 32px; }
+    .cover-title { font-size: 32px; }
+    .section-title { font-size: 28px; }
+    .section-title-sm { font-size: 24px; }
+    .overview-grid, .phase-grid, .big-number-grid { grid-template-columns: 1fr; }
+    .overview-grid.cols-4, .overview-grid.cols-2 { grid-template-columns: 1fr; }
+    .two-col { grid-template-columns: 1fr; }
+    .cover-flow { flex-wrap: wrap; }
+    .h-timeline { flex-direction: column; }
+    .h-timeline-item::after { display: none; }
+    .closing-stats { flex-wrap: wrap; gap: 32px; }
+    .closing-title { font-size: 32px; }
+    .arch-diagram .arch-row { flex-wrap: wrap; justify-content: center; }
+    .arch-box { min-width: 160px; font-size: 13px; padding: 12px 16px; }
+  }
+
+  /* ===== RESPONSIVE — MOBILE ===== */
+  @media (max-width: 480px) {
+    .slide { padding: 24px 16px; align-items: flex-start; padding-top: 40px; }
+    .slide-content { max-width: 100%; }
+
+    /* Cover */
+    .cover-logo { font-size: 12px; letter-spacing: 4px; margin-bottom: 20px; }
+    .cover-title { font-size: 24px; margin-bottom: 16px; }
+    .cover-subtitle { font-size: 15px; margin-bottom: 28px; }
+    .cover-flow { gap: 10px; }
+    .cover-flow-item { padding: 10px 16px; font-size: 12px; }
+    .flow-arrow { font-size: 16px; }
+    .cover-meta { margin-top: 28px; font-size: 11px; }
+
+    /* Section headers */
+    .section-label { font-size: 11px; letter-spacing: 3px; margin-bottom: 10px; }
+    .section-title { font-size: 22px; margin-bottom: 24px; }
+    .section-title-sm { font-size: 20px; margin-bottom: 20px; }
+
+    /* Cards */
+    .overview-card { padding: 20px 16px; border-radius: 12px; }
+    .card-number { font-size: 28px; }
+    .card-title { font-size: 16px; margin-bottom: 8px; }
+    .card-desc { font-size: 12px; }
+    .card-icon { width: 40px; height: 40px; font-size: 18px; margin-bottom: 14px; }
+
+    /* Columns */
+    .col-panel { padding: 16px; border-radius: 12px; }
+    .col-panel-title { font-size: 13px; }
+    .col-panel-body { font-size: 12px; }
+    .col-panel-body li { padding-left: 14px; }
+
+    /* Tables */
+    .data-table { font-size: 11px; }
+    .data-table th, .data-table td { padding: 8px 10px; }
+
+    /* Flow diagram */
+    .flow-diagram { gap: 8px; }
+    .flow-box { padding: 8px 14px; font-size: 12px; }
+    .flow-arrow-icon { font-size: 14px; }
+
+    /* Benefits */
+    .benefit-point { font-size: 12px; padding: 8px 12px; }
+
+    /* Bottom message */
+    .bottom-msg { padding: 12px 16px; font-size: 12px; margin-top: 20px; }
+
+    /* Big numbers */
+    .big-num { font-size: 28px; }
+    .big-num-label { font-size: 12px; }
+    .big-num-desc { font-size: 11px; }
+    .big-number-card { padding: 20px 16px; }
+
+    /* Timeline */
+    .h-timeline-week { font-size: 11px; }
+    .h-timeline-text { font-size: 12px; }
+    .h-timeline-item { padding: 12px; }
+
+    /* Architecture diagram */
+    .arch-box { min-width: 100%; font-size: 12px; padding: 10px 14px; }
+    .arch-arrow-v { font-size: 18px; }
+
+    /* Phase cards */
+    .phase-card { padding: 20px 16px; }
+    .phase-label { font-size: 11px; }
+    .phase-title { font-size: 16px; }
+    .phase-desc { font-size: 12px; }
+
+    /* Q&A */
+    .qa-item { padding: 14px 16px; }
+    .qa-question { font-size: 13px; }
+    .qa-answer { font-size: 12px; padding-left: 16px; }
+
+    /* Action items */
+    .action-item { padding: 14px 16px; gap: 12px; }
+    .action-num { width: 32px; height: 32px; font-size: 14px; border-radius: 8px; }
+    .action-text { font-size: 13px; }
+
+    /* Closing */
+    .closing-title { font-size: 24px; }
+    .closing-desc { font-size: 14px; margin-bottom: 28px; }
+    .stat-number { font-size: 28px; }
+    .stat-label { font-size: 12px; }
+    .closing-stats { gap: 24px; }
+    .closing-contact { font-size: 12px; margin-top: 32px; }
+
+    /* Scroll area */
+    .scroll-area { max-height: calc(100vh - 160px); }
+
+    /* Nav */
+    .nav-arrows { bottom: 16px; }
+    .nav-btn { width: 40px; height: 40px; font-size: 16px; }
+    .slide-counter { bottom: 20px; right: 20px; font-size: 12px; }
+    .keyboard-hint { display: none; }
+
+    /* Team bar */
+    .team-bar { font-size: 11px; padding: 12px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="slides-container" id="slidesContainer">
+
+  <!-- ====== SLIDE 0: COVER ====== -->
+  <div class="slide cover-slide active" data-slide="0">
+    <div class="slide-content">
+      <div class="cover-logo">KUSTODYFI &times; SMBS</div>
+      <div class="cover-title">
+        <span class="highlight">On-chain FX Infrastructure</span><br>
+        한국 금융중개의 글로벌화
+      </div>
+      <div class="cover-subtitle">파트너십 제안 &nbsp;|&nbsp; 2026.03</div>
+      <div class="cover-flow">
+        <div class="cover-flow-item flow-stage1">Stage 1: 데이터 연동 POC</div>
+        <div class="flow-arrow">→</div>
+        <div class="cover-flow-item flow-stage2">Stage 2: 거래소 보고 채널</div>
+        <div class="flow-arrow">→</div>
+        <div class="cover-flow-item flow-stage3">Stage 3: 글로벌 IDB 데이터 사업</div>
+      </div>
+      <div class="cover-meta">inwoo.kang@kustodyfi.com</div>
+    </div>
+  </div>
+
+  <!-- ====== SLIDE 1: OPPORTUNITY ====== -->
+  <div class="slide overview-slide" data-slide="1">
+    <div class="slide-content">
+      <div class="section-label">Opportunity</div>
+      <div class="section-title">IDB 산업의 새로운 수익 구조</div>
+      <div class="overview-grid">
+        <div class="overview-card" data-delay="0">
+          <div class="card-number">£2.1B</div>
+          <div class="card-title">TP ICAP 연매출</div>
+          <div class="card-desc">음성 중개에서 출발해 데이터 사업 + 전자 중개 + 거래소까지. 매출의 15%가 데이터 사업.</div>
+        </div>
+        <div class="overview-card" data-delay="150">
+          <div class="card-number">$2.1B</div>
+          <div class="card-title">BGC Partners 연매출</div>
+          <div class="card-desc">Fenics 전자 거래 플랫폼 + FMX 금리선물 거래소 론칭. 중개를 넘어 인프라 사업자로 진화.</div>
+        </div>
+        <div class="overview-card" data-delay="300">
+          <div class="card-number">£300M+</div>
+          <div class="card-title">데이터 사업 매출</div>
+          <div class="card-desc">TP ICAP Parameta Solutions 단일 사업부 연매출. 중개 수수료를 넘어 데이터가 IDB의 새로운 성장 엔진.</div>
+        </div>
+      </div>
+      <div class="bottom-msg green-msg" style="margin-top:32px;">
+        글로벌 IDB의 성장 공식: <strong>음성 중개 → 전자 중개 → 데이터 사업 → 거래소 운영</strong><br>
+        한국 IDB도 이 경로를 밟을 수 있는 <strong>인프라가 처음으로 갖춰졌다.</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SLIDE 2: GLOBAL CONTEXT ====== -->
+  <div class="slide overview-slide" data-slide="2">
+    <div class="slide-content">
+      <div class="section-label">Global Benchmark</div>
+      <div class="section-title">BGC / TP ICAP은 어떻게 성장했나</div>
+      <div class="two-col">
+        <div class="col-panel border-blue">
+          <div class="col-panel-title" style="color:#93c5fd;">TP ICAP</div>
+          <div class="col-panel-body">
+            <ul>
+              <li>연매출 <strong style="color:#fff;">£2.1B</strong> (약 ₩3.4조)</li>
+              <li>60개국 네트워크, 5,500+ 직원</li>
+              <li><strong style="color:#93c5fd;">Parameta Solutions</strong> — OTC 데이터 유통 사업 (연매출 £300M+)</li>
+              <li><strong style="color:#93c5fd;">Fusion</strong> — 전자 중개 플랫폼</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-panel border-purple">
+          <div class="col-panel-title" style="color:#c4b5fd;">BGC Partners</div>
+          <div class="col-panel-body">
+            <ul>
+              <li>연매출 <strong style="color:#fff;">$2.1B</strong> (약 ₩2.9조)</li>
+              <li>글로벌 OTC 중개 + 전자 거래</li>
+              <li><strong style="color:#c4b5fd;">Fenics</strong> — 전자 거래 + 시장 데이터</li>
+              <li><strong style="color:#c4b5fd;">FMX</strong> — 금리선물 거래소 (CBOT 대항)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-msg purple-msg">
+        공통점: <strong>중개 수수료에 머물지 않고, 데이터와 인프라로 사업을 확장</strong>했다.<br>
+        KustodyFi는 이 확장을 SMBS와 함께 한국에서 시작하려 한다.
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SLIDE 3: KUSTODYFI INTRO ====== -->
+  <div class="slide overview-slide" data-slide="3">
+    <div class="slide-content">
+      <div class="section-label">Partner</div>
+      <div class="section-title">KustodyFi — Stablecoin FX Infrastructure</div>
+      <div class="overview-grid">
+        <div class="overview-card" data-delay="0">
+          <div class="card-icon blue">⚡</div>
+          <div class="card-title">StableFX</div>
+          <div class="card-desc">FX 이론가 계산 엔진. Swap Points, Forward Premium을 실시간 계산하여 기업에게 은행 마진 투명화.</div>
+        </div>
+        <div class="overview-card" data-delay="150">
+          <div class="card-icon green">🏢</div>
+          <div class="card-title">AI Treasury (TMS)</div>
+          <div class="card-desc">기업 자금관리 통합 시스템. 환율 모니터링부터 선물환 체결까지 9개 시나리오 커버. AI Agent 기반.</div>
+        </div>
+        <div class="overview-card" data-delay="300">
+          <div class="card-icon purple">🌐</div>
+          <div class="card-title">Exchange</div>
+          <div class="card-desc">Stablecoin FX Futures 거래소. 싱가포르 자회사를 통한 글로벌 On-chain NDF 시장.</div>
+        </div>
+      </div>
+      <div class="team-bar">
+        <strong>팀:</strong> 외환딜러 7년 + VC 2.5년 + CFO(예비유니콘) → 대표 &nbsp;|&nbsp; Amazon/MS/Coupang 25년 → CTO &nbsp;|&nbsp; SAP/IBM 20년 → CBO &nbsp;|&nbsp; MIT/CMU + Fed/Citadel → CISO
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SLIDE 4: PARTNERSHIP OVERVIEW ★ ====== -->
+  <div class="slide overview-slide" data-slide="4">
+    <div class="slide-content">
+      <div class="section-label">Partnership</div>
+      <div class="section-title">3단계 파트너십 — SMBS의 글로벌화 경로</div>
+      <div class="overview-grid">
+        <div class="overview-card" data-delay="0" style="border-top: 3px solid var(--success);">
+          <div class="card-icon green">1</div>
+          <div class="card-title" style="color:#6ee7b7;">Stage 1: 데이터 연동 POC</div>
+          <div class="card-desc">
+            SMBS FX Swap Bid/Ask/Mid → StableFX 연동<br>
+            <strong style="color:#6ee7b7;">"Powered by SMBS"</strong> 브랜딩<br><br>
+            <span style="color:#6ee7b7;">8주, 양측 무상</span>
+          </div>
+        </div>
+        <div class="overview-card" data-delay="200" style="border-top: 3px solid var(--primary);">
+          <div class="card-icon blue">2</div>
+          <div class="card-title" style="color:#93c5fd;">Stage 2: 거래소 보고 채널</div>
+          <div class="card-desc">
+            싱가포르 거래소 출범 후<br>
+            SMBS = <strong style="color:#93c5fd;">한국 금융당국 보고/관리</strong> 채널<br><br>
+            <span style="color:#93c5fd;">보고 수수료 수익</span>
+          </div>
+        </div>
+        <div class="overview-card" data-delay="400" style="border-top: 3px solid var(--accent);">
+          <div class="card-icon purple">3</div>
+          <div class="card-title" style="color:#c4b5fd;">Stage 3: 글로벌 IDB 데이터 사업</div>
+          <div class="card-desc">
+            TP ICAP Parameta 모델<br>
+            SMBS <strong style="color:#c4b5fd;">자체 OTC 데이터 구조화 + 유통</strong><br><br>
+            <span style="color:#c4b5fd;">데이터 플랫폼 공동 구축</span>
+          </div>
+        </div>
+      </div>
+      <div class="flow-diagram" style="margin-top:28px;">
+        <div class="flow-box green" data-delay="600">POC 8주</div>
+        <div class="flow-arrow-icon" data-delay="700">→</div>
+        <div class="flow-box blue" data-delay="800">거래소 파트너</div>
+        <div class="flow-arrow-icon" data-delay="900">→</div>
+        <div class="flow-box purple" data-delay="1000">데이터 사업</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SLIDE 5: STAGE 1 DETAIL ====== -->
+  <div class="slide overview-slide" data-slide="5">
+    <div class="slide-content">
+      <div class="scroll-area">
+        <div class="section-label">Stage 1 — POC</div>
+        <div class="section-title-sm">데이터 연동 POC — 8주</div>
+        <div class="two-col">
+          <div class="col-panel border-green">
+            <div class="col-panel-title" style="color:#6ee7b7;">🏦 SMBS가 제공하는 것</div>
+            <div class="col-panel-body">
+              <ul>
+                <li>FX Swap Bid/Ask/Mid 데이터 피드 (1W~1Y 테너)</li>
+                <li>IRS/CRS 금리 데이터</li>
+                <li>API 또는 EOD CSV/JSON 전송</li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-panel border-blue">
+            <div class="col-panel-title" style="color:#93c5fd;">⚡ KustodyFi가 제공하는 것</div>
+            <div class="col-panel-body">
+              <ul>
+                <li>StableFX 계산기에 <strong style="color:#93c5fd;">"Powered by SMBS"</strong> 연동</li>
+                <li>기업 사용자 조회 패턴 리포트 (집계)</li>
+                <li>상용화 과금 모델 제안서</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:24px;">
+          <div style="font-size:14px;font-weight:700;margin-bottom:12px;color:var(--gray-300);">POC 타임라인</div>
+          <div class="h-timeline">
+            <div class="h-timeline-item green-border" data-delay="200">
+              <div class="h-timeline-week">1-2주</div>
+              <div class="h-timeline-text">API 연동<br>데이터 수신 세팅</div>
+            </div>
+            <div class="h-timeline-item blue-border" data-delay="350">
+              <div class="h-timeline-week">3-4주</div>
+              <div class="h-timeline-text">StableFX 베타<br>내부 테스트</div>
+            </div>
+            <div class="h-timeline-item blue-border" data-delay="500">
+              <div class="h-timeline-week">5-6주</div>
+              <div class="h-timeline-text">기업 5~10사<br>파일럿 운영</div>
+            </div>
+            <div class="h-timeline-item purple-border" data-delay="650">
+              <div class="h-timeline-week">7-8주</div>
+              <div class="h-timeline-text">결과 분석<br>상용화 판단</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="benefit-points" style="margin-top:20px;">
+          <div class="benefit-point green" data-delay="800">
+            ✓ &nbsp; SMBS 투입 리소스 최소 (API 피드 세팅). <strong>비용 제로. Downside 거의 없음.</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SLIDE 6: STAGE 2 DETAIL ====== -->
+  <div class="slide overview-slide" data-slide="6">
+    <div class="slide-content">
+      <div class="scroll-area">
+        <div class="section-label">Stage 2 — Exchange</div>
+        <div class="section-title-sm">거래소 보고 채널 — 한국 측 파트너</div>
+
+        <div class="arch-diagram" style="margin-bottom:28px;">
+          <div class="arch-row">
+            <div class="arch-box kf" style="opacity:0;animation:fadeUp 0.6s 0.4s forwards;">KustodyFi (싱가포르)<br><span style="font-size:12px;color:#64748b;">On-chain NDF 거래소 운영</span></div>
+          </div>
+          <div class="arch-arrow-v" style="opacity:0;animation:fadeUp 0.4s 0.6s forwards;">⇅</div>
+          <div class="arch-row">
+            <div class="arch-box smbs" style="opacity:0;animation:fadeUp 0.6s 0.8s forwards;">SMBS (한국)<br><span style="font-size:12px;color:#64748b;">금융당국 신고/보고 + 참가자 온보딩</span></div>
+            <div style="font-size:20px;color:var(--gray-500);opacity:0;animation:fadeIn 0.4s 1.0s forwards;">→</div>
+            <div class="arch-box gov" style="opacity:0;animation:fadeUp 0.6s 1.0s forwards;">한국 금융당국<br><span style="font-size:12px;color:#64748b;">거래 보고 수신</span></div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="col-panel border-green">
+            <div class="col-panel-title" style="color:#6ee7b7;">왜 SMBS인가</div>
+            <div class="col-panel-body">
+              <ul>
+                <li>이미 외환파생상품 중개 인가 보유</li>
+                <li>금융당국과의 기존 보고 채널 활용</li>
+                <li>추가 인프라 구축 불필요</li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-panel border-blue">
+            <div class="col-panel-title" style="color:#93c5fd;">SMBS 수익</div>
+            <div class="col-panel-body">
+              <ul>
+                <li>거래 건당 보고 수수료</li>
+                <li>기존 비즈니스 모델의 자연스러운 확장</li>
+                <li>국내 참가자 온보딩 수수료</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="bottom-msg blue-msg">
+          BGC가 런던에서 글로벌 거래소를 운영하고 <strong>각 국가별 중개사를 통해 로컬 보고</strong>를 하는 것과 같은 구조.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SLIDE 7: STAGE 3 DETAIL ====== -->
+  <div class="slide overview-slide" data-slide="7">
+    <div class="slide-content">
+      <div class="scroll-area">
+        <div class="section-label">Stage 3 — Data Business</div>
+        <div class="section-title-sm">글로벌 IDB 데이터 사업</div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>회사</th>
+              <th>데이터 사업 브랜드</th>
+              <th>설명</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-weight:600;">TP ICAP</td>
+              <td>Parameta Solutions</td>
+              <td>OTC 데이터 유통, 연매출 £300M+</td>
+            </tr>
+            <tr>
+              <td style="font-weight:600;">BGC</td>
+              <td>Fenics Market Data</td>
+              <td>실시간 가격/분석 데이터</td>
+            </tr>
+            <tr>
+              <td style="font-weight:600;">Tradition</td>
+              <td>TraditionData</td>
+              <td>금리/FX 데이터 서비스</td>
+            </tr>
+            <tr class="highlight-row">
+              <td>SMBS &times; KustodyFi</td>
+              <td>TBD</td>
+              <td>SMBS OTC 중개 데이터 구조화 + 유통</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="benefit-points" style="margin-top:24px;">
+          <div class="benefit-point purple" data-delay="200">
+            ✓ &nbsp; SMBS가 보유한 <strong>OTC 중개 데이터(호가/체결)를 구조화</strong>하여 데이터 상품으로 유통. Parameta와 동일한 모델.
+          </div>
+          <div class="benefit-point blue" data-delay="350">
+            ✓ &nbsp; TP ICAP Parameta는 자사 OTC 데이터만으로 연매출 <strong>£300M+</strong>. SMBS도 동일한 자산을 이미 보유 중.
+          </div>
+          <div class="benefit-point green" data-delay="500">
+            ✓ &nbsp; KustodyFi가 <strong>데이터 구조화 + 유통 플랫폼</strong>을 구축. SMBS는 데이터 소스 + 금융기관 유통 채널.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SLIDE 8: MARKET OPPORTUNITY ====== -->
+  <div class="slide overview-slide" data-slide="8">
+    <div class="slide-content">
+      <div class="section-label">Market</div>
+      <div class="section-title">시장 기회 — On-chain NDF</div>
+
+      <div class="big-number-grid">
+        <div class="big-number-card" data-delay="0">
+          <div class="big-num">$48B</div>
+          <div class="big-num-label">KRW NDF 일 거래량</div>
+          <div class="big-num-desc">한은 온쇼어 $14B + 역외 약 $35B<br>(2.5× 추정)</div>
+        </div>
+        <div class="big-number-card" data-delay="150">
+          <div class="big-num">$58B</div>
+          <div class="big-num-label">BIS 교차검증</div>
+          <div class="big-num-desc">BIS Triennial Survey 기준<br>KRW FX 일 거래량</div>
+        </div>
+        <div class="big-number-card" data-delay="300">
+          <div class="big-num">$1.4B</div>
+          <div class="big-num-label">KustodyFi 타겟</div>
+          <div class="big-num-desc">FY31 peak 일 거래량<br>= 시장의 2.86%</div>
+        </div>
+      </div>
+
+      <div class="bottom-msg purple-msg">
+        KustodyFi 타겟 거래량의 보고 수수료 + 체결 데이터 유통 RS → <strong>SMBS의 새로운 수익 라인.</strong><br>
+        KRW 외에도 <strong>TWD, INR, BRL</strong> 등 NDF 통화 확장 시 SMBS와 함께 <strong>multi-currency 플랫폼</strong>으로.
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SLIDE 9: WHY NOW ====== -->
+  <div class="slide overview-slide" data-slide="9">
+    <div class="slide-content">
+      <div class="section-label">Timing</div>
+      <div class="section-title">Why Now</div>
+      <div class="overview-grid cols-2">
+        <div class="overview-card" data-delay="0">
+          <div class="card-icon blue">🪙</div>
+          <div class="card-title">스테이블코인 인프라 성숙</div>
+          <div class="card-desc">USDC 시총 $30B+, BlackRock BUIDL 펀드 출시. 기관급 스테이블코인 인프라가 처음으로 갖춰진 시점.</div>
+        </div>
+        <div class="overview-card" data-delay="150">
+          <div class="card-icon green">🏛️</div>
+          <div class="card-title">싱가포르 MAS 규제 정비</div>
+          <div class="card-desc">MPI + CMS 라이선스 프레임워크 완성. 규제 안에서 On-chain 파생상품 거래소 설립 가능.</div>
+        </div>
+        <div class="overview-card" data-delay="300">
+          <div class="card-icon orange">📋</div>
+          <div class="card-title">한국 가상자산 법제화</div>
+          <div class="card-desc">가상자산이용자보호법, 전금법 개정. 스테이블코인 관련 규제 프레임워크가 구체화되는 중.</div>
+        </div>
+        <div class="overview-card" data-delay="450">
+          <div class="card-icon purple">⚡</div>
+          <div class="card-title">글로벌 IDB 전자화 가속</div>
+          <div class="card-desc">TP ICAP Fusion, BGC Fenics의 급성장. 전자 중개가 음성 중개를 대체하는 전환기.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SLIDE 10: VALUE FOR SMBS ====== -->
+  <div class="slide overview-slide" data-slide="10">
+    <div class="slide-content">
+      <div class="section-label">Value for SMBS</div>
+      <div class="section-title">SMBS가 얻는 것</div>
+      <div class="overview-grid cols-4">
+        <div class="overview-card" data-delay="0" style="border-top:3px solid var(--success);">
+          <div class="card-icon green">💰</div>
+          <div class="card-title">새로운 수익원</div>
+          <div class="card-desc">On-chain NDF 거래의 한국 측 보고 수수료 + 데이터 유통 Revenue Share</div>
+        </div>
+        <div class="overview-card" data-delay="150" style="border-top:3px solid var(--primary);">
+          <div class="card-icon blue">🌍</div>
+          <div class="card-title">글로벌 확장</div>
+          <div class="card-desc">싱가포르 거래소 접근 → SMBS 고객에 새로운 상품 제공 경로</div>
+        </div>
+        <div class="overview-card" data-delay="300" style="border-top:3px solid var(--accent);">
+          <div class="card-icon purple">🏛️</div>
+          <div class="card-title">규제 포지션</div>
+          <div class="card-desc">금융당국과의 관계에서 "글로벌 인프라와 연결된 중개사"로 격상</div>
+        </div>
+        <div class="overview-card" data-delay="450" style="border-top:3px solid var(--warning);">
+          <div class="card-icon orange">🏢</div>
+          <div class="card-title">기업 시장 접근</div>
+          <div class="card-desc">StableFX를 통해 기존에 없던 B2B2C 채널 확보</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SLIDE 11: RISK VS UPSIDE ====== -->
+  <div class="slide overview-slide" data-slide="11">
+    <div class="slide-content">
+      <div class="section-label">Risk Assessment</div>
+      <div class="section-title">리스크 vs 업사이드</div>
+      <div class="two-col">
+        <div class="col-panel risk-panel border-red">
+          <div class="col-panel-title" style="color:#fca5a5;">⚠️ SMBS 리스크 — 최소</div>
+          <div class="col-panel-body">
+            <div class="benefit-points">
+              <div class="benefit-point red" data-delay="0">
+                API 피드 세팅 비용만 발생
+              </div>
+              <div class="benefit-point red" data-delay="150">
+                POC 8주 — 짧은 검증 기간
+              </div>
+              <div class="benefit-point red" data-delay="300">
+                금전적 부담 제로
+              </div>
+              <div class="benefit-point red" data-delay="450">
+                KustodyFi가 실패해도 SMBS 손실 없음
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-panel upside-panel border-green">
+          <div class="col-panel-title" style="color:#6ee7b7;">📈 SMBS 업사이드 — 구조적</div>
+          <div class="col-panel-body">
+            <div class="benefit-points">
+              <div class="benefit-point green" data-delay="100">
+                거래소 보고 수수료 수익
+              </div>
+              <div class="benefit-point green" data-delay="250">
+                데이터 사업 Revenue Share
+              </div>
+              <div class="benefit-point green" data-delay="400">
+                전략적 투자 리턴 가능성
+              </div>
+              <div class="benefit-point green" data-delay="550">
+                글로벌 IDB 포지셔닝
+              </div>
+              <div class="benefit-point green" data-delay="700">
+                POC 파트너에 한해 다음 라운드 우선 참여 기회
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-msg green-msg">
+        <strong>리스크는 최소, 업사이드는 구조적.</strong> — 비대칭적 기회 구조.
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SLIDE 12: Q&A ====== -->
+  <div class="slide overview-slide" data-slide="12">
+    <div class="slide-content">
+      <div class="scroll-area">
+        <div class="section-label">Q&A</div>
+        <div class="section-title-sm">대표님 예상 Q&A</div>
+        <div class="qa-list">
+          <div class="qa-item" data-delay="0">
+            <div class="qa-question">Q. "우리 데이터가 기업한테 가면 은행들이 싫어하지 않나?"</div>
+            <div class="qa-answer">
+              이미 KMB/SMBS 웹에서 IRS/CRS 데이터를 공개 중입니다. 기업이 접근 못 하는 게 아니라 <strong style="color:#fff;">해석을 못 하는 것</strong>입니다.<br>
+              KustodyFi가 <strong style="color:#93c5fd;">해석 레이어</strong>를 입히는 것이지, 비공개 데이터 유출이 아닙니다.
+            </div>
+          </div>
+          <div class="qa-item" data-delay="200">
+            <div class="qa-question">Q. "KustodyFi가 망하면?"</div>
+            <div class="qa-answer">
+              POC 8주, SMBS 투입 최소, 비용 제로. <strong style="color:#6ee7b7;">Downside가 거의 없는 구조</strong>입니다.<br>
+              API 피드 세팅 외 추가 리소스 투입이 불필요합니다.
+            </div>
+          </div>
+          <div class="qa-item" data-delay="400">
+            <div class="qa-question">Q. "수익이 얼마나?"</div>
+            <div class="qa-answer">
+              TP ICAP Parameta 매출 <strong style="color:#c4b5fd;">£300M+ (약 ₩5,000억)</strong>. 데이터 사업은 IDB 매출의 새로운 성장 동력입니다.<br>
+              한국에서는 아직 미개척 영역 — 선점 효과가 큽니다.
+            </div>
+          </div>
+          <div class="qa-item" data-delay="600">
+            <div class="qa-question">Q. "왜 지금?"</div>
+            <div class="qa-answer">
+              스테이블코인 인프라가 성숙한 <strong style="color:#fcd34d;">첫 번째 윈도우</strong>입니다.<br>
+              선점하지 않으면 TP ICAP, BGC 같은 글로벌 IDB가 먼저 아시아 시장에 들어옵니다.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SLIDE 13: ROADMAP ====== -->
+  <div class="slide overview-slide" data-slide="13">
+    <div class="slide-content">
+      <div class="section-label">Roadmap</div>
+      <div class="section-title">파트너십 로드맵</div>
+      <div class="phase-grid">
+        <div class="phase-card green-top" data-delay="0">
+          <div class="phase-label green">2026 H1</div>
+          <div class="phase-title">Stage 1 — POC</div>
+          <div class="phase-desc">
+            SMBS 데이터 피드 → StableFX 연동<br>
+            8주 POC 진행<br>
+            기업 5~10사 파일럿<br>
+            상용화 판단
+          </div>
+        </div>
+        <div class="phase-card blue-top" data-delay="200">
+          <div class="phase-label blue">2027</div>
+          <div class="phase-title">Stage 2 — Exchange</div>
+          <div class="phase-desc">
+            싱가포르 법인 설립 + 거래소 파일럿<br>
+            SMBS = 한국 보고 파트너<br>
+            국내 참가자 온보딩<br>
+            보고 수수료 수익 개시
+          </div>
+        </div>
+        <div class="phase-card purple-top" data-delay="400">
+          <div class="phase-label purple">2028~</div>
+          <div class="phase-title">Stage 3 — Data Business</div>
+          <div class="phase-desc">
+            거래소 본격 운영<br>
+            체결 데이터 유통 사업 확장<br>
+            Multi-currency NDF 확장<br>
+            글로벌 IDB 포지셔닝
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SLIDE 14: NEXT STEPS ====== -->
+  <div class="slide overview-slide" data-slide="14">
+    <div class="slide-content">
+      <div class="section-label">Next Steps</div>
+      <div class="section-title">다음 단계</div>
+      <div class="action-list">
+        <div class="action-item" data-delay="0">
+          <div class="action-num">1</div>
+          <div class="action-text"><strong>POC 범위 합의</strong> — API 스펙, 데이터 종류 (Swap/IRS/CRS), 전송 방식 (API/EOD)</div>
+        </div>
+        <div class="action-item" data-delay="200">
+          <div class="action-num">2</div>
+          <div class="action-text"><strong>NDA 체결</strong> — 양사 간 데이터 보안 및 활용 범위 합의</div>
+        </div>
+        <div class="action-item" data-delay="400">
+          <div class="action-num">3</div>
+          <div class="action-text"><strong>8주 POC 킥오프</strong> — API 연동 → 베타 테스트 → 파일럿 → 결과 분석</div>
+        </div>
+        <div class="action-item" data-delay="600">
+          <div class="action-num">4</div>
+          <div class="action-text"><strong>다음 라운드 참여 논의</strong> — POC 파트너에 한해 다음 라운드 우선 참여 기회 제공 (현 라운드는 FI 참여로 클로즈)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SLIDE 15: CLOSING ====== -->
+  <div class="slide closing-slide" data-slide="15">
+    <div class="slide-content">
+      <div class="closing-title">Code the Law. Move the Money.</div>
+      <div class="closing-desc">한국 IDB가 글로벌 인프라와 만나는 순간</div>
+      <div class="closing-stats">
+        <div class="stat-item">
+          <div class="stat-number">3</div>
+          <div class="stat-label">단계 파트너십</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">$48B</div>
+          <div class="stat-label">KRW NDF 일 거래량</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">8주</div>
+          <div class="stat-label">POC 기간</div>
+        </div>
+      </div>
+      <div class="closing-contact">
+        KustodyFi Co., Ltd. &nbsp;|&nbsp; inwoo.kang@kustodyfi.com
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- NAV -->
+<div class="nav-arrows">
+  <button class="nav-btn" onclick="prevSlide()">←</button>
+  <button class="nav-btn" onclick="nextSlide()">→</button>
+</div>
+<div class="slide-counter" id="slideCounter">1 / 16</div>
+<div class="keyboard-hint"><kbd>←</kbd> <kbd>→</kbd> 또는 스와이프</div>
+
+<script>
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide');
+  const totalSlides = slides.length;
+  const progressBar = document.getElementById('progressBar');
+  const slideCounter = document.getElementById('slideCounter');
+  let isTransitioning = false;
+
+  function updateProgress() {
+    const pct = ((currentSlide) / (totalSlides - 1)) * 100;
+    progressBar.style.width = pct + '%';
+    slideCounter.textContent = (currentSlide + 1) + ' / ' + totalSlides;
+  }
+
+  function animateElements(slide) {
+    const animatables = slide.querySelectorAll(
+      '.overview-card, .benefit-point, .flow-box, .flow-arrow-icon, .big-number-card, .h-timeline-item, .phase-card, .qa-item, .action-item'
+    );
+    animatables.forEach((el) => {
+      el.classList.remove('animated');
+      const delay = parseInt(el.getAttribute('data-delay') || '0');
+      setTimeout(() => el.classList.add('animated'), delay + 200);
+    });
+  }
+
+  function goToSlide(index) {
+    if (index < 0 || index >= totalSlides || isTransitioning) return;
+    isTransitioning = true;
+    const oldSlide = slides[currentSlide];
+    const newSlide = slides[index];
+    if (index > currentSlide) {
+      oldSlide.classList.add('exit-left');
+      oldSlide.classList.remove('active');
+    } else {
+      oldSlide.classList.remove('active');
+      oldSlide.classList.remove('exit-left');
+    }
+    setTimeout(() => {
+      oldSlide.classList.remove('exit-left');
+      newSlide.classList.add('active');
+      currentSlide = index;
+      updateProgress();
+      animateElements(newSlide);
+      setTimeout(() => { isTransitioning = false; }, 400);
+    }, 100);
+  }
+
+  function nextSlide() { goToSlide(currentSlide + 1); }
+  function prevSlide() { goToSlide(currentSlide - 1); }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+  });
+
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', (e) => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) { diff > 0 ? nextSlide() : prevSlide(); }
+  });
+
+  // Init
+  updateProgress();
+  animateElements(slides[0]);
+</script>
+</body>
+</html>

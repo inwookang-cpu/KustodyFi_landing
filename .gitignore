@@ -1,0 +1,8 @@
+.claude/
+__MACOSX/
+kustodyfi-curves/
+node_modules/
+.env
+*.pyc
+__pycache__/
+.DS_Store

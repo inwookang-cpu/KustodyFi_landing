@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KustodyFi &mdash; FP&amp;A &middot; 펀딩 &amp; Turnaround</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0a0e1a;
+    color: #e0e6f0;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .header {
+    text-align: center;
+    padding: 40px 20px 10px;
+  }
+
+  .header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+
+  .header p {
+    color: #64748b;
+    font-size: 14px;
+    margin-top: 8px;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 30px;
+  }
+
+  /* Section title */
+  .section-title {
+    text-align: center;
+    padding: 40px 20px 20px;
+  }
+
+  .section-title h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #e0e6f0;
+  }
+
+  .section-title p {
+    color: #64748b;
+    font-size: 13px;
+    margin-top: 6px;
+  }
+
+  /* Phase badge */
+  .phase-label {
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .phase-1 { background: rgba(52,211,153,0.2); color: #6ee7b7; }
+  .phase-2 { background: rgba(96,165,250,0.2); color: #93c5fd; }
+  .phase-3 { background: rgba(167,139,250,0.2); color: #c4b5fd; }
+
+  /* License table */
+  .license-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(100,116,139,0.2);
+    margin-bottom: 12px;
+  }
+
+  .license-table thead th {
+    background: rgba(255,255,255,0.04);
+    padding: 14px 16px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #94a3b8;
+    text-align: left;
+    border-bottom: 1px solid rgba(100,116,139,0.2);
+  }
+
+  .license-table tbody td {
+    padding: 16px;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(100,116,139,0.08);
+    vertical-align: top;
+  }
+
+  .license-table tbody tr:last-child td { border-bottom: none; }
+
+  .license-table .entity-name {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 2px;
+  }
+
+  .license-table .entity-loc {
+    font-size: 11px;
+    color: #64748b;
+  }
+
+  .license-tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: rgba(167,139,250,0.15);
+    color: #c4b5fd;
+    margin: 2px 2px;
+  }
+
+  .license-tag.law {
+    background: rgba(96,165,250,0.15);
+    color: #93c5fd;
+  }
+
+  .capital-cell {
+    font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 13px;
+  }
+
+  .capital-main {
+    font-weight: 700;
+    font-size: 16px;
+    color: #f472b6;
+  }
+
+  .capital-orig {
+    font-size: 11px;
+    color: #64748b;
+    margin-top: 2px;
+  }
+
+  .capital-note {
+    font-size: 10px;
+    color: #475569;
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+
+  /* Phase separator row */
+  .phase-row td {
+    background: rgba(255,255,255,0.02);
+    padding: 10px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(100,116,139,0.15);
+  }
+
+  .phase-row.p1 td { color: #34d399; }
+  .phase-row.p2 td { color: #60a5fa; }
+  .phase-row.p3 td { color: #a78bfa; }
+
+  /* Subtotal rows */
+  .subtotal-row td {
+    background: rgba(255,255,255,0.03);
+    font-weight: 600;
+    border-top: 1px solid rgba(100,116,139,0.15);
+  }
+
+  .grand-total td {
+    background: rgba(244,114,182,0.06);
+    font-weight: 700;
+    border-top: 2px solid rgba(244,114,182,0.3);
+    font-size: 14px;
+  }
+
+  /* Notes */
+  .table-note {
+    font-size: 11px;
+    color: #475569;
+    line-height: 1.7;
+    margin-bottom: 40px;
+  }
+
+  /* Summary cards */
+  .summary-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .summary-card {
+    border-radius: 14px;
+    padding: 24px;
+    text-align: center;
+  }
+
+  .summary-card.p1-card {
+    background: linear-gradient(135deg, rgba(52,211,153,0.1), rgba(52,211,153,0.03));
+    border: 1px solid rgba(52,211,153,0.25);
+  }
+
+  .summary-card.p2-card {
+    background: linear-gradient(135deg, rgba(96,165,250,0.1), rgba(96,165,250,0.03));
+    border: 1px solid rgba(96,165,250,0.25);
+  }
+
+  .summary-card.p3-card {
+    background: linear-gradient(135deg, rgba(167,139,250,0.1), rgba(167,139,250,0.03));
+    border: 1px solid rgba(167,139,250,0.25);
+  }
+
+  .summary-card .sc-label {
+    font-size: 11px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .summary-card .sc-value {
+    font-size: 28px;
+    font-weight: 800;
+    font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+  }
+
+  .summary-card.p1-card .sc-value { color: #34d399; }
+  .summary-card.p2-card .sc-value { color: #60a5fa; }
+  .summary-card.p3-card .sc-value { color: #a78bfa; }
+
+  .summary-card .sc-sub {
+    font-size: 11px;
+    color: #64748b;
+    margin-top: 4px;
+  }
+
+  /* Roadmap matching fund-flow.html */
+  .roadmap {
+    display: flex;
+    gap: 0;
+    margin-bottom: 40px;
+    position: relative;
+  }
+
+  .roadmap::before {
+    content: '';
+    position: absolute;
+    top: 36px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #34d399, #60a5fa, #a78bfa, #475569);
+    z-index: 0;
+  }
+
+  .phase {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .phase-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin: 26px auto 16px;
+    border: 3px solid;
+  }
+
+  .phase.p1 .phase-dot { background: #34d399; border-color: #34d399; box-shadow: 0 0 12px rgba(52,211,153,0.4); }
+  .phase.p2 .phase-dot { background: #60a5fa; border-color: #60a5fa; box-shadow: 0 0 12px rgba(96,165,250,0.4); }
+  .phase.p3 .phase-dot { background: transparent; border-color: #a78bfa; }
+
+  .phase-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .phase.p1 .phase-title { color: #34d399; }
+  .phase.p2 .phase-title { color: #60a5fa; }
+  .phase.p3 .phase-title { color: #a78bfa; }
+
+  .phase-time {
+    font-size: 11px;
+    color: #64748b;
+    margin-bottom: 12px;
+  }
+
+  .phase-items {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .phase-item {
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.04);
+    color: #94a3b8;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .phase-cost {
+    font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    margin-top: 4px;
+  }
+
+  .phase.p1 .phase-cost { color: #34d399; background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.2); }
+  .phase.p2 .phase-cost { color: #60a5fa; background: rgba(96,165,250,0.1); border: 1px solid rgba(96,165,250,0.2); }
+  .phase.p3 .phase-cost { color: #a78bfa; background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.2); }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 30px 20px 40px;
+    color: #475569;
+    font-size: 11px;
+  }
+
+  .footer span { color: #64748b; }
+
+  @media (max-width: 900px) {
+    .summary-cards { grid-template-columns: 1fr; }
+    .roadmap { flex-direction: column; gap: 20px; }
+    .roadmap::before { display: none; }
+    .license-table { font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>KustodyFi FP&amp;A</h1>
+  <p>펀딩 추산 &amp; Use of Funds &amp; Turnaround 시나리오</p>
+</div>
+
+<div class="container">
+
+  <table class="license-table">
+    <thead>
+      <tr>
+        <th style="width:16%;">Phase / 법인</th>
+        <th style="width:16%;">라이선스<br>자본금 (실제)</th>
+        <th style="width:16%;">초기 구축비<br>(1회성)</th>
+        <th style="width:16%;">연간 운영비</th>
+        <th style="width:18%;">2년간 필요 총액</th>
+        <th style="width:18%;">누적 펀딩</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr class="phase-row p1">
+        <td colspan="6">PHASE 1 &mdash; 현재 ~ 2027</td>
+      </tr>
+
+      <tr>
+        <td><div style="font-size:12px; font-weight:600;">&#127480;&#127468; 거래소</div></td>
+        <td class="capital-cell"><div style="color:#34d399; font-weight:600;">2.7억</div></td>
+        <td class="capital-cell"><div>25억</div></td>
+        <td class="capital-cell"><div>17억</div></td>
+        <td class="capital-cell"><div class="capital-main" style="font-size:16px;">62억</div><div class="capital-note">2.7 + 25 + 17&times;2</div></td>
+        <td class="capital-cell" rowspan="2" style="vertical-align:middle;">
+          <div style="font-size:24px; font-weight:800; color:#34d399;">100~150억</div>
+          <div class="capital-note" style="margin-top:4px;">Pre-Series A 목표</div>
+        </td>
+      </tr>
+
+      <tr>
+        <td><div style="font-size:12px; font-weight:600;">&#127472;&#127479; 한국법인</div></td>
+        <td class="capital-cell"><div style="color:#34d399; font-weight:600;">30억</div></td>
+        <td class="capital-cell"><div>3억</div></td>
+        <td class="capital-cell"><div>6억</div></td>
+        <td class="capital-cell"><div class="capital-main" style="font-size:16px;">45억</div><div class="capital-note">30 + 3 + 6&times;2</div></td>
+      </tr>
+
+      <tr class="subtotal-row">
+        <td style="text-align:right; color:#34d399;">Phase 1</td>
+        <td class="capital-cell" style="color:#34d399; font-weight:700;">32.7억</td>
+        <td class="capital-cell" style="color:#34d399; font-weight:700;">28억</td>
+        <td class="capital-cell" style="color:#34d399; font-weight:700;">23억/yr</td>
+        <td class="capital-cell" style="color:#34d399; font-weight:700;">107억 (2yr)</td>
+        <td class="capital-cell" style="color:#34d399; font-weight:700;">100~150억</td>
+      </tr>
+
+      <tr class="phase-row p2">
+        <td colspan="6">PHASE 2 &mdash; ~ 2030</td>
+      </tr>
+
+      <tr>
+        <td><div style="font-size:12px; font-weight:600;">&#127473;&#127481; 유럽법인</div></td>
+        <td class="capital-cell"><div style="color:#60a5fa; font-weight:600;">5.4억</div></td>
+        <td class="capital-cell"><div>7억</div></td>
+        <td class="capital-cell"><div>10억</div></td>
+        <td class="capital-cell"><div class="capital-main" style="font-size:16px;">32억</div><div class="capital-note">5.4 + 7 + 10&times;2</div></td>
+        <td class="capital-cell" rowspan="4" style="vertical-align:middle;">
+          <div style="font-size:24px; font-weight:800; color:#60a5fa;">200억</div>
+          <div class="capital-note" style="margin-top:4px;">Series A 목표<br>+ Phase 1 수익 활용</div>
+        </td>
+      </tr>
+
+      <tr>
+        <td><div style="font-size:12px; font-weight:600;">&#127471;&#127477; 일본법인</div></td>
+        <td class="capital-cell"><div style="color:#60a5fa; font-weight:600;">1.9억</div></td>
+        <td class="capital-cell"><div>4.5억</div></td>
+        <td class="capital-cell"><div>7억</div></td>
+        <td class="capital-cell"><div class="capital-main" style="font-size:16px;">20억</div><div class="capital-note">1.9 + 4.5 + 7&times;2</div></td>
+      </tr>
+
+      <tr>
+        <td><div style="font-size:12px; font-weight:600;">&#127462;&#127482; 호주법인</div></td>
+        <td class="capital-cell"><div style="color:#60a5fa; font-weight:600;">0.5억</div></td>
+        <td class="capital-cell"><div>5.5억</div></td>
+        <td class="capital-cell"><div>8.5억</div></td>
+        <td class="capital-cell"><div class="capital-main" style="font-size:16px;">23억</div><div class="capital-note">0.5 + 5.5 + 8.5&times;2</div></td>
+      </tr>
+
+      <tr>
+        <td><div style="font-size:12px; font-weight:600;">&#127481;&#127469; 태국법인 (가맹사업)</div></td>
+        <td class="capital-cell"><div style="color:#60a5fa; font-weight:600;">~20억</div></td>
+        <td class="capital-cell"><div>2.5억</div></td>
+        <td class="capital-cell"><div>4억</div></td>
+        <td class="capital-cell"><div class="capital-main" style="font-size:16px;">31억</div><div class="capital-note">20 + 2.5 + 4&times;2</div></td>
+      </tr>
+
+      <tr>
+        <td><div style="font-size:12px; font-weight:600;">&#127469;&#127472; 홍콩 MM (SFC Type 9)</div></td>
+        <td class="capital-cell"><div style="color:#60a5fa; font-weight:600;">~0.2억</div></td>
+        <td class="capital-cell"><div>1.5억</div></td>
+        <td class="capital-cell"><div>4.5억</div></td>
+        <td class="capital-cell"><div class="capital-main" style="font-size:16px;">11억</div><div class="capital-note">0.2 + 1.5 + 4.5&times;2</div></td>
+      </tr>
+
+      <tr class="subtotal-row">
+        <td style="text-align:right; color:#60a5fa;">Phase 2</td>
+        <td class="capital-cell" style="color:#60a5fa; font-weight:700;">~28억</td>
+        <td class="capital-cell" style="color:#60a5fa; font-weight:700;">~22억</td>
+        <td class="capital-cell" style="color:#60a5fa; font-weight:700;">~34억/yr</td>
+        <td class="capital-cell" style="color:#60a5fa; font-weight:700;">~118억 (2yr)</td>
+        <td class="capital-cell" style="color:#60a5fa; font-weight:700;">200억</td>
+      </tr>
+
+      <tr class="phase-row p3">
+        <td colspan="6">PHASE 3 &mdash; 2030 ~</td>
+      </tr>
+
+      <tr>
+        <td><div style="font-size:12px; font-weight:600;">&#127482;&#127480; 미국법인</div><div class="capital-note">FinCEN MSB + State MTL</div></td>
+        <td class="capital-cell"><div style="color:#a78bfa; font-weight:600;">~30억</div></td>
+        <td class="capital-cell"><div>4억</div></td>
+        <td class="capital-cell"><div>8억</div></td>
+        <td class="capital-cell"><div class="capital-main" style="font-size:16px;">50억</div><div class="capital-note">30 + 4 + 8&times;2</div></td>
+        <td class="capital-cell" rowspan="2" style="vertical-align:middle;">
+          <div style="font-size:24px; font-weight:800; color:#a78bfa;">500억</div>
+          <div class="capital-note" style="margin-top:4px;">Series B 목표<br>미국 + 글로벌 확장</div>
+        </td>
+      </tr>
+
+      <tr>
+        <td><div style="font-size:12px; font-weight:600;">&#127474;&#127486; 말레이시아 (가맹사업)</div><div class="capital-note">BNM e-Money</div></td>
+        <td class="capital-cell"><div style="color:#a78bfa; font-weight:600;">~16억</div></td>
+        <td class="capital-cell"><div>1억</div></td>
+        <td class="capital-cell"><div>2.5억</div></td>
+        <td class="capital-cell"><div class="capital-main" style="font-size:16px;">22억</div><div class="capital-note">16 + 1 + 2.5&times;2</div></td>
+      </tr>
+
+      <tr class="subtotal-row">
+        <td style="text-align:right; color:#a78bfa;">Phase 3</td>
+        <td class="capital-cell" style="color:#a78bfa; font-weight:700;">~46억</td>
+        <td class="capital-cell" style="color:#a78bfa; font-weight:700;">~5억</td>
+        <td class="capital-cell" style="color:#a78bfa; font-weight:700;">~10.5억/yr</td>
+        <td class="capital-cell" style="color:#a78bfa; font-weight:700;">~72억 (2yr)</td>
+        <td class="capital-cell" style="color:#a78bfa; font-weight:700;">500억</td>
+      </tr>
+
+      <tr class="phase-row" style="background:rgba(100,116,139,0.06);">
+        <td colspan="6" style="color:#94a3b8;">PHASE 4 &mdash; 2032 ~ (ASEAN + 신흥시장)</td>
+      </tr>
+
+      <tr>
+        <td><div style="font-size:12px; font-weight:600;">ASEAN 3 + 신흥시장</div><div class="capital-note">베트남/인도네시아/필리핀/중동</div></td>
+        <td class="capital-cell"><div style="color:#94a3b8;">TBD</div></td>
+        <td class="capital-cell"><div>TBD</div></td>
+        <td class="capital-cell"><div>TBD</div></td>
+        <td class="capital-cell"><div class="capital-main" style="font-size:14px;">TBD</div></td>
+        <td class="capital-cell" style="vertical-align:middle;">
+          <div style="font-size:14px; font-weight:600; color:#94a3b8;">TBD</div>
+          <div class="capital-note">진출 시점 결정</div>
+        </td>
+      </tr>
+
+      <tr class="grand-total">
+        <td style="text-align:right; color:#f472b6;">전체 (Phase 1~3)</td>
+        <td class="capital-cell" style="color:#f472b6; font-weight:700;">~107억</td>
+        <td class="capital-cell" style="color:#f472b6; font-weight:700;">~55억</td>
+        <td class="capital-cell" style="color:#f472b6; font-weight:700;">~68억/yr</td>
+        <td class="capital-cell" style="color:#f472b6; font-weight:700;">~298억</td>
+        <td class="capital-cell" style="color:#f472b6; font-weight:800; font-size:16px;">800~850억</td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <div class="table-note">
+    * 라이선스 자본금: 동일 국가 내 가장 높은 요건이 기준 (합산 아님)<br>
+    * 2년간 필요 총액: 자본금 + 초기 구축비 + (연간 운영비 &times; 2년)<br>
+    * 누적 펀딩: Phase 1~2 수익이 Phase 2~3 운영비 일부 충당 가정<br>
+    * Phase 2~3는 Phase 1 매출로 상당 부분 자체 충당 가능 &rarr; 실제 외부 펀딩은 줄어듦
+  </div>
+
+  <!-- 펀딩 라운드 매핑 -->
+  <div class="section-title" style="padding-top:40px;">
+    <h2>펀딩 라운드 매핑</h2>
+    <p>Phase별 필요 자금을 언제, 얼마나 조달해야 하는가</p>
+  </div>
+
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:40px;">
+
+    <!-- Pre-A -->
+    <div style="border-radius:14px; padding:24px; background:linear-gradient(135deg,rgba(52,211,153,0.12),rgba(52,211,153,0.03)); border:1px solid rgba(52,211,153,0.3);">
+      <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;">Pre-Series A</div>
+      <div style="font-size:28px; font-weight:800; color:#34d399; margin:8px 0; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">100~150억</div>
+      <div style="font-size:11px; color:#64748b; margin-bottom:12px;">현재 ~ 2027</div>
+      <div style="font-size:12px; color:#94a3b8; line-height:1.8;">
+        <div style="padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.05);">&#127480;&#127468; 거래소 설립 &amp; MPI 라이선스</div>
+        <div style="padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.05);">&#127472;&#127479; 한국법인 PG + FX + VASP</div>
+        <div style="padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.05);">매칭엔진 &amp; 인프라 구축</div>
+        <div style="padding:4px 0;">초기 유동성 확보 + 운영 런웨이</div>
+      </div>
+      <div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(52,211,153,0.15); font-size:10px; color:#64748b;">
+        비용 소요: ~107억 &nbsp;|&nbsp; 잔여 자금: 운영 버퍼로 확보
+      </div>
+    </div>
+
+    <!-- Series A -->
+    <div style="border-radius:14px; padding:24px; background:linear-gradient(135deg,rgba(96,165,250,0.12),rgba(96,165,250,0.03)); border:1px solid rgba(96,165,250,0.3);">
+      <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;">Series A</div>
+      <div style="font-size:28px; font-weight:800; color:#60a5fa; margin:8px 0; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">200억</div>
+      <div style="font-size:11px; color:#64748b; margin-bottom:12px;">2027 ~ 2030</div>
+      <div style="font-size:12px; color:#94a3b8; line-height:1.8;">
+        <div style="padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.05);">&#127473;&#127481; 유럽 CASP + EMI 취득</div>
+        <div style="padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.05);">&#127471;&#127477; 일본 CAESP + 資金移動業 + カード決済</div>
+        <div style="padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.05);">&#127462;&#127482; 호주 AFSL + AUSTRAC</div>
+        <div style="padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.05);">&#127481;&#127469; 태국 가맹사업 진출</div>
+        <div style="padding:4px 0;">&#127469;&#127472; 홍콩 MM 법인 (SFC Type 9)</div>
+      </div>
+      <div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(96,165,250,0.15); font-size:10px; color:#64748b;">
+        비용 소요: ~118억 &nbsp;|&nbsp; 잔여: Phase 1 수익 + 글로벌 운영 확장
+      </div>
+    </div>
+
+    <!-- Series B -->
+    <div style="border-radius:14px; padding:24px; background:linear-gradient(135deg,rgba(167,139,250,0.12),rgba(167,139,250,0.03)); border:1px solid rgba(167,139,250,0.3);">
+      <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;">Series B</div>
+      <div style="font-size:28px; font-weight:800; color:#a78bfa; margin:8px 0; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">500억</div>
+      <div style="font-size:11px; color:#64748b; margin-bottom:12px;">2030 ~</div>
+      <div style="font-size:12px; color:#94a3b8; line-height:1.8;">
+        <div style="padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.05);">&#127482;&#127480; 미국법인 MTL + Agent/가맹사업</div>
+        <div style="padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.05);">&#127474;&#127486; 말레이시아 가맹사업</div>
+        <div style="padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.05);">글로벌 유동성 풀 확대 + MM 스케일링</div>
+        <div style="padding:4px 0;">시장 지배력 확보 &amp; 전략적 확장</div>
+      </div>
+      <div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(167,139,250,0.15); font-size:10px; color:#64748b;">
+        비용 소요: ~72억 &nbsp;|&nbsp; 잔여: 미국+글로벌 확장, MM 스케일링
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 총 펀딩 요약 -->
+  <div style="text-align:center; margin-bottom:40px; padding:30px; border-radius:14px; background:linear-gradient(135deg,rgba(244,114,182,0.08),rgba(167,139,250,0.05)); border:1px solid rgba(244,114,182,0.2);">
+    <div style="font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;">총 펀딩 목표 (Phase 1~3)</div>
+    <div style="font-size:42px; font-weight:800; color:#f472b6; margin:8px 0; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">800~850억원</div>
+    <div style="font-size:13px; color:#64748b;">약 $550~590M &nbsp;&middot;&nbsp; Pre-A (100~150억) &rarr; Series A (200억) &rarr; Series B (500억)</div>
+    <div style="font-size:11px; color:#475569; margin-top:6px;">라이선스 자본금 ~55억 + 초기 구축비 ~51억 + 운영비 2년분 ~131억 = 필수 소요 ~237억</div>
+    <div style="font-size:11px; color:#475569; margin-top:2px;">잔여 ~563~613억 &rarr; 에이스 인력, 유동성 풀, MM 운용자본, 전략적 확장</div>
+  </div>
+
+  <!-- ========================================= -->
+  <!-- 펀딩 사용처 세분화 -->
+  <!-- ========================================= -->
+  <div class="section-title" style="padding-top:60px;">
+    <h2>펀딩 사용처 세분화 (Use of Funds)</h2>
+    <p>라운드별 조달 자금의 구체적 사용 계획 &mdash; 단계별 인력 보상 체계</p>
+  </div>
+
+  <!-- Pre-A Use of Funds -->
+  <div style="margin-bottom:24px; border-radius:14px; overflow:hidden; border:1px solid rgba(52,211,153,0.25);">
+    <div style="padding:16px 24px; background:rgba(52,211,153,0.08); display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <span style="font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;">Pre-Series A</span>
+        <span style="font-size:22px; font-weight:800; color:#34d399; margin-left:12px; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">100~150억</span>
+      </div>
+      <div style="font-size:11px; color:#64748b;">현재 ~ 2027 &nbsp;|&nbsp; 목표 인원: ~15명</div>
+    </div>
+    <div style="padding:20px 24px;">
+      <div style="display:grid; grid-template-columns:1fr 100px 1fr; gap:0; font-size:12px;">
+        <!-- Header -->
+        <div style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.08); color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:1px;">항목</div>
+        <div style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.08); color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:1px; text-align:right;">금액</div>
+        <div style="padding:8px 0 8px 16px; border-bottom:1px solid rgba(255,255,255,0.08); color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:1px;">비고</div>
+        <!-- Row 1 -->
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); color:#e0e6f0;">&#127919; 라이선스 자본금</div>
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); text-align:right; font-weight:700; color:#34d399; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">33억</div>
+        <div style="padding:10px 0 10px 16px; border-bottom:1px solid rgba(255,255,255,0.04); color:#64748b;">SG MPI 2.7억 + KR PG 30억</div>
+        <!-- Row 2 -->
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); color:#e0e6f0;">&#9881;&#65039; 인프라 &amp; 매칭엔진</div>
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); text-align:right; font-weight:700; color:#34d399; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">28억</div>
+        <div style="padding:10px 0 10px 16px; border-bottom:1px solid rgba(255,255,255,0.04); color:#64748b;">매칭엔진 15억, 서버/보안 12억, ISMS-P 1억</div>
+        <!-- Row 3 - ACE TALENT -->
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); color:#fcd34d; font-weight:600;">&#11088; 초기 핵심 인력 채용</div>
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); text-align:right; font-weight:700; color:#fcd34d; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">23억</div>
+        <div style="padding:10px 0 10px 16px; border-bottom:1px solid rgba(255,255,255,0.04); color:#64748b;">핵심 개발 + 퀀트 + BD ~15명<br><span style="font-size:10px;">평균 연봉 1.5억원 &times; 1년분</span></div>
+        <!-- Row 4 -->
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); color:#e0e6f0;">&#128176; 초기 유동성 풀</div>
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); text-align:right; font-weight:700; color:#34d399; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">10억</div>
+        <div style="padding:10px 0 10px 16px; border-bottom:1px solid rgba(255,255,255,0.04); color:#64748b;">거래소 런칭 시 초기 유동성</div>
+        <!-- Row 5 -->
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); color:#e0e6f0;">&#128188; 운영비 &amp; 런웨이</div>
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); text-align:right; font-weight:700; color:#34d399; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">10억</div>
+        <div style="padding:10px 0 10px 16px; border-bottom:1px solid rgba(255,255,255,0.04); color:#64748b;">법률, 컴플라이언스, 사무소, 마케팅</div>
+        <!-- Row 6 -->
+        <div style="padding:10px 0; color:#e0e6f0;">&#128737; 버퍼</div>
+        <div style="padding:10px 0; text-align:right; font-weight:700; color:#34d399; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">~0~47억</div>
+        <div style="padding:10px 0 0 16px; color:#64748b;">예비비 + 추가 기회 대응</div>
+      </div>
+      <!-- Bar chart -->
+      <div style="margin-top:20px; padding-top:16px; border-top:1px solid rgba(52,211,153,0.15);">
+        <div style="display:flex; height:28px; border-radius:8px; overflow:hidden; font-size:9px; font-weight:600;">
+          <div style="width:26%; background:rgba(52,211,153,0.5); display:flex; align-items:center; justify-content:center; color:#0a0e1a;">자본금 26%</div>
+          <div style="width:22%; background:rgba(52,211,153,0.35); display:flex; align-items:center; justify-content:center; color:#e0e6f0;">인프라 22%</div>
+          <div style="width:18%; background:rgba(251,191,36,0.4); display:flex; align-items:center; justify-content:center; color:#0a0e1a;">인력 18%</div>
+          <div style="width:8%; background:rgba(96,165,250,0.3); display:flex; align-items:center; justify-content:center; color:#e0e6f0;">LP</div>
+          <div style="width:8%; background:rgba(167,139,250,0.3); display:flex; align-items:center; justify-content:center; color:#e0e6f0;">운영</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Series A Use of Funds -->
+  <div style="margin-bottom:24px; border-radius:14px; overflow:hidden; border:1px solid rgba(96,165,250,0.25);">
+    <div style="padding:16px 24px; background:rgba(96,165,250,0.08); display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <span style="font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;">Series A</span>
+        <span style="font-size:22px; font-weight:800; color:#60a5fa; margin-left:12px; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">200억</span>
+      </div>
+      <div style="font-size:11px; color:#64748b;">2027 ~ 2030 &nbsp;|&nbsp; 목표 인원: 25명 &rarr; 55명</div>
+    </div>
+    <div style="padding:20px 24px;">
+      <div style="display:grid; grid-template-columns:1fr 100px 1fr; gap:0; font-size:12px;">
+        <div style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.08); color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:1px;">항목</div>
+        <div style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.08); color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:1px; text-align:right;">금액</div>
+        <div style="padding:8px 0 8px 16px; border-bottom:1px solid rgba(255,255,255,0.08); color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:1px;">비고</div>
+        <!-- Row 1 -->
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); color:#e0e6f0;">&#127919; 라이선스 자본금 (Phase 2)</div>
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); text-align:right; font-weight:700; color:#60a5fa; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">28억</div>
+        <div style="padding:10px 0 10px 16px; border-bottom:1px solid rgba(255,255,255,0.04); color:#64748b;">EU 5.4 + JP 1.9 + AU 0.5 + 태국 20 + 홍콩 0.2</div>
+        <!-- Row 2 -->
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); color:#e0e6f0;">&#9881;&#65039; 글로벌 인프라 구축</div>
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); text-align:right; font-weight:700; color:#60a5fa; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">22억</div>
+        <div style="padding:10px 0 10px 16px; border-bottom:1px solid rgba(255,255,255,0.04); color:#64748b;">SEPA/카드 연동, 분별관리, 태국 가맹점 + 홍콩 MM 인프라 + 각국 라이선스</div>
+        <!-- Row 3 - ACE TALENT -->
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); color:#fcd34d; font-weight:600;">&#11088; 에이스 인력 확대</div>
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); text-align:right; font-weight:700; color:#fcd34d; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">80억</div>
+        <div style="padding:10px 0 10px 16px; border-bottom:1px solid rgba(255,255,255,0.04); color:#64748b;">15명 &rarr; 55명 확대 (추가 40명)<br><span style="font-size:10px;">연봉 2억 + 성과급 1억 = 3억/인 &middot; EU/JP/AU 현지 + 본사</span></div>
+        <!-- Row 4 -->
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); color:#e0e6f0;">&#128176; 유동성 풀 확대</div>
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); text-align:right; font-weight:700; color:#60a5fa; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">35억</div>
+        <div style="padding:10px 0 10px 16px; border-bottom:1px solid rgba(255,255,255,0.04); color:#64748b;">멀티커런시 유동성 + 거래량 부스트</div>
+        <!-- Row 5 -->
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); color:#e0e6f0;">&#128640; BD &amp; 마케팅</div>
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); text-align:right; font-weight:700; color:#60a5fa; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">25억</div>
+        <div style="padding:10px 0 10px 16px; border-bottom:1px solid rgba(255,255,255,0.04); color:#64748b;">기관 영업, 컨퍼런스, 파트너십</div>
+        <!-- Row 6 -->
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); color:#e0e6f0;">&#128188; 운영비 &amp; 컴플라이언스</div>
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); text-align:right; font-weight:700; color:#60a5fa; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">21억</div>
+        <div style="padding:10px 0 10px 16px; border-bottom:1px solid rgba(255,255,255,0.04); color:#64748b;">4개국 법률/감사/사무소</div>
+        <!-- Row 7 -->
+        <div style="padding:10px 0; color:#e0e6f0;">&#128737; 버퍼</div>
+        <div style="padding:10px 0; text-align:right; font-weight:700; color:#60a5fa; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">~10억</div>
+        <div style="padding:10px 0 0 16px; color:#64748b;">예비비 (+ Phase 1 자체 매출로 보충)</div>
+      </div>
+      <div style="margin-top:20px; padding-top:16px; border-top:1px solid rgba(96,165,250,0.15);">
+        <div style="display:flex; height:28px; border-radius:8px; overflow:hidden; font-size:9px; font-weight:600;">
+          <div style="width:7%; background:rgba(96,165,250,0.5); display:flex; align-items:center; justify-content:center; color:#0a0e1a;"></div>
+          <div style="width:8%; background:rgba(96,165,250,0.35); display:flex; align-items:center; justify-content:center; color:#e0e6f0;">인프라</div>
+          <div style="width:40%; background:rgba(251,191,36,0.4); display:flex; align-items:center; justify-content:center; color:#0a0e1a;">인력 40%</div>
+          <div style="width:18%; background:rgba(52,211,153,0.3); display:flex; align-items:center; justify-content:center; color:#e0e6f0;">유동성</div>
+          <div style="width:13%; background:rgba(244,114,182,0.3); display:flex; align-items:center; justify-content:center; color:#e0e6f0;">BD</div>
+          <div style="width:10%; background:rgba(167,139,250,0.3); display:flex; align-items:center; justify-content:center; color:#e0e6f0;">운영</div>
+          <div style="width:4%; background:rgba(255,255,255,0.06);"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Series B Use of Funds -->
+  <div style="margin-bottom:40px; border-radius:14px; overflow:hidden; border:1px solid rgba(167,139,250,0.25);">
+    <div style="padding:16px 24px; background:rgba(167,139,250,0.08); display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <span style="font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;">Series B</span>
+        <span style="font-size:22px; font-weight:800; color:#a78bfa; margin-left:12px; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">500억</span>
+      </div>
+      <div style="font-size:11px; color:#64748b;">2030 ~ &nbsp;|&nbsp; 목표 인원: 55명 &rarr; 100명+</div>
+    </div>
+    <div style="padding:20px 24px;">
+      <div style="display:grid; grid-template-columns:1fr 100px 1fr; gap:0; font-size:12px;">
+        <div style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.08); color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:1px;">항목</div>
+        <div style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.08); color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:1px; text-align:right;">금액</div>
+        <div style="padding:8px 0 8px 16px; border-bottom:1px solid rgba(255,255,255,0.08); color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:1px;">비고</div>
+        <!-- Row 1 -->
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); color:#e0e6f0;">&#127919; 라이선스 자본금 (Phase 3)</div>
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); text-align:right; font-weight:700; color:#a78bfa; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">46억</div>
+        <div style="padding:10px 0 10px 16px; border-bottom:1px solid rgba(255,255,255,0.04); color:#64748b;">미국 MTL ~30억 + 말레이시아 BNM ~16억</div>
+        <!-- Row 2 - ACE TALENT -->
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); color:#fcd34d; font-weight:600;">&#11088; 에이스 인력 글로벌 확대</div>
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); text-align:right; font-weight:700; color:#fcd34d; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">135억</div>
+        <div style="padding:10px 0 10px 16px; border-bottom:1px solid rgba(255,255,255,0.04); color:#64748b;">55명 &rarr; 100명+ 확대<br><span style="font-size:10px;">시니어 퀀트, 트레이더, 글로벌 세일즈 &middot; 2~3억/인</span></div>
+        <!-- Row 3 -->
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); color:#e0e6f0;">&#128176; 글로벌 유동성 풀 &amp; MM</div>
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); text-align:right; font-weight:700; color:#a78bfa; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">120억</div>
+        <div style="padding:10px 0 10px 16px; border-bottom:1px solid rgba(255,255,255,0.04); color:#64748b;">홍콩 MM 운용자본 스케일업 + 글로벌 LP 확대</div>
+        <!-- Row 4 -->
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); color:#e0e6f0;">&#127758; 전략적 확장 &amp; M&amp;A</div>
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); text-align:right; font-weight:700; color:#a78bfa; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">105억</div>
+        <div style="padding:10px 0 10px 16px; border-bottom:1px solid rgba(255,255,255,0.04); color:#64748b;">미국/동남아 시장 확장, 전략적 인수</div>
+        <!-- Row 5 -->
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); color:#e0e6f0;">&#128640; 글로벌 BD &amp; 브랜딩</div>
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); text-align:right; font-weight:700; color:#a78bfa; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">50억</div>
+        <div style="padding:10px 0 10px 16px; border-bottom:1px solid rgba(255,255,255,0.04); color:#64748b;">글로벌 기관 세일즈, 시장 지배력 확보</div>
+        <!-- Row 6 -->
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); color:#e0e6f0;">&#128188; 운영비 &amp; 인프라</div>
+        <div style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); text-align:right; font-weight:700; color:#a78bfa; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">40억</div>
+        <div style="padding:10px 0 10px 16px; border-bottom:1px solid rgba(255,255,255,0.04); color:#64748b;">글로벌 운영, 인프라 스케일링</div>
+        <!-- Row 7 -->
+        <div style="padding:10px 0; color:#e0e6f0;">&#128737; 버퍼</div>
+        <div style="padding:10px 0; text-align:right; font-weight:700; color:#a78bfa; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">~40억</div>
+        <div style="padding:10px 0 0 16px; color:#64748b;">Phase 1~2 자체 매출로 상당 부분 보충</div>
+      </div>
+      <div style="margin-top:20px; padding-top:16px; border-top:1px solid rgba(167,139,250,0.15);">
+        <div style="display:flex; height:28px; border-radius:8px; overflow:hidden; font-size:9px; font-weight:600;">
+          <div style="width:2%; background:rgba(167,139,250,0.5);"></div>
+          <div style="width:27%; background:rgba(251,191,36,0.4); display:flex; align-items:center; justify-content:center; color:#0a0e1a;">인력 27%</div>
+          <div style="width:24%; background:rgba(52,211,153,0.3); display:flex; align-items:center; justify-content:center; color:#e0e6f0;">유동성/MM 24%</div>
+          <div style="width:21%; background:rgba(244,114,182,0.3); display:flex; align-items:center; justify-content:center; color:#e0e6f0;">전략확장 21%</div>
+          <div style="width:10%; background:rgba(96,165,250,0.3); display:flex; align-items:center; justify-content:center; color:#e0e6f0;">BD</div>
+          <div style="width:8%; background:rgba(167,139,250,0.25); display:flex; align-items:center; justify-content:center; color:#e0e6f0;">운영</div>
+          <div style="width:8%; background:rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:center; color:#64748b;">버퍼</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 인력 투자 요약 -->
+  <div style="text-align:center; margin-bottom:60px; padding:24px; border-radius:14px; background:linear-gradient(135deg,rgba(251,191,36,0.08),rgba(251,191,36,0.02)); border:1px solid rgba(251,191,36,0.2);">
+    <div style="font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;">전체 인력 투자</div>
+    <div style="font-size:36px; font-weight:800; color:#fcd34d; margin:8px 0; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">~238억원</div>
+    <div style="font-size:13px; color:#64748b;">전체 펀딩의 <span style="color:#fcd34d; font-weight:700;">~29%</span> &nbsp;&middot;&nbsp; Pre-A 23억 &rarr; Series A 80억 &rarr; Series B 135억</div>
+    <div style="font-size:11px; color:#475569; margin-top:6px;">인원: 15명 (Y1) &rarr; 25명 (Y2) &rarr; 40명 (Y3) &rarr; 55명 (Y4) &rarr; 80명 (Y5) &rarr; 100명+ (Y6)</div>
+    <div style="font-size:10px; color:#fcd34d; margin-top:4px;">Pre-A 1.5억/인 &rarr; Series A 2억+성과급 1억 &rarr; Series B 2~3억/인</div>
+  </div>
+
+  <!-- ========================================= -->
+  <!-- Turnaround / Breakeven 분석 -->
+  <!-- ========================================= -->
+  <div class="section-title" style="padding-top:20px;">
+    <h2>Turnaround 시나리오</h2>
+    <p>연도별 매출 vs 비용 &mdash; 단계별 인력 보상 체계 기반 성장 모델</p>
+  </div>
+
+  <!-- 가정 박스 -->
+  <div style="margin-bottom:24px; padding:20px 24px; border-radius:12px; background:rgba(255,255,255,0.02); border:1px solid rgba(100,116,139,0.2);">
+    <div style="font-size:11px; color:#94a3b8; font-weight:600; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">Key Assumptions</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px 24px; font-size:12px; color:#94a3b8;">
+      <div>&bull; Revenue TAM (40% 점유 시): Phase 1+2 ~7.4조 / Phase 1~3 ~10.3조</div>
+      <div>&bull; 거래소 수수료: 1.5bp / Agent B2B: 1bp / B2C: 4bp</div>
+      <div>&bull; Phase 1 (KR+SG) 커버 TAM: 전체의 ~35%</div>
+      <div>&bull; Phase 2 (EU+JP+AU+태국+홍콩MM) 추가: +40% &rarr; 누적 ~75%</div>
+      <div>&bull; 인력 보상: Pre-A <span style="color:#fcd34d; font-weight:600;">1.5억</span> &rarr; Series A <span style="color:#fcd34d; font-weight:600;">2억+성과급</span> &rarr; Series B <span style="color:#fcd34d; font-weight:600;">2~3억</span></div>
+      <div>&bull; EBITDA Margin 상한: <span style="color:#fcd34d; font-weight:600;">45% 이하</span> (보수적)</div>
+    </div>
+  </div>
+
+  <!-- Year-by-Year Table -->
+  <table class="license-table" style="margin-bottom:12px;">
+    <thead>
+      <tr>
+        <th style="width:10%;">연도</th>
+        <th style="width:12%;">Phase</th>
+        <th style="width:8%;">인원</th>
+        <th style="width:10%;">침투율</th>
+        <th style="width:14%;">매출</th>
+        <th style="width:14%;">비용 (연간)</th>
+        <th style="width:14%;">EBITDA</th>
+        <th style="width:18%;">누적 손익</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Y1: 2026 -->
+      <tr>
+        <td style="font-weight:700; color:#e0e6f0;">2026</td>
+        <td><span style="font-size:10px; padding:2px 6px; border-radius:4px; background:rgba(52,211,153,0.2); color:#6ee7b7; font-weight:700;">Phase 1</span><br><span style="font-size:10px; color:#64748b;">Setup</span></td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; font-weight:600;">~5명</td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#64748b;">0%</td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#64748b;">0</td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#f87171;">8억</td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#f87171; font-weight:700;">-8억</td>
+        <td>
+          <div style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#f87171; font-weight:700;">-8억</div>
+          <div style="font-size:9px; color:#64748b; margin-top:2px;">창업팀 + 초기 셋업</div>
+          <div style="height:6px; background:rgba(255,255,255,0.05); border-radius:3px; margin-top:4px; overflow:hidden;">
+            <div style="width:8%; height:100%; background:#f87171; border-radius:3px;"></div>
+          </div>
+        </td>
+      </tr>
+      <!-- Y2: 2027 -->
+      <tr>
+        <td style="font-weight:700; color:#e0e6f0;">2027</td>
+        <td><span style="font-size:10px; padding:2px 6px; border-radius:4px; background:rgba(52,211,153,0.2); color:#6ee7b7; font-weight:700;">Phase 1</span><br><span style="font-size:10px; color:#64748b;">Launch</span></td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; font-weight:600;">~12명</td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#fcd34d;">0.07%</td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#34d399;">10억</td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#f87171;">40억</td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#f87171; font-weight:700;">-30억</td>
+        <td>
+          <div style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#f87171; font-weight:700;">-38억</div>
+          <div style="font-size:9px; color:#64748b; margin-top:2px;">SG 거래소 런칭 + 채용 확대</div>
+          <div style="height:6px; background:rgba(255,255,255,0.05); border-radius:3px; margin-top:4px; overflow:hidden;">
+            <div style="width:38%; height:100%; background:#f87171; border-radius:3px;"></div>
+          </div>
+        </td>
+      </tr>
+      <!-- Y3: 2028 -->
+      <tr>
+        <td style="font-weight:700; color:#e0e6f0;">2028</td>
+        <td><span style="font-size:10px; padding:2px 6px; border-radius:4px; background:rgba(52,211,153,0.2); color:#6ee7b7; font-weight:700;">Phase 1</span><br><span style="font-size:10px; color:#fcd34d;">Growth</span></td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; font-weight:600;">~25명</td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#fcd34d;">0.4%</td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#34d399;">55억</td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#f87171;">95억</td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#f87171; font-weight:700;">-40억</td>
+        <td>
+          <div style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#f87171; font-weight:700;">-78억</div>
+          <div style="font-size:9px; color:#64748b; margin-top:2px;">KR Agent + 거래소 성장</div>
+          <div style="height:6px; background:rgba(255,255,255,0.05); border-radius:3px; margin-top:4px; overflow:hidden;">
+            <div style="width:78%; height:100%; background:#f87171; border-radius:3px;"></div>
+          </div>
+        </td>
+      </tr>
+      <!-- Y4: 2029 — KR BEP but consolidated negative -->
+      <tr style="background:rgba(251,191,36,0.03);">
+        <td style="font-weight:700; color:#fcd34d;">2029</td>
+        <td><span style="font-size:10px; padding:2px 6px; border-radius:4px; background:rgba(96,165,250,0.2); color:#93c5fd; font-weight:700;">Phase 2</span><br><span style="font-size:10px; color:#fcd34d;">KR BEP</span></td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; font-weight:600;">~35명</td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#fcd34d;">1.0%</td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#34d399;">140억</td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#f87171;">155억</td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#f87171; font-weight:700;">-15억</td>
+        <td>
+          <div style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#f87171; font-weight:700;">-93억</div>
+          <div style="font-size:9px; color:#fcd34d; margin-top:2px;">&#127472;&#127479; KR +3억 / Phase 2 셋업 -18억</div>
+          <div style="height:6px; background:rgba(255,255,255,0.05); border-radius:3px; margin-top:4px; overflow:hidden;">
+            <div style="width:93%; height:100%; background:linear-gradient(90deg,#f87171,#fcd34d); border-radius:3px;"></div>
+          </div>
+        </td>
+      </tr>
+      <!-- Y5: 2030 — BEP -->
+      <tr style="background:rgba(52,211,153,0.04);">
+        <td style="font-weight:700; color:#34d399;">2030</td>
+        <td><span style="font-size:10px; padding:2px 6px; border-radius:4px; background:rgba(96,165,250,0.2); color:#93c5fd; font-weight:700;">Phase 2</span><span style="font-size:10px; padding:2px 6px; border-radius:4px; background:rgba(167,139,250,0.2); color:#c4b5fd; font-weight:700; margin-left:4px;">3</span><br><span style="font-size:10px; color:#34d399; font-weight:600;">BEP &#9889;</span></td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; font-weight:600;">~55명</td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#34d399; font-weight:600;">2.1%</td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#34d399; font-weight:700;">290억</td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#fcd34d;">225억</td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#34d399; font-weight:700;">+65억</td>
+        <td>
+          <div style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#f87171; font-weight:700;">-28억</div>
+          <div style="font-size:9px; color:#34d399; font-weight:700; margin-top:2px;">&#9889; 단년도 BEP &middot; Margin 22%</div>
+          <div style="height:6px; background:rgba(255,255,255,0.05); border-radius:3px; margin-top:4px; overflow:hidden;">
+            <div style="width:30%; height:100%; background:#34d399; border-radius:3px;"></div>
+          </div>
+        </td>
+      </tr>
+      <!-- Y6: 2031 — Cumulative BEP -->
+      <tr style="background:rgba(52,211,153,0.04);">
+        <td style="font-weight:700; color:#34d399;">2031</td>
+        <td><span style="font-size:10px; padding:2px 6px; border-radius:4px; background:rgba(167,139,250,0.2); color:#c4b5fd; font-weight:700;">Phase 3</span><br><span style="font-size:10px; color:#34d399; font-weight:600;">Profit</span></td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; font-weight:600;">~80명</td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#34d399; font-weight:600;">3.6%</td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#34d399; font-weight:700;">500억</td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#fcd34d;">310억</td>
+        <td style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#34d399; font-weight:700;">+190억</td>
+        <td>
+          <div style="font-family:'SF Mono','Cascadia Code','Consolas',monospace; color:#34d399; font-weight:700;">+162억</div>
+          <div style="font-size:9px; color:#34d399; font-weight:700; margin-top:2px;">&#10003; 누적 흑자 전환</div>
+          <div style="font-size:9px; color:#64748b;">Margin 38% &middot; 인건비 240 + 기타 70</div>
+          <div style="height:6px; background:rgba(255,255,255,0.05); border-radius:3px; margin-top:4px; overflow:hidden;">
+            <div style="width:65%; height:100%; background:linear-gradient(90deg,#34d399,#a78bfa); border-radius:3px;"></div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="table-note">
+    * 침투율: Phase 1~3 Revenue TAM ~10.3조 대비 점유율<br>
+    * 비용: 인건비 (인원 &times; 3억) + 인프라 + 라이선스 유지 + 컴플라이언스 + BD/마케팅<br>
+    * 2029년: 한국법인 단독 BEP (+3억) 달성, 그러나 Phase 2 법인 셋업 비용으로 연결 기준 적자 유지<br>
+    * 2030년: Phase 2 법인들 매출 기여 시작 &rarr; 연결 기준 단년도 흑자 전환<br>
+    * 2031년 EBITDA Margin 38% &mdash; 비용의 ~77%가 인건비 (에이스 투자 유지)
+  </div>
+
+  <!-- Breakeven Highlight -->
+  <div style="text-align:center; margin-bottom:24px; padding:30px; border-radius:14px; background:linear-gradient(135deg,rgba(52,211,153,0.1),rgba(52,211,153,0.03)); border:2px solid rgba(52,211,153,0.3);">
+    <div style="display:flex; justify-content:center; gap:40px; margin-bottom:20px;">
+      <div style="text-align:center;">
+        <div style="font-size:10px; color:#fcd34d; text-transform:uppercase; letter-spacing:1px;">&#127472;&#127479; 한국법인 BEP</div>
+        <div style="font-size:36px; font-weight:800; color:#fcd34d; margin:4px 0; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">2029년</div>
+        <div style="font-size:11px; color:#64748b;">한국법인 단독 +3억</div>
+      </div>
+      <div style="width:1px; background:rgba(100,116,139,0.2);"></div>
+      <div style="text-align:center;">
+        <div style="font-size:10px; color:#34d399; text-transform:uppercase; letter-spacing:1px;">연결 기준 BEP</div>
+        <div style="font-size:36px; font-weight:800; color:#34d399; margin:4px 0; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">2030년</div>
+        <div style="font-size:11px; color:#64748b;">전체 단년도 +65억</div>
+      </div>
+      <div style="width:1px; background:rgba(100,116,139,0.2);"></div>
+      <div style="text-align:center;">
+        <div style="font-size:10px; color:#a78bfa; text-transform:uppercase; letter-spacing:1px;">누적 흑자 전환</div>
+        <div style="font-size:36px; font-weight:800; color:#a78bfa; margin:4px 0; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">2031년</div>
+        <div style="font-size:11px; color:#64748b;">누적 +162억</div>
+      </div>
+    </div>
+    <div style="display:flex; justify-content:center; gap:40px; font-size:12px;">
+      <div style="text-align:center;">
+        <div style="color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:1px;">최대 누적 적자</div>
+        <div style="color:#f87171; font-weight:700; font-size:18px; font-family:'SF Mono','Cascadia Code','Consolas',monospace; margin-top:4px;">-93억</div>
+        <div style="color:#64748b; font-size:10px;">(2029년 말)</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:1px;">2030 EBITDA</div>
+        <div style="color:#34d399; font-weight:700; font-size:18px; font-family:'SF Mono','Cascadia Code','Consolas',monospace; margin-top:4px;">+65억</div>
+        <div style="color:#64748b; font-size:10px;">Margin 22%</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="color:#94a3b8; font-size:10px; text-transform:uppercase; letter-spacing:1px;">2031 EBITDA</div>
+        <div style="color:#34d399; font-weight:700; font-size:18px; font-family:'SF Mono','Cascadia Code','Consolas',monospace; margin-top:4px;">+190억</div>
+        <div style="color:#64748b; font-size:10px;">Margin 38%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Revenue vs Cost Visual -->
+  <div style="margin-bottom:24px; padding:24px; border-radius:14px; background:rgba(255,255,255,0.02); border:1px solid rgba(100,116,139,0.15);">
+    <div style="font-size:11px; color:#94a3b8; font-weight:600; text-transform:uppercase; letter-spacing:1px; margin-bottom:16px;">매출 vs 비용 추이 (억원)</div>
+    <div style="display:flex; align-items:flex-end; gap:12px; height:200px; padding-bottom:24px; border-bottom:1px solid rgba(100,116,139,0.15);">
+      <!-- 2026 -->
+      <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; align-self:flex-end;">
+        <div style="font-size:9px; color:#64748b;">0</div>
+        <div style="width:18px; height:2px; background:#34d399; border-radius:2px;"></div>
+        <div style="width:18px; height:5px; background:rgba(248,113,113,0.4); border-radius:4px 4px 0 0;"></div>
+        <div style="font-size:10px; color:#64748b; margin-top:4px;">'26</div>
+      </div>
+      <!-- 2027 -->
+      <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; align-self:flex-end;">
+        <div style="font-size:9px; color:#34d399;">10</div>
+        <div style="width:18px; height:4px; background:rgba(52,211,153,0.5); border-radius:4px 4px 0 0;"></div>
+        <div style="width:18px; height:16px; background:rgba(248,113,113,0.4); border-radius:4px 4px 0 0;"></div>
+        <div style="font-size:10px; color:#64748b; margin-top:4px;">'27</div>
+      </div>
+      <!-- 2028 -->
+      <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; align-self:flex-end;">
+        <div style="font-size:9px; color:#34d399;">55</div>
+        <div style="width:18px; height:22px; background:rgba(52,211,153,0.5); border-radius:4px 4px 0 0;"></div>
+        <div style="width:18px; height:38px; background:rgba(248,113,113,0.4); border-radius:4px 4px 0 0;"></div>
+        <div style="font-size:10px; color:#64748b; margin-top:4px;">'28</div>
+      </div>
+      <!-- 2029 -->
+      <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; align-self:flex-end;">
+        <div style="font-size:9px; color:#34d399;">140</div>
+        <div style="width:18px; height:56px; background:rgba(52,211,153,0.5); border-radius:4px 4px 0 0;"></div>
+        <div style="width:18px; height:62px; background:rgba(248,113,113,0.4); border-radius:4px 4px 0 0;"></div>
+        <div style="font-size:10px; color:#fcd34d; margin-top:4px;">'29</div>
+      </div>
+      <!-- 2030 BEP -->
+      <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; align-self:flex-end;">
+        <div style="font-size:9px; color:#34d399; font-weight:700;">290</div>
+        <div style="width:18px; height:116px; background:rgba(52,211,153,0.5); border-radius:4px 4px 0 0;"></div>
+        <div style="width:18px; height:90px; background:rgba(248,113,113,0.4); border-radius:4px 4px 0 0;"></div>
+        <div style="font-size:10px; color:#34d399; font-weight:700; margin-top:4px;">'30&#9889;</div>
+      </div>
+      <!-- 2031 -->
+      <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; align-self:flex-end;">
+        <div style="font-size:9px; color:#34d399;">500</div>
+        <div style="width:18px; height:200px; background:linear-gradient(180deg,rgba(167,139,250,0.5),rgba(52,211,153,0.5)); border-radius:4px 4px 0 0;"></div>
+        <div style="width:18px; height:124px; background:rgba(248,113,113,0.4); border-radius:4px 4px 0 0;"></div>
+        <div style="font-size:10px; color:#64748b; margin-top:4px;">'31</div>
+      </div>
+    </div>
+    <div style="display:flex; justify-content:center; gap:24px; margin-top:12px; font-size:10px; color:#64748b;">
+      <div><span style="display:inline-block; width:12px; height:8px; background:rgba(52,211,153,0.5); border-radius:2px; margin-right:4px;"></span>매출 (Revenue)</div>
+      <div><span style="display:inline-block; width:12px; height:8px; background:rgba(248,113,113,0.4); border-radius:2px; margin-right:4px;"></span>비용 (Cost)</div>
+    </div>
+  </div>
+
+  <!-- Scenario comparison -->
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:40px;">
+    <div style="border-radius:14px; padding:20px; background:rgba(248,113,113,0.05); border:1px solid rgba(248,113,113,0.2); text-align:center;">
+      <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;">Conservative</div>
+      <div style="font-size:11px; color:#64748b; margin-top:4px;">침투 속도 50% 감소</div>
+      <div style="font-size:24px; font-weight:800; color:#fcd34d; margin:12px 0; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">2031년</div>
+      <div style="font-size:11px; color:#64748b;">단년도 BEP Y6<br>최대 누적 적자 ~140억<br>누적 흑자: 2033년</div>
+    </div>
+    <div style="border-radius:14px; padding:20px; background:rgba(52,211,153,0.05); border:2px solid rgba(52,211,153,0.3); text-align:center;">
+      <div style="font-size:10px; color:#34d399; text-transform:uppercase; letter-spacing:1px; font-weight:700;">Base Case</div>
+      <div style="font-size:11px; color:#64748b; margin-top:4px;">현재 모델 기준</div>
+      <div style="font-size:24px; font-weight:800; color:#34d399; margin:12px 0; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">2030년</div>
+      <div style="font-size:11px; color:#64748b;">단년도 BEP Y5<br>최대 누적 적자 ~93억<br>누적 흑자: 2031년</div>
+    </div>
+    <div style="border-radius:14px; padding:20px; background:rgba(96,165,250,0.05); border:1px solid rgba(96,165,250,0.2); text-align:center;">
+      <div style="font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;">Optimistic</div>
+      <div style="font-size:11px; color:#64748b; margin-top:4px;">침투 속도 50% 증가</div>
+      <div style="font-size:24px; font-weight:800; color:#60a5fa; margin:12px 0; font-family:'SF Mono','Cascadia Code','Consolas',monospace;">2029년</div>
+      <div style="font-size:11px; color:#64748b;">단년도 BEP Y4<br>최대 누적 적자 ~60억<br>누적 흑자: 2030년</div>
+    </div>
+  </div>
+
+  <div class="table-note" style="margin-bottom:40px;">
+    * Conservative: 시장 침투 속도가 Base Case 대비 50% 느린 시나리오 (규제 지연, 경쟁 심화)<br>
+    * Base Case: 현재 계획대로 라이선스 취득 및 시장 진입이 진행되는 시나리오<br>
+    * Optimistic: 시장 수요가 예상보다 강하고 침투가 빠른 시나리오 (기관 고객 조기 확보)<br>
+    * 2029년 한국법인 단독 BEP 달성 (+3억), 그러나 Phase 2 법인 셋업으로 연결 기준 적자 지속<br>
+    * 모든 시나리오에서 에이스 인력 채용 계획은 동일하게 유지 (핵심 경쟁력)
+  </div>
+
+</div>
+
+<div class="footer">
+  <span>KustodyFi</span> &mdash; FP&amp;A &middot; Confidential
+</div>
+
+</body>
+</html>

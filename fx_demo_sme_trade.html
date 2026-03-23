@@ -299,7 +299,7 @@
       <div style="margin-top:8px">
         <div class="pain-point" data-delay="1000"><span>&#9888;</span> 건별 소액 환전 &rarr; 은행 스프레드 <strong>1.5~2.5원/달러</strong> (대기업은 0.3~0.5원)</div>
         <div class="pain-point" data-delay="1100"><span>&#9888;</span> 은행 <strong>1곳</strong>과만 장외거래 &rarr; 비교 없음, Best Execution 불가</div>
-        <div class="pain-point" data-delay="1200"><span>&#9888;</span> 당일 즉시 매도 &rarr; 타이밍 최적화 0%</div>
+        <div class="pain-point" data-delay="1200"><span>&#9888;</span> 당일 즉시 매도 &rarr; 호가 비교 없이 체결</div>
         <div class="pain-point" data-delay="1300"><span>&#9888;</span> 환전 건을 묶지 않음 &rarr; 볼륨 디스카운트 못 받음</div>
         <div class="pain-point" data-delay="1400"><span>&#9888;</span> 환율 변동 대비(헷지) 전혀 없음 &rarr; 환율 급변 시 무방비</div>
         <div class="pain-point" data-delay="1500"><span>&#9888;</span> 미실현 손익 관리 0% &rarr; <strong>실현 손익 vs 평가 손익 차이</strong>를 매월 추적 못함</div>
@@ -325,21 +325,21 @@
           </div>
           <div style="font-size:12px;color:var(--gray-300);line-height:1.6;padding:10px;background:rgba(217,119,6,.06);border-radius:8px">
             건별 소액 처리 &rarr; 스프레드 불리 + 은행 1곳만 이용<br>
-            배칭 + Multi-RFQ 시 연 &#8361;1.6/$ 개선 가능<br>
+            Multi-RFQ 경쟁 호가 시 연 &#8361;1.6/$ 개선 가능<br>
             <span style="font-size:10px;color:var(--gray-500)">"묶어서, 여러 은행 비교하면 이만큼 줄일 수 있습니다"</span>
           </div>
         </div>
 
         <div class="panel fx" style="opacity:0;animation:fadeUp .6s .5s forwards;padding:24px">
-          <div class="panel-title"><span class="badge badge-cyan">TIMING</span> 타이밍 손실</div>
+          <div class="panel-title"><span class="badge badge-cyan">SPREAD</span> 스프레드 손실</div>
           <div style="text-align:center;margin:16px 0">
             <div style="font-size:36px;font-weight:900;color:#67e8f9">5,250만원</div>
             <div style="font-size:11px;color:var(--gray-500);margin-top:4px">/년</div>
           </div>
           <div style="font-size:12px;color:var(--gray-300);line-height:1.6;padding:10px;background:rgba(8,145,178,.06);border-radius:8px">
-            최적 매도 시점 vs 즉시 매도: 평균 &#8361;1.5/$ 차이<br>
+            단일 은행 호가 vs Multi-RFQ 경쟁 호가: 평균 &#8361;1.5/$ 차이<br>
             $35M &times; &#8361;1.5<br>
-            <span style="font-size:10px;color:var(--gray-500)">"환율이 오를 때 팔고, 내릴 때도 팔고"</span>
+            <span style="font-size:10px;color:var(--gray-500)">공정가치 대비 불리한 호가를 걸러냅니다</span>
           </div>
         </div>
 
@@ -453,14 +453,14 @@
         <div class="cause-arrow">&rarr;</div>
         <div class="cause-step" style="background:rgba(8,145,178,.08);border:1px solid rgba(8,145,178,.2);border-radius:10px">
           <div class="cause-num">STEP 2</div>
-          <div class="cause-label" style="color:#67e8f9">자동 배칭</div>
-          <div class="cause-detail">일/주 배칭<br>볼륨 최적화</div>
+          <div class="cause-label" style="color:#67e8f9">자금 집계</div>
+          <div class="cause-detail">입금 내역 자동 집계<br>스케줄 연동</div>
         </div>
         <div class="cause-arrow">&rarr;</div>
         <div class="cause-step" style="background:rgba(217,119,6,.08);border:1px solid rgba(217,119,6,.2);border-radius:10px">
           <div class="cause-num">STEP 3</div>
-          <div class="cause-label" style="color:#fcd34d">타이밍 분석</div>
-          <div class="cause-detail">최적 시점<br>AI 판단</div>
+          <div class="cause-label" style="color:#fcd34d">공정가치 분석</div>
+          <div class="cause-detail">유불리 구간<br>AI 평가</div>
         </div>
         <div class="cause-arrow">&rarr;</div>
         <div class="cause-step" style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.2);border-radius:10px">
@@ -489,7 +489,7 @@
       <div style="margin-top:4px">
         <div class="benefit-point green" data-delay="0"><span>&#10003;</span> 인적 시간 <strong>0분</strong> &mdash; AI가 준비, 사람은 승인 클릭만</div>
         <div class="benefit-point green" data-delay="100"><span>&#10003;</span> 소액 건을 <strong>묶어서</strong> 볼륨 디스카운트 확보</div>
-        <div class="benefit-point cyan" data-delay="200"><span>&#10003;</span> 24시간 시장 모니터링 &rarr; <strong>최적 타이밍</strong> 매도 제안</div>
+        <div class="benefit-point cyan" data-delay="200"><span>&#10003;</span> 24시간 시장 모니터링 &rarr; <strong>공정가치 대비 유리 구간</strong> 안내</div>
         <div class="benefit-point cyan" data-delay="300"><span>&#10003;</span> 5곳 은행 자동 비교 &rarr; <strong>Best Execution</strong> 보장</div>
         <div class="benefit-point green" data-delay="400"><span>&#10003;</span> 외환 전담자 채용 불필요 &mdash; <strong>CFO님이 승인권만 행사</strong></div>
       </div>
@@ -497,55 +497,55 @@
   </div>
 </div>
 
-<!-- ====== SLIDE 7: AI Agent 상세 -- 배칭 + 타이밍 ====== -->
+<!-- ====== SLIDE 7: AI Agent 상세 -- 입금 감지 + 공정가치 분석 ====== -->
 <div class="slide" data-slide="7">
   <div class="slide-content">
     <div class="section-label">AI AGENT DETAIL</div>
-    <div class="section-title">스마트 배칭 + 최적 타이밍</div>
-    <div class="section-desc">건별로 $120K씩 팔면 스프레드 1.5~2.5원. $350K로 묶으면 0.5~1원. AI가 자동으로 배칭합니다.</div>
+    <div class="section-title">입금 감지 + 공정가치 분석</div>
+    <div class="section-desc">외화 입금을 실시간 감지하고, 현재 시장 호가가 공정가치 대비 유리한지 즉시 분석합니다.</div>
 
     <div class="scroll-area">
       <div class="two-col" style="margin-bottom:16px">
         <div class="panel fx" style="padding:24px">
-          <div class="panel-title" style="color:#67e8f9"><span class="badge badge-cyan">BATCHING</span> 배칭 엔진</div>
+          <div class="panel-title" style="color:#67e8f9"><span class="badge badge-cyan">DETECT</span> 입금 감지 엔진</div>
           <div class="tl">
             <div class="tl-item" data-delay="0">
-              <div class="tl-time">월요일</div>
+              <div class="tl-time">09:15</div>
               <span class="tl-who ai">AI AGENT</span>
-              <div class="tl-text"><strong style="color:#67e8f9">$120K</strong> 입금 감지 &rarr; <span style="color:#fcd34d">대기</span></div>
+              <div class="tl-text"><strong style="color:#67e8f9">$350K</strong> 입금 감지 (Open Banking API)</div>
             </div>
             <div class="tl-item" data-delay="150">
-              <div class="tl-time">화요일</div>
+              <div class="tl-time">09:15</div>
               <span class="tl-who ai">AI AGENT</span>
-              <div class="tl-text"><strong style="color:#67e8f9">$85K</strong> 입금 감지 &rarr; <span style="color:#fcd34d">대기</span> (누적: $205K)</div>
+              <div class="tl-text">공정가치 분석: 현재 호가 <strong style="color:#6ee7b7">유리 구간</strong> 판정</div>
             </div>
             <div class="tl-item" data-delay="300">
-              <div class="tl-time">수요일</div>
+              <div class="tl-time">09:16</div>
               <span class="tl-who ai">AI AGENT</span>
-              <div class="tl-text"><strong style="color:#67e8f9">$145K</strong> 입금 &rarr; <strong style="color:#6ee7b7">$350K 배치 완성</strong> &rarr; CFO에게 알림 발송!</div>
+              <div class="tl-text">CFO에게 <strong style="color:#fcd34d">매도 검토 알림</strong> 발송 (카카오톡/이메일)</div>
             </div>
             <div class="tl-item" data-delay="450">
-              <div class="tl-time">수요일 14:30</div>
+              <div class="tl-time">09:20</div>
               <span class="tl-who cfo">CFO 승인</span>
               <div class="tl-text">박이사 카카오톡 확인 &rarr; <strong style="color:#6ee7b7">"승인" 클릭</strong> &rarr; Multi-RFQ 자동 실행</div>
             </div>
           </div>
           <div style="margin-top:12px;padding:10px;background:rgba(8,145,178,.06);border-radius:8px;font-size:11px;color:var(--gray-300);line-height:1.6">
-            <strong style="color:#67e8f9">Threshold:</strong> 금액 기준 ($350K) 또는 시간 기준 (3영업일) 중 먼저 도달<br>
-            <strong style="color:#6ee7b7">배칭 효과:</strong> 평균 스프레드 2.0원 &rarr; 0.8원 (<strong style="color:#fcd34d">60% 개선</strong>)
+            <strong style="color:#67e8f9">감지 방식:</strong> Open Banking API 실시간 모니터링<br>
+            <strong style="color:#6ee7b7">분석 효과:</strong> 은행 호가 vs 공정가치 비교 &rarr; 유불리 즉시 판단
           </div>
         </div>
 
         <div class="panel" style="padding:24px;border-color:rgba(251,191,36,.2);background:rgba(251,191,36,.04)">
-          <div class="panel-title" style="color:#fcd34d"><span class="badge badge-yellow">TIMING</span> 타이밍 엔진</div>
+          <div class="panel-title" style="color:#fcd34d"><span class="badge badge-yellow">FAIR VALUE</span> 공정가치 분석 엔진</div>
           <div style="font-size:12px;color:var(--gray-300);line-height:2">
-            &#128200; 실시간 환율 모니터링 (USDKRW, EURKRW)<br>
-            &#128202; 장중 환율 패턴 분석<br>
-            <span style="font-size:10px;color:var(--gray-500);margin-left:20px">10:00~11:00 변동성 높음, 14:00~15:00 안정</span><br>
+            &#128200; 실시간 호가 모니터링 (USDKRW, EURKRW)<br>
+            &#128202; 선물환 이론가 대비 시장 호가 유불리 평가<br>
+            <span style="font-size:10px;color:var(--gray-500);margin-left:20px">금리차 기반 공정 스왑포인트 vs 은행 호가 비교</span><br>
             &#128240; 뉴스/이벤트 감지 (FOMC, BOK 금리 결정 등)<br>
           </div>
           <div style="margin-top:12px;padding:10px;background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.15);border-radius:8px;font-size:12px;color:#6ee7b7;line-height:1.6">
-            <strong>AI 추천 알림:</strong> "금일 14:30 매도 추천<br>(현재 1,433 &rarr; 14시 1,435 예상)"<br>
+            <strong>AI 분석 알림:</strong> "현재 환율 1,433은 직전 10일 대비 상위 5% 구간입니다 — 매도 검토 구간"<br>
             <span style="font-size:10px;color:var(--gray-500)">CFO님이 승인하면 즉시 실행</span>
           </div>
           <div style="margin-top:8px;padding:10px;background:rgba(8,145,178,.06);border-radius:8px;font-size:11px;color:var(--gray-300);line-height:1.6">
@@ -620,7 +620,7 @@
         <div style="font-size:14px;color:#6ee7b7;font-weight:700;margin-bottom:8px">AI Agent 자동 선택: H은행 1,434.80</div>
         <div style="font-size:13px;color:var(--gray-300);line-height:1.8">
           K은행(기존) 대비: $350K &times; &#8361;1.30 = <strong style="color:#fcd34d">45.5만원 추가 수취</strong><br>
-          월 8회 배칭 기준: <strong style="color:#67e8f9">월 364만원, 연 4,370만원 추가 수취</strong><br>
+          월 8회 거래 기준: <strong style="color:#67e8f9">월 364만원, 연 4,370만원 추가 수취</strong><br>
           <span style="font-size:11px;color:var(--gray-500)">CFO님의 역할: 승인 클릭 1회. 소요 시간: 약 10초.</span>
         </div>
       </div>
@@ -706,7 +706,7 @@
 
         <div class="benefit-point cyan" data-delay="0"><span>&#10003;</span> 총 소요시간 <strong>5분</strong> &mdash; 90분 대비 94% 단축</div>
         <div class="benefit-point cyan" data-delay="100"><span>&#10003;</span> 은행 <strong>5곳 동시</strong> 비교 &mdash; Best Execution 보장</div>
-        <div class="benefit-point cyan" data-delay="200"><span>&#10003;</span> 건별/배칭 <strong>선택 가능</strong> &mdash; 전문가의 전략적 판단</div>
+        <div class="benefit-point cyan" data-delay="200"><span>&#10003;</span> 공정가치 대비 <strong>유불리 분석</strong> &mdash; 전문가의 전략적 판단</div>
         <div class="benefit-point cyan" data-delay="300"><span>&#10003;</span> 체결 기록 <strong>자동 저장</strong> &mdash; 감사 증적 자동 생성</div>
       </div>
 
@@ -716,13 +716,13 @@
           <div style="font-size:11px;font-weight:700;color:#6ee7b7;margin-bottom:12px;letter-spacing:1px">AI Agent &mdash; AI가 자동 제안 &rarr; CFO/담당자 승인만 (인적 시간 0분, 승인 클릭만)</div>
           <div style="position:relative;height:100px">
             <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--gray-500);margin-bottom:6px;font-family:'Inter',monospace">
-              <span>AI 처리</span><span>배칭</span><span>타이밍분석</span><span>RFQ</span><span>Best선택</span><span>체결</span><span>기록</span>
+              <span>AI 처리</span><span>입금감지</span><span>유불리분석</span><span>RFQ</span><span>Best선택</span><span>체결</span><span>기록</span>
             </div>
             <div style="display:flex;align-items:center;margin-bottom:6px">
               <div style="width:70px;font-size:10px;color:#6ee7b7;font-weight:600;flex-shrink:0">AI Agent</div>
               <div style="flex:1;height:26px;position:relative;background:rgba(255,255,255,.03);border-radius:4px">
-                <div style="position:absolute;left:0;width:15%;height:100%;background:rgba(5,150,105,.2);border:1px solid rgba(5,150,105,.4);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:8px;color:#6ee7b7;font-weight:600">배치 감지</div>
-                <div style="position:absolute;left:16%;width:15%;height:100%;background:rgba(5,150,105,.25);border:1px solid rgba(5,150,105,.4);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:8px;color:#6ee7b7;font-weight:600">타이밍</div>
+                <div style="position:absolute;left:0;width:15%;height:100%;background:rgba(5,150,105,.2);border:1px solid rgba(5,150,105,.4);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:8px;color:#6ee7b7;font-weight:600">입금 감지</div>
+                <div style="position:absolute;left:16%;width:15%;height:100%;background:rgba(5,150,105,.25);border:1px solid rgba(5,150,105,.4);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:8px;color:#6ee7b7;font-weight:600">유불리</div>
                 <div style="position:absolute;left:32%;width:30%;height:100%;background:rgba(5,150,105,.3);border:1px solid rgba(5,150,105,.5);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#6ee7b7;font-weight:700">Multi-RFQ &rarr; Best 선택</div>
                 <div style="position:absolute;left:63%;width:20%;height:100%;background:rgba(5,150,105,.35);border:1px solid rgba(5,150,105,.5);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fff;font-weight:700">자동 체결</div>
                 <div style="position:absolute;left:84%;width:16%;height:100%;background:rgba(5,150,105,.2);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:8px;color:#6ee7b7;font-weight:600">기록+알림</div>
@@ -746,7 +746,7 @@
         </div>
 
         <div class="benefit-point green" data-delay="0"><span>&#10003;</span> 인적 시간 <strong>0분</strong> &mdash; CFO는 승인 클릭만 (~10초)</div>
-        <div class="benefit-point green" data-delay="100"><span>&#10003;</span> 입금 감지 &rarr; 배칭 &rarr; 타이밍 &rarr; RFQ &rarr; 체결 <strong>전부 AI 자동</strong></div>
+        <div class="benefit-point green" data-delay="100"><span>&#10003;</span> 입금 감지 &rarr; 유불리 분석 &rarr; RFQ &rarr; 체결 <strong>전부 AI 자동</strong></div>
         <div class="benefit-point green" data-delay="200"><span>&#10003;</span> 외환 전담자 없이도 <strong>기관급 FX 실행</strong> 달성</div>
         <div class="benefit-point green" data-delay="300"><span>&#10003;</span> CFO가 <strong>승인권을 유지</strong>하면서 AI의 전문성 활용 (Human-in-the-Loop)</div>
       </div>
@@ -766,12 +766,12 @@
         <div class="panel" style="text-align:center;padding:24px;opacity:0;animation:fadeUp .6s .3s forwards">
           <div style="font-size:10px;color:var(--gray-500);margin-bottom:6px">스프레드 절감</div>
           <div style="font-size:36px;font-weight:900;color:#fcd34d">5,600만</div>
-          <div style="font-size:10px;color:var(--gray-500);margin-top:4px;line-height:1.5">배칭 + Multi-RFQ 경쟁<br>소액 건별 &rarr; 묶어서 여러 은행 비교</div>
+          <div style="font-size:10px;color:var(--gray-500);margin-top:4px;line-height:1.5">Multi-RFQ 경쟁 호가<br>여러 은행 동시 비교</div>
         </div>
         <div class="panel" style="text-align:center;padding:24px;opacity:0;animation:fadeUp .6s .5s forwards">
-          <div style="font-size:10px;color:var(--gray-500);margin-bottom:6px">타이밍 절감</div>
+          <div style="font-size:10px;color:var(--gray-500);margin-bottom:6px">스프레드 절감</div>
           <div style="font-size:36px;font-weight:900;color:#67e8f9">5,250만</div>
-          <div style="font-size:10px;color:var(--gray-500);margin-top:4px">AI 타이밍 최적화</div>
+          <div style="font-size:10px;color:var(--gray-500);margin-top:4px">공정가치 기반 호가 비교</div>
         </div>
         <div class="panel" style="text-align:center;padding:24px;opacity:0;animation:fadeUp .6s .7s forwards">
           <div style="font-size:10px;color:var(--gray-500);margin-bottom:6px">업무시간 절감</div>
@@ -816,7 +816,7 @@
           <div style="font-size:12px;color:var(--gray-300);line-height:2">
             <strong style="color:#67e8f9">방향:</strong> USD 매도 (SELL USD / BUY KRW)<br>
             <strong style="color:#6ee7b7">목표:</strong> 높은 환율에 팔기<br>
-            <strong style="color:#fcd34d">AI Agent:</strong> 환율 상승 시 매도 타이밍 추천<br>
+            <strong style="color:#fcd34d">AI Agent:</strong> 현재 호가가 공정가치 대비 유리한 구간인지 안내<br>
             <strong style="color:#c4b5fd">CFO:</strong> 승인 클릭 &rarr; 자동 체결<br>
           </div>
           <div style="margin-top:12px;padding:10px;background:rgba(8,145,178,.06);border-radius:8px;font-size:12px;color:#67e8f9;text-align:center;font-weight:600">
@@ -829,7 +829,7 @@
           <div style="font-size:12px;color:var(--gray-300);line-height:2">
             <strong style="color:#fcd34d">방향:</strong> USD 매수 (BUY USD / SELL KRW)<br>
             <strong style="color:#6ee7b7">목표:</strong> 낮은 환율에 사기<br>
-            <strong style="color:#67e8f9">AI Agent:</strong> 환율 하락 시 매수 타이밍 추천<br>
+            <strong style="color:#67e8f9">AI Agent:</strong> 현재 호가가 공정가치 대비 유리한 구간인지 안내<br>
             <strong style="color:#c4b5fd">CFO:</strong> 승인 클릭 &rarr; 자동 체결<br>
           </div>
           <div style="margin-top:12px;padding:10px;background:rgba(251,191,36,.06);border-radius:8px;font-size:12px;color:#fcd34d;text-align:center;font-weight:600">
@@ -842,7 +842,7 @@
       </div>
 
       <div class="hbox" style="background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.15);color:#6ee7b7;text-align:center;font-size:13px;padding:16px">
-        수출이든 수입이든, <strong>AI가 제안 &rarr; CFO가 승인 &rarr; Multi-RFQ + 최적 타이밍 + 자동 배칭</strong> = 같은 효과
+        수출이든 수입이든, <strong>AI가 유불리 분석 &rarr; CFO가 판단·승인 &rarr; Multi-RFQ + 공정가치 기반 자동 실행</strong> = 같은 효과
       </div>
     </div>
   </div>
