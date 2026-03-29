@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KustodyFi 만기 결제 Cut-off 타임라인</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #fff; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; color: #222; }
+.page { max-width: 880px; margin: 0 auto; padding: 40px 32px 60px; }
+h1 { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 4px; }
+.page-sub { font-size: 13px; color: #999; text-align: center; margin-bottom: 36px; }
+
+/* Legend */
+.legend { display:flex; gap:16px; justify-content:center; margin-bottom:28px; flex-wrap:wrap; }
+.legend-item { display:flex; align-items:center; gap:6px; font-size:11px; color:#666; }
+.legend-dot { width:10px; height:10px; border-radius:50%; }
+.ld-tms { background:#7F77DD; }
+.ld-cust { background:#1D9E75; }
+.ld-inst { background:#3B8BD4; }
+.ld-dead { background:#E24B4A; }
+
+/* Timeline */
+.timeline-wrap { position:relative; }
+.tl-phase { margin-bottom:8px; }
+.tl-phase-label {
+  font-size:10px; font-weight:700; letter-spacing:0.5px; color:#fff;
+  padding:4px 12px; border-radius:4px; display:inline-block; margin-bottom:12px; margin-left:88px;
+}
+.tp-pre { background:#7F77DD; }
+.tp-day { background:#E24B4A; }
+.tp-post { background:#1D9E75; }
+
+.tl-row {
+  display:flex; align-items:flex-start; position:relative; min-height:48px;
+}
+.tl-time {
+  width:80px; flex-shrink:0; text-align:right; padding:6px 16px 6px 0;
+  font-size:13px; font-weight:700; color:#555; position:relative;
+}
+.tl-time small { display:block; font-size:10px; font-weight:400; color:#aaa; margin-top:1px; }
+.tl-line { width:4px; flex-shrink:0; position:relative; }
+.tl-line-inner { width:4px; background:#e8e8e8; position:absolute; top:0; bottom:0; left:0; }
+.tl-dot {
+  width:16px; height:16px; border-radius:50%; position:absolute; left:-6px; top:8px; z-index:2;
+  border:3px solid #fff; box-shadow:0 0 0 1px rgba(0,0,0,0.08);
+}
+.dot-tms { background:#7F77DD; }
+.dot-cust { background:#1D9E75; }
+.dot-inst { background:#3B8BD4; }
+.dot-dead { background:#E24B4A; }
+.dot-warn { background:#BA7517; }
+
+.tl-content { flex:1; padding:4px 0 16px 18px; }
+.tl-header { display:flex; align-items:center; gap:8px; margin-bottom:3px; }
+.tl-actor {
+  font-size:10px; font-weight:600; padding:2px 8px; border-radius:3px; color:#fff;
+  white-space:nowrap;
+}
+.a-tms { background:#7F77DD; }
+.a-cust { background:#1D9E75; }
+.a-inst { background:#3B8BD4; }
+.a-dead { background:#E24B4A; }
+.a-warn { background:#BA7517; }
+.tl-title { font-size:13px; font-weight:600; color:#333; }
+.tl-desc { font-size:12px; color:#777; line-height:1.6; margin-top:2px; }
+.tl-detail { font-size:11px; color:#999; line-height:1.5; margin-top:4px; }
+
+/* Deadline highlight */
+.tl-row.deadline .tl-time { color:#E24B4A; }
+.tl-row.deadline .tl-content { background:#fef2f2; border-radius:8px; padding:10px 14px 14px 14px; margin-left:12px; border-left:3px solid #E24B4A; }
+.tl-row.action .tl-content { background:#f0fdf4; border-radius:8px; padding:10px 14px 14px 14px; margin-left:12px; border-left:3px solid #1D9E75; }
+.tl-row.settle .tl-content { background:#eff6ff; border-radius:8px; padding:10px 14px 14px 14px; margin-left:12px; border-left:3px solid #3B8BD4; }
+.tl-row.release .tl-content { background:#f0fdf4; border-radius:8px; padding:10px 14px 14px 14px; margin-left:12px; border-left:3px solid #1D9E75; }
+
+/* Phase divider */
+.phase-divider {
+  margin:24px 0 16px; padding:0; border:none;
+  border-top:2px solid #E24B4A; margin-left:84px;
+}
+.phase-divider-soft {
+  margin:20px 0 12px; padding:0; border:none;
+  border-top:1px dashed #ddd; margin-left:84px;
+}
+
+/* Summary card */
+.summary {
+  margin-top:32px; padding:20px; background:#f8f8f8; border-radius:10px;
+}
+.summary h3 { font-size:14px; font-weight:600; margin-bottom:14px; }
+.summary-grid { display:grid; grid-template-columns:100px 1fr 1fr 1fr; gap:0; font-size:12px; }
+.sg-header { font-weight:600; color:#555; padding:8px 10px; background:#eee; border:1px solid #e0e0e0; }
+.sg-cell { padding:8px 10px; border:1px solid #e0e0e0; color:#444; line-height:1.4; }
+.sg-cell.sg-time { font-weight:600; color:#333; }
+.sg-cell.sg-red { background:#fef2f2; color:#E24B4A; font-weight:600; }
+.sg-cell.sg-green { background:#f0fdf4; }
+
+.co { margin:16px 0; padding:14px 18px; border-radius:8px; font-size:12px; line-height:1.7; }
+.co-amber { background:#fff8f0; border:1px solid #ffe0b2; color:#6d4c00; }
+.co-blue { background:#f0f7ff; border:1px solid #90caf9; color:#0d47a1; }
+.co-green { background:#f0fff4; border:1px solid #a5d6a7; color:#1b5e20; }
+.co strong { font-weight:600; }
+
+.footer { margin-top:40px; padding-top:20px; border-top:1px solid #eee; font-size:11px; color:#aaa; text-align:center; line-height:1.6; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>만기 결제 Cut-off 타임라인</h1>
+<p class="page-sub">D-3 → D-2 → D-1 → D-Day → 담보해제 — 누가, 무엇을, 언제까지</p>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot ld-tms"></div>TMS (자동)</div>
+  <div class="legend-item"><div class="legend-dot ld-cust"></div>고객 (행동 필요)</div>
+  <div class="legend-item"><div class="legend-dot ld-inst"></div>거래 기관</div>
+  <div class="legend-item"><div class="legend-dot ld-dead"></div>마감 / 경고</div>
+</div>
+
+<div class="timeline-wrap">
+
+  <!-- ===== D-3 ===== -->
+  <div class="tl-phase">
+    <span class="tl-phase-label tp-pre">사전 준비</span>
+  </div>
+
+  <div class="tl-row">
+    <div class="tl-time">D-3<small>3일 전</small></div>
+    <div class="tl-line"><div class="tl-line-inner"></div><div class="tl-dot dot-cust"></div></div>
+    <div class="tl-content">
+      <div class="tl-header">
+        <span class="tl-actor a-cust">고객</span>
+        <span class="tl-title">자금 확보 계획</span>
+      </div>
+      <div class="tl-desc">
+        결제 자금(외화) 확보 여부 확인. 부족 시 환전 예약 또는 자금 조달.<br>
+        인터넷뱅킹 외화이체 1일 한도 확인 — 결제 금액 대비 충분한지.
+      </div>
+      <div class="tl-detail">TMS에서 Cash Schedule 대사 결과 + 잔고 예측을 확인</div>
+    </div>
+  </div>
+
+  <!-- ===== D-2 ===== -->
+  <div class="tl-row">
+    <div class="tl-time">D-2<small>2일 전</small></div>
+    <div class="tl-line"><div class="tl-line-inner"></div><div class="tl-dot dot-tms"></div></div>
+    <div class="tl-content">
+      <div class="tl-header">
+        <span class="tl-actor a-tms">TMS</span>
+        <span class="tl-title">만기 사전 알림</span>
+      </div>
+      <div class="tl-desc">
+        만기 예정 거래 목록 + 결제 금액 + 정산 경로(A/B) + 예상 환전 금액 안내.<br>
+        잔고 부족 예상 시 경고: "USD XXX 부족. 내일까지 자금 확보 필요."
+      </div>
+      <div class="tl-detail">발송 대상: Dealer + Approver + 담보관리 담당자 | 채널: 이메일 + TMS + 메신저</div>
+    </div>
+  </div>
+
+  <!-- ===== D-1 ===== -->
+  <div class="tl-row">
+    <div class="tl-time">D-1<small>전일</small></div>
+    <div class="tl-line"><div class="tl-line-inner"></div><div class="tl-dot dot-tms"></div></div>
+    <div class="tl-content">
+      <div class="tl-header">
+        <span class="tl-actor a-tms">TMS</span>
+        <span class="tl-title">Settlement Instruction 발송</span>
+      </div>
+      <div class="tl-desc">
+        최종 결제 지시서 — 내일 이체 실행을 위한 모든 정보 포함:
+      </div>
+      <div class="tl-detail">
+        · 거래 ID, 통화쌍, 결제 금액, 약정환율<br>
+        · 출금 계좌: [은행명] [계좌번호]<br>
+        · 입금 계좌: [기관명] [계좌번호] [SWIFT BIC]<br>
+        · 이체 방식: KFTC / 외화펌뱅킹 / 수동<br>
+        · <strong style="color:#E24B4A;">이체 마감: 내일 12:00 (정오)</strong><br>
+        · 참조: Invoice #, 선물환 확인서 #
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== D-DAY ===== -->
+  <hr class="phase-divider">
+  <div class="tl-phase">
+    <span class="tl-phase-label tp-day">D-Day 만기 당일</span>
+  </div>
+
+  <div class="tl-row">
+    <div class="tl-time">09:00</div>
+    <div class="tl-line"><div class="tl-line-inner"></div><div class="tl-dot dot-tms"></div></div>
+    <div class="tl-content">
+      <div class="tl-header">
+        <span class="tl-actor a-tms">TMS</span>
+        <span class="tl-title">잔고 최종 확인</span>
+      </div>
+      <div class="tl-desc">
+        오픈뱅킹/스크래핑으로 출금 계좌 잔고 실시간 체크.
+      </div>
+      <div class="tl-detail">
+        ✅ 충분 → "결제 준비 완료" 표시<br>
+        ❌ 부족 → 긴급 알림: "USD XXX 부족. 즉시 환전 필요."
+      </div>
+    </div>
+  </div>
+
+  <div class="tl-row action">
+    <div class="tl-time" style="color:#1D9E75;font-size:14px;">09:00<br>~12:00</div>
+    <div class="tl-line"><div class="tl-line-inner"></div><div class="tl-dot dot-cust"></div></div>
+    <div class="tl-content">
+      <div class="tl-header">
+        <span class="tl-actor a-cust">고객 (Dealer)</span>
+        <span class="tl-title" style="font-size:14px;">⭐ 외화이체 실행</span>
+      </div>
+      <div class="tl-desc">
+        출금 은행 인터넷뱅킹 / 외화펌뱅킹에서 이체 실행.<br>
+        Settlement Instruction에 기재된 그대로 입력.
+      </div>
+      <div class="tl-detail">
+        · 수취인: [기관명] 외화입금계좌<br>
+        · 금액: USD [결제금액]<br>
+        · 적요: 선물환 확인서 번호<br>
+        <strong style="color:#E24B4A;">⚠️ 12:00(정오) 전에 완료 필수</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="tl-row">
+    <div class="tl-time">11:00</div>
+    <div class="tl-line"><div class="tl-line-inner"></div><div class="tl-dot dot-warn"></div></div>
+    <div class="tl-content">
+      <div class="tl-header">
+        <span class="tl-actor a-warn">TMS</span>
+        <span class="tl-title">이체 미실행 시 리마인더</span>
+      </div>
+      <div class="tl-desc">
+        출금 계좌 잔고 변동이 없으면 → "아직 이체가 감지되지 않았습니다. 마감 1시간 전입니다."
+      </div>
+    </div>
+  </div>
+
+  <div class="tl-row deadline">
+    <div class="tl-time" style="font-size:16px;">12:00</div>
+    <div class="tl-line"><div class="tl-line-inner"></div><div class="tl-dot dot-dead"></div></div>
+    <div class="tl-content">
+      <div class="tl-header">
+        <span class="tl-actor a-dead">DEADLINE</span>
+        <span class="tl-title" style="color:#E24B4A;font-size:14px;">외화이체 마감 (Soft Cutoff)</span>
+      </div>
+      <div class="tl-desc" style="color:#E24B4A;">
+        이 시점까지 이체 완료해야 → 기관이 오후에 환전 + 담보해제까지 당일 처리 가능.<br>
+        12:00 이후 이체 시: 기관 처리 시간 부족 → 담보해제가 익일로 밀릴 수 있음.
+      </div>
+    </div>
+  </div>
+
+  <hr class="phase-divider-soft">
+
+  <div class="tl-row settle">
+    <div class="tl-time">12:00<br><small>~13:00</small></div>
+    <div class="tl-line"><div class="tl-line-inner"></div><div class="tl-dot dot-inst"></div></div>
+    <div class="tl-content">
+      <div class="tl-header">
+        <span class="tl-actor a-inst">거래 기관</span>
+        <span class="tl-title">외화 입금 확인 + 환전 실행</span>
+      </div>
+      <div class="tl-desc">
+        KFTC 실시간 입금 확인 → 선물환 약정환율로 원화 환전 → 고객 KRW 계좌에 입금.
+      </div>
+      <div class="tl-detail">
+        예: USD 500K × ₩1,430/$ = ₩7.15억 → 고객 원화 계좌 입금
+      </div>
+    </div>
+  </div>
+
+  <div class="tl-row">
+    <div class="tl-time">13:00<br><small>~14:00</small></div>
+    <div class="tl-line"><div class="tl-line-inner"></div><div class="tl-dot dot-cust"></div></div>
+    <div class="tl-content">
+      <div class="tl-header">
+        <span class="tl-actor a-cust">고객</span>
+        <span class="tl-title">원화 입금 확인</span>
+      </div>
+      <div class="tl-desc">원화 계좌 입금 확인. TMS에서 결제 완료 상태 확인 (또는 수동 입력).</div>
+    </div>
+  </div>
+
+  <div class="tl-row">
+    <div class="tl-time">13:00<br><small>~14:00</small></div>
+    <div class="tl-line"><div class="tl-line-inner"></div><div class="tl-dot dot-tms"></div></div>
+    <div class="tl-content">
+      <div class="tl-header">
+        <span class="tl-actor a-tms">TMS</span>
+        <span class="tl-title">결제 완료 확인 + Blotter 업데이트</span>
+      </div>
+      <div class="tl-desc">
+        출금 계좌 잔고 감소 + 원화 계좌 입금 감지 → 자동 매칭.<br>
+        Blotter 상태: CONFIRMED → SETTLED
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MARGIN RELEASE ===== -->
+  <hr class="phase-divider-soft">
+  <div class="tl-phase">
+    <span class="tl-phase-label tp-post">담보해제 (당일 처리)</span>
+  </div>
+
+  <div class="tl-row">
+    <div class="tl-time">결제 확인<br><small>직후</small></div>
+    <div class="tl-line"><div class="tl-line-inner"></div><div class="tl-dot dot-tms"></div></div>
+    <div class="tl-content">
+      <div class="tl-header">
+        <span class="tl-actor a-tms">TMS</span>
+        <span class="tl-title">담보소요액 재산정 (자동)</span>
+      </div>
+      <div class="tl-desc">
+        Blotter가 SETTLED 되는 즉시 자동 트리거.
+      </div>
+      <div class="tl-detail">
+        · 다른 미결제 거래 없음 → 전액 반환 대상<br>
+        · 다른 미결제 거래 있음 → Netting 재산정 → 초과분만 반환 대상<br>
+        · Netting Floor (최대 개별 Notional의 10%) 자동 체크
+      </div>
+    </div>
+  </div>
+
+  <div class="tl-row">
+    <div class="tl-time">재산정<br><small>직후</small></div>
+    <div class="tl-line"><div class="tl-line-inner"></div><div class="tl-dot dot-tms"></div></div>
+    <div class="tl-content">
+      <div class="tl-header">
+        <span class="tl-actor a-tms">TMS</span>
+        <span class="tl-title">담보해제 요청서 자동 생성 + 발송</span>
+      </div>
+      <div class="tl-desc">
+        반환 금액, 근거(결제 확인서 번호, Netting 재산정 결과) 포함 → 거래 기관에 즉시 발송.
+      </div>
+      <div class="tl-detail">
+        채널: API (B-1) 또는 이메일/팩스 (B-2)<br>
+        고객(Approver)에게 동시 안내: "담보해제 요청 발송됨. 반환 예정액: ₩XXX"
+      </div>
+    </div>
+  </div>
+
+  <div class="tl-row release">
+    <div class="tl-time" style="color:#1D9E75;">당일<br><small>15:30 이내</small></div>
+    <div class="tl-line"><div class="tl-line-inner"></div><div class="tl-dot dot-inst"></div></div>
+    <div class="tl-content">
+      <div class="tl-header">
+        <span class="tl-actor a-inst">거래 기관</span>
+        <span class="tl-title" style="color:#1D9E75;">담보 잠금 해제 + 보증금 반환</span>
+      </div>
+      <div class="tl-desc">
+        결제 완료 확인 + 담보해제 요청 수신 → 보증금 계정 잠금 해제 → 고객 계좌에 이체.
+      </div>
+      <div class="tl-detail">
+        <strong>경로 A (동일 기관):</strong> 내부이체 → 즉시 반환<br>
+        <strong>경로 B (타행):</strong> 12:00 전 이체 완료 시 → 기관이 13~14시에 환전 처리 → 14~15시 담보해제 → <strong>당일 반환</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="tl-row">
+    <div class="tl-time">반환 후</div>
+    <div class="tl-line"><div class="tl-line-inner"></div><div class="tl-dot dot-tms"></div></div>
+    <div class="tl-content">
+      <div class="tl-header">
+        <span class="tl-actor a-tms">TMS</span>
+        <span class="tl-title">담보해제 완료 확인 + Audit Trail 확정</span>
+      </div>
+      <div class="tl-desc">
+        보증금 반환 입금 확인. 전체 거래 이력 Audit Trail 최종 기록.
+      </div>
+      <div class="tl-detail">
+        Invoice → 헷지추천 → SEAL승인 → 체결 → Settlement Instruction<br>
+        → 외화이체 → 입금확인 → 환전 → 원화수취 → 담보해제 → 보증금반환 ✅
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== HARD CUTOFF ===== -->
+  <hr class="phase-divider">
+
+  <div class="tl-row deadline">
+    <div class="tl-time" style="font-size:16px;">15:00</div>
+    <div class="tl-line"><div class="tl-line-inner"></div><div class="tl-dot dot-dead"></div></div>
+    <div class="tl-content">
+      <div class="tl-header">
+        <span class="tl-actor a-dead">HARD CUTOFF</span>
+        <span class="tl-title" style="color:#E24B4A;">인도마감시한 — 미인도 시 즉시 담보 몰수</span>
+      </div>
+      <div class="tl-desc" style="color:#E24B4A;">
+        15:00까지 약정 통화금액이 거래 기관에 도착하지 않으면:<br>
+        · 별도의 최고(催告) 없이 즉시 강제청산<br>
+        · 정산금 충당 후 계약보증금 잔액은 거래 기관에 귀속 (담보 몰수)<br>
+        · T+1 유예 없음
+      </div>
+      <div class="tl-detail" style="color:#999;">
+        약정서 근거: 제20조 ①②③ (인도마감시한 15:00, 미인도 시 즉시 강제청산 + 담보귀속)<br>
+        단, 15:00 전에 지연 불가피를 통지하고 당일 내 이행 소명 시 연장 합의 가능 (제20조 ⑤)
+      </div>
+    </div>
+  </div>
+
+</div><!-- timeline-wrap -->
+
+<!-- ===== SUMMARY ===== -->
+<div class="summary">
+  <h3>한눈에 보는 타임라인</h3>
+  <div class="summary-grid">
+    <div class="sg-header">시점</div>
+    <div class="sg-header">누가</div>
+    <div class="sg-header">무엇을</div>
+    <div class="sg-header">놓치면?</div>
+
+    <div class="sg-cell sg-time">D-3</div>
+    <div class="sg-cell">고객</div>
+    <div class="sg-cell">자금 확보 계획, 이체 한도 확인</div>
+    <div class="sg-cell">만기일 자금 부족</div>
+
+    <div class="sg-cell sg-time">D-2</div>
+    <div class="sg-cell">TMS</div>
+    <div class="sg-cell">만기 사전 알림, 잔고 예측, 부족 시 경고</div>
+    <div class="sg-cell">—</div>
+
+    <div class="sg-cell sg-time">D-1</div>
+    <div class="sg-cell">TMS</div>
+    <div class="sg-cell">Settlement Instruction 발송</div>
+    <div class="sg-cell">—</div>
+
+    <div class="sg-cell sg-time">D-Day 09:00</div>
+    <div class="sg-cell">TMS</div>
+    <div class="sg-cell">잔고 최종 확인</div>
+    <div class="sg-cell">부족 미감지</div>
+
+    <div class="sg-cell sg-time sg-green" style="font-weight:700;color:#1D9E75;">09:00~12:00</div>
+    <div class="sg-cell sg-green" style="font-weight:600;">고객 (Dealer)</div>
+    <div class="sg-cell sg-green" style="font-weight:600;">⭐ 외화이체 실행</div>
+    <div class="sg-cell sg-red">마감 초과</div>
+
+    <div class="sg-cell sg-time">11:00</div>
+    <div class="sg-cell">TMS</div>
+    <div class="sg-cell">미실행 시 리마인더</div>
+    <div class="sg-cell">—</div>
+
+    <div class="sg-cell sg-red" style="font-weight:700;">12:00</div>
+    <div class="sg-cell sg-red">DEADLINE</div>
+    <div class="sg-cell sg-red">외화이체 마감 (Soft)</div>
+    <div class="sg-cell sg-red">담보해제 익일</div>
+
+    <div class="sg-cell sg-time">12:00~14:00</div>
+    <div class="sg-cell">거래 기관</div>
+    <div class="sg-cell">입금 확인 → 환전 → 원화 입금</div>
+    <div class="sg-cell">—</div>
+
+    <div class="sg-cell sg-time" style="color:#1D9E75;">결제 확인 후<br>~15:30</div>
+    <div class="sg-cell" style="color:#1D9E75;">TMS + 기관</div>
+    <div class="sg-cell" style="color:#1D9E75;">담보 재산정 → 해제 요청 → 보증금 당일 반환</div>
+    <div class="sg-cell">—</div>
+
+    <div class="sg-cell sg-red" style="font-weight:700;">15:00</div>
+    <div class="sg-cell sg-red">약정서 제20조</div>
+    <div class="sg-cell sg-red">인도마감시한 — 미인도 시 즉시 담보 몰수</div>
+    <div class="sg-cell sg-red">강제청산 + 담보귀속 (유예 없음)</div>
+  </div>
+</div>
+
+<div class="co co-green" style="margin-top:20px;">
+  <strong>고객에게 전달하는 메시지 (한 줄):</strong><br>
+  "만기일 <strong>오전 중에 이체, 12시 전에 완료</strong>하시면 당일 환전 + 담보해제 + 보증금 반환까지 처리됩니다."
+</div>
+
+<div class="co co-amber">
+  <strong>당일 담보해제가 예외적으로 익일 처리될 수 있는 경우:</strong><br>
+  · 12:00 이후 이체 → 기관 환전이 오후 늦게 완료 → 담보해제 승인이 영업시간 내 불가<br>
+  · 기관 내부 시스템 장애 또는 수동 확인 절차 지연<br>
+  · 이 경우 약정서 제15조 ⑥ 단서에 따라 "익영업일 영업개시 후 지체 없이" 처리<br><br>
+  <strong>약정서 근거:</strong> [2-A]/[2-B] 제15조 ⑥ "결제 완료 확인 후 당일 내 담보해제 원칙. 불가 시 익영업일 영업개시 후 지체 없이."<br>
+  별지 4에도 "결제 완료 시 당일 해제" 명시.
+</div>
+
+<div class="co co-blue">
+  <strong>외화이체 수수료 절감 전략:</strong><br>
+  · <strong>경로 A 유도:</strong> Layer 3 기관 온보딩 시, 고객의 주거래 은행에서 선물환도 체결하도록 가이드 → 내부이체 = 수수료 ₩0<br>
+  · <strong>볼륨 협상:</strong> 은행과 외화펌뱅킹 계약 시 월 XX건 이상 → 건당 수수료 ₩3,000 이하로 할인 협상<br>
+  · <strong>묶음 이체:</strong> 동일 기관 동일 통화 결제가 같은 날이면 합산 1건으로 이체 → 건수 줄여 수수료 절감<br>
+  · <strong>장기:</strong> KustodyFi 플랫폼에서 이체까지 원스톱 처리 (오픈뱅킹 외화이체 API 확장 시 또는 자체 라이선스 취득 시)
+</div>
+
+<div class="footer">
+  KustodyFi Co., Ltd. — 만기 결제 Cut-off 타임라인 v1.0 (DRAFT)<br>
+  D-3 자금계획 → D-2 사전알림 → D-1 Settlement Instruction → D-Day 12:00 이체마감 → 당일 담보해제 → 15:00 Hard Cutoff (미인도 시 담보 몰수)
+</div>
+
+</div>
+</body>
+</html>

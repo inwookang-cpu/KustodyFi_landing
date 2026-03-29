@@ -206,7 +206,7 @@
   <div class="slide-content">
     <div class="cover-logo">KUSTODYFI</div>
     <h1 class="cover-title">환율 정보는 넘쳐나는데,<br><span class="hl">그래서 뭘 해야 하죠?</span></h1>
-    <p class="cover-sub">시장 데이터는 실시간, 분석 리포트도 매일 쏟아집니다. 하지만 "지금 뭘 해야 하는지"는 아무도 안 알려줍니다.<br>KustodyFi는 <strong style="color:#67e8f9">시스템이 제안하고, 담당자가 승인</strong>하는 워크플로우로 외환 업무를 바꿉니다.</p>
+    <p class="cover-sub">시장 데이터는 실시간, 분석 리포트도 매일 쏟아집니다. 하지만 "지금 뭘 해야 하는지"는 아무도 안 알려줍니다.<br>KustodyFi는 <strong style="color:#67e8f9">시스템이 분석·제시하고, 담당자가 판단·승인</strong>하는 워크플로우로 외환 업무를 바꿉니다.</p>
     <div style="display:flex;gap:12px;flex-wrap:wrap;opacity:0;animation:fadeUp .8s .9s forwards">
       <div class="hbox" style="background:rgba(103,232,249,.08);border:1px solid rgba(103,232,249,.2);color:#67e8f9"><strong>CFO</strong> 이정우 상무</div>
       <div class="hbox" style="background:rgba(196,181,253,.08);border:1px solid rgba(196,181,253,.2);color:#c4b5fd"><strong>Risk Manager</strong> 최유진 부장</div>
@@ -577,7 +577,7 @@
       리스크위원회 의결 후, 시장은 기다려주지 않습니다.<br>
       Brent $92에서 추가 $1 상승 = 1.81M bbl &times; $1 = <strong style="color:#fca5a5">$1.81M 추가 비용</strong><br>
       환율 1원 상승 = $324M &times; &#8361;1 = <strong style="color:#fca5a5">약 3.2억원 추가 비용</strong><br><br>
-      <strong style="color:#67e8f9">시스템이 다음 액션을 제안하고, 담당자는 승인만 하면 됩니다.</strong>
+      <strong style="color:#67e8f9">시스템이 다음 액션을 제시하고, 담당자는 승인만 하면 됩니다.</strong>
     </div>
   </div>
 </div>
@@ -587,11 +587,11 @@
   <div class="slide-content">
     <div class="section-label">WORKFLOW</div>
     <div class="section-title">AS-IS vs TO-BE: 의결 후 담당자의 하루</div>
-    <div class="section-desc">추가 Brent Swap 1.81M bbl + FX Forward $324M &mdash; 시스템이 제안하고, 담당자가 승인합니다.</div>
+    <div class="section-desc">추가 Brent Swap 1.81M bbl + FX Forward $324M &mdash; 시스템이 분석·제시하고, 담당자가 판단·승인합니다.</div>
 
     <div class="phase-tabs">
       <button class="phase-tab asis active-tab" onclick="switchPhase(this,'asis-wf')">AS-IS (전화, 순차, 수작업)</button>
-      <button class="phase-tab tobe" onclick="switchPhase(this,'tobe-wf')">TO-BE (제안 → 1클릭 승인)</button>
+      <button class="phase-tab tobe" onclick="switchPhase(this,'tobe-wf')">TO-BE (분석·제시 → 1클릭 승인)</button>
     </div>
 
     <div class="scroll-area">
@@ -684,7 +684,7 @@
       <div class="phase-content" id="tobe-wf">
         <!-- Gantt-style visual -->
         <div style="margin-bottom:20px;padding:16px;background:rgba(5,150,105,.04);border:1px solid rgba(5,150,105,.12);border-radius:12px">
-          <div style="font-size:11px;font-weight:700;color:#6ee7b7;margin-bottom:12px;letter-spacing:1px">TO-BE 타임라인 &mdash; 시스템 제안 → 1클릭 승인, 20분</div>
+          <div style="font-size:11px;font-weight:700;color:#6ee7b7;margin-bottom:12px;letter-spacing:1px">TO-BE 타임라인 &mdash; 시스템 분석·제시 → 1클릭 승인, 20분</div>
           <div style="position:relative;height:100px">
             <!-- Time axis (scaled to 3 min) -->
             <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--gray-500);margin-bottom:6px;font-family:'Inter',monospace">
@@ -727,8 +727,8 @@
           </div>
           <div class="tl-item" data-delay="100">
             <div class="tl-time">T+0~3분</div>
-            <span class="tl-who system">KUSTODYFI 제안</span>
-            <div class="tl-text">시스템이 <strong style="color:#6ee7b7">Brent Swap RFQ + FX Forward RFQ를 자동 구성하여 제안</strong>.<br>FWD BUY USD: Spot $12M / 1M $105M / 2M $105M / 3M $102M. <strong>5개 은행에 동시 발송. 통화 0건.</strong></div>
+            <span class="tl-who system">KUSTODYFI 분석·제시</span>
+            <div class="tl-text">시스템이 <strong style="color:#6ee7b7">Brent Swap RFQ + FX Forward RFQ를 자동 구성하여 제시</strong>.<br>FWD BUY USD: Spot $12M / 1M $105M / 2M $105M / 3M $102M. <strong>5개 은행에 동시 발송. 통화 0건.</strong></div>
           </div>
           <div class="tl-item" data-delay="200">
             <div class="tl-time">T+3~12분</div>
@@ -738,12 +738,12 @@
           <div class="tl-item" data-delay="300">
             <div class="tl-time">T+12~20분</div>
             <span class="tl-who cfo">CFO 이상무 &mdash; 1클릭 승인</span>
-            <div class="tl-text">시스템 제안: Brent 최저가 + FX tenor별 최저가. <strong style="color:#6ee7b7">1클릭 승인으로 동시 체결.</strong> tenor 매칭, 포지션, 기록 모두 자동.</div>
+            <div class="tl-text">시스템 분석·제시: Brent 최저가 + FX tenor별 최저가. <strong style="color:#6ee7b7">1클릭 승인으로 동시 체결.</strong> tenor 매칭, 포지션, 기록 모두 자동.</div>
           </div>
         </div>
         <div style="margin-top:12px">
           <div class="benefit-point green" data-delay="400"><span>&#10003;</span> <strong>통화 0건</strong> &mdash; 전화 한 통 없이 5개 은행 동시 견적</div>
-          <div class="benefit-point green" data-delay="500"><span>&#10003;</span> <strong>1클릭 승인</strong> &mdash; 시스템이 Best를 제안, 담당자는 승인만</div>
+          <div class="benefit-point green" data-delay="500"><span>&#10003;</span> <strong>1클릭 승인</strong> &mdash; 시스템이 Best를 제시, 담당자는 승인만</div>
           <div class="benefit-point cyan" data-delay="600"><span>&#10003;</span> <strong>기록 자동화</strong> &mdash; 체결, 포지션, 만기 매칭, 감사 증적 모두 자동</div>
           <div class="benefit-point green" data-delay="700"><span>&#10003;</span> 총 소요시간 <strong>20분</strong> &mdash; 담당자가 본업에 쓸 시간을 돌려드립니다</div>
         </div>
@@ -757,7 +757,7 @@
   <div class="slide-content">
     <div class="section-label">LIVE RFQ &mdash; COMMODITY HEDGE</div>
     <div class="section-title">Brent Crude Swap 3M, 1.81M Barrels</div>
-    <div class="section-desc">시스템이 5개 은행에 동시 견적을 요청합니다. 전화 0건. 담당자는 Best 제안을 확인하고 승인만.</div>
+    <div class="section-desc">시스템이 5개 은행에 동시 견적을 요청합니다. 전화 0건. 담당자는 Best 제시를 확인하고 승인만.</div>
 
     <div class="scroll-area">
       <div style="margin-bottom:16px">
@@ -818,7 +818,7 @@
   <div class="slide-content">
     <div class="section-label">LIVE RFQ &mdash; FX HEDGE</div>
     <div class="section-title">3M FWD BUY USD $324M</div>
-    <div class="section-desc">시스템이 USD delta를 산출하고 FX Forward RFQ를 구성하여 제안합니다. 담당자는 Best 환율을 확인하고 1클릭 승인.</div>
+    <div class="section-desc">시스템이 USD delta를 산출하고 FX Forward RFQ를 구성하여 제시합니다. 담당자는 Best 환율을 확인하고 1클릭 승인.</div>
 
     <div class="scroll-area">
       <div style="margin-bottom:16px">
@@ -878,8 +878,8 @@
 <div class="slide" data-slide="10">
   <div class="slide-content">
     <div class="section-label">WORKFLOW IMPACT</div>
-    <div class="section-title">제안/승인 워크플로우의 결과</div>
-    <div class="section-desc">시스템이 제안하고 담당자가 승인한 결과: 경쟁 견적에 의한 가격 개선 + 빠른 체결에 의한 시장 이동 방어.</div>
+    <div class="section-title">분석·제시/승인 워크플로우의 결과</div>
+    <div class="section-desc">시스템이 분석·제시하고 담당자가 판단·승인한 결과: 경쟁 견적에 의한 가격 개선 + 빠른 체결에 의한 시장 이동 방어.</div>
 
     <div class="scroll-area">
       <div class="two-col" style="margin-bottom:20px">
@@ -946,7 +946,7 @@
     <div class="scene-title">Fuel-FX <span class="hl">연동 관리</span></div>
     <div class="scene-desc">
       Commodity hedge가 변하면 USD delta가 변하고, FX hedge도 연동되어야 합니다.<br>
-      시스템이 변동을 감지하고 다음 액션을 제안합니다 &mdash;<br>
+      시스템이 변동을 감지하고 다음 액션을 제시합니다 &mdash;<br>
       <strong style="color:#67e8f9">담당자는 "이 상태가 맞는지" 확인하고 승인만 하면 됩니다.</strong>
     </div>
   </div>
@@ -1044,9 +1044,9 @@
       </div>
 
       <div style="margin-top:8px">
-        <div class="benefit-point green" data-delay="0"><span>&#10003;</span> Commodity swap 변경 &rarr; 시스템이 FX forward 조정을 제안 &mdash; USD delta 누락 리스크 제로</div>
+        <div class="benefit-point green" data-delay="0"><span>&#10003;</span> Commodity swap 변경 &rarr; 시스템이 FX forward 조정을 제시 &mdash; USD delta 누락 리스크 제로</div>
         <div class="benefit-point cyan" data-delay="100"><span>&#10003;</span> 만기 매칭을 시스템이 구성 &mdash; 담당자는 1클릭 승인</div>
-        <div class="benefit-point green" data-delay="200"><span>&#10003;</span> Net Exposure 이상 감지 시 알림 &rarr; 다음 액션 제안 &mdash; 오버헤지/언더헤지 즉시 대응</div>
+        <div class="benefit-point green" data-delay="200"><span>&#10003;</span> Net Exposure 이상 감지 시 알림 &rarr; 다음 액션 제시 &mdash; 오버헤지/언더헤지 즉시 대응</div>
       </div>
     </div>
   </div>
@@ -1057,7 +1057,7 @@
   <div class="slide-content">
     <div class="section-label">AUDIT &amp; COMPLIANCE</div>
     <div class="section-title">Best Execution 증명</div>
-    <div class="section-desc">감사관 질의에 자신 있게 대응. 제안-승인-체결 전 과정이 기록되어 Best Execution을 증명합니다.</div>
+    <div class="section-desc">감사관 질의에 자신 있게 대응. 분석·제시-승인-체결 전 과정이 기록되어 Best Execution을 증명합니다.</div>
 
     <div class="scroll-area">
       <div class="panel" style="padding:24px;margin-bottom:20px;border-color:rgba(248,113,113,.15);background:rgba(248,113,113,.02)">
@@ -1096,7 +1096,7 @@
         <div class="panel" style="text-align:center;padding:20px">
           <div style="font-size:11px;color:var(--gray-500);margin-bottom:6px">포함 항목</div>
           <div style="font-size:28px;font-weight:900;color:#67e8f9">7개</div>
-          <div style="font-size:10px;color:var(--gray-500);margin-top:4px">의결서, 제안내역, 승인기록, 견적, 체결, 선택근거, 감사증적</div>
+          <div style="font-size:10px;color:var(--gray-500);margin-top:4px">의결서, 분석내역, 승인기록, 견적, 체결, 선택근거, 감사증적</div>
         </div>
         <div class="panel" style="text-align:center;padding:20px">
           <div style="font-size:11px;color:var(--gray-500);margin-bottom:6px">감사 대응 시간</div>
@@ -1147,13 +1147,13 @@
           <tr><td>FX Forward 환율</td><td style="color:#fca5a5">1,457.50 (A은행 단독)</td><td style="color:#6ee7b7">1,455.80 (5곳 비교)</td><td style="color:#fcd34d">-&#8361;1.70</td></tr>
           <tr><td>체결 소요시간</td><td style="color:#fca5a5">1.5시간</td><td style="color:#6ee7b7">20분</td><td style="color:#fcd34d">-78%</td></tr>
           <tr><td>비교 은행 수</td><td style="color:#fca5a5">1곳 (주거래)</td><td style="color:#6ee7b7">5곳 (경쟁)</td><td style="color:#fcd34d">+400%</td></tr>
-          <tr><td>Commodity-FX 연동</td><td style="color:#fca5a5">별도 부서, 수작업</td><td style="color:#6ee7b7">시스템 제안 → 승인</td><td style="color:#fcd34d">Zero gap</td></tr>
+          <tr><td>Commodity-FX 연동</td><td style="color:#fca5a5">별도 부서, 수작업</td><td style="color:#6ee7b7">시스템 분석·제시 → 승인</td><td style="color:#fcd34d">Zero gap</td></tr>
           <tr><td>Best Execution 증빙</td><td style="color:#fca5a5">없음</td><td style="color:#6ee7b7">기록 자동화</td><td style="color:#fcd34d">100%</td></tr>
         </table>
       </div>
 
       <div class="hbox" style="background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.15);color:#6ee7b7;text-align:center;font-size:13px;padding:16px">
-        "이상무님, 시스템 제안대로 승인 완료했습니다. Brent Swap $90.60, FX 1,455.80 체결. 전화 0건, 1클릭 승인, 기록 자동 완료. Best Execution 증빙 첨부."<br>
+        "이상무님, 시스템 분석·제시대로 승인 완료했습니다. Brent Swap $90.60, FX 1,455.80 체결. 전화 0건, 1클릭 승인, 기록 자동 완료. Best Execution 증빙 첨부."<br>
         <span style="font-size:11px;color:var(--gray-500)">&mdash; 최유진 부장, 이정우 상무에게 보고</span>
       </div>
     </div>
@@ -1231,7 +1231,7 @@
   <div class="slide-content">
     <div class="section-label">IMPACT</div>
     <div class="section-title">외환 업무에 쓰는 시간, 본업에 쓰세요</div>
-    <div class="section-desc">시스템이 제안하고, 담당자가 승인하는 워크플로우. 통화 0건, 1클릭 승인, 기록 자동화.</div>
+    <div class="section-desc">시스템이 분석·제시하고, 담당자가 판단·승인하는 워크플로우. 통화 0건, 1클릭 승인, 기록 자동화.</div>
 
     <div class="scroll-area">
       <div class="three-col" style="margin-bottom:16px">
@@ -1251,12 +1251,12 @@
             <div style="color:var(--gray-500)">&rarr;</div>
             <div><div style="font-size:11px;color:#6ee7b7;font-weight:600">AFTER</div><div style="font-size:28px;font-weight:900;color:#6ee7b7">통화 0건</div></div>
           </div>
-          <div style="font-size:10px;color:var(--gray-500);margin-top:4px">시스템이 제안, 담당자가 승인</div>
+          <div style="font-size:10px;color:var(--gray-500);margin-top:4px">시스템이 분석·제시, 담당자가 판단·승인</div>
         </div>
         <div class="panel" style="text-align:center;padding:24px">
           <div style="font-size:11px;color:var(--gray-500);margin-bottom:8px">승인 방식</div>
           <div style="font-size:36px;font-weight:900;color:#67e8f9">1클릭</div>
-          <div style="font-size:10px;color:var(--gray-500);margin-top:4px">시스템 제안 → 담당자 1클릭 승인</div>
+          <div style="font-size:10px;color:var(--gray-500);margin-top:4px">시스템 분석·제시 → 담당자 1클릭 승인</div>
         </div>
       </div>
 
@@ -1274,14 +1274,14 @@
         <div class="panel" style="text-align:center;padding:24px">
           <div style="font-size:11px;color:var(--gray-500);margin-bottom:8px">통합 관리</div>
           <div style="font-size:36px;font-weight:900;color:#6ee7b7">Fuel-FX</div>
-          <div style="font-size:10px;color:var(--gray-500);margin-top:4px">시스템이 제안, 담당자가 승인</div>
+          <div style="font-size:10px;color:var(--gray-500);margin-top:4px">시스템이 분석·제시, 담당자가 판단·승인</div>
         </div>
       </div>
 
       <div style="padding:18px 28px;background:rgba(8,145,178,.06);border:1px solid rgba(8,145,178,.15);border-radius:14px">
         <div style="font-size:12px;color:var(--gray-300);line-height:1.8">
           <strong style="color:#67e8f9">핵심 메시지: "그래서 뭘 해야 하죠?"에 대한 답</strong><br>
-          1. <strong style="color:#fbbf24">경영 결정(증편)</strong> &rarr; 2. <strong style="color:#fb923c">시스템이 hedge 변경 제안</strong> &rarr; 3. <strong style="color:#67e8f9">USD delta 산출</strong> &rarr; 4. <strong style="color:#6ee7b7">FX hedge 제안</strong> &rarr; 5. <strong style="color:var(--white)">담당자 1클릭 승인</strong><br>
+          1. <strong style="color:#fbbf24">경영 결정(증편)</strong> &rarr; 2. <strong style="color:#fb923c">시스템이 hedge 변경 분석·제시</strong> &rarr; 3. <strong style="color:#67e8f9">USD delta 산출</strong> &rarr; 4. <strong style="color:#6ee7b7">FX hedge 분석·제시</strong> &rarr; 5. <strong style="color:var(--white)">담당자 1클릭 승인</strong><br>
           정보를 해석하고 다음 액션을 찾는 시간 &mdash; 그 시간을 시스템이 대신합니다. 담당자는 본업에 집중하세요.
         </div>
       </div>
@@ -1294,7 +1294,7 @@
   <div class="slide-content">
     <div class="section-label">PLATFORM</div>
     <div class="section-title">KustodyFi 25 Agent 아키텍처 <span style="font-size:14px;color:var(--gray-500);font-weight:400">(Phase 2 로드맵)</span></div>
-    <div style="font-size:13px;color:var(--gray-500);margin-bottom:16px">각 Agent가 상황을 분석하고 다음 액션을 제안합니다. 담당자는 승인만.</div>
+    <div style="font-size:13px;color:var(--gray-500);margin-bottom:16px">각 Agent가 상황을 분석하고 다음 액션을 제시합니다. 담당자는 승인만.</div>
 
     <div class="scroll-area">
       <div class="two-col" style="gap:14px">
@@ -1357,9 +1357,9 @@
             </div>
           </div>
           <div class="hbox" style="background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.15);color:var(--gray-300);font-size:11px;line-height:1.7">
-            <strong style="color:#6ee7b7">이 시나리오:</strong> 10개 Agent가 상황 분석 → 액션 제안 → 담당자 승인<br>
+            <strong style="color:#6ee7b7">이 시나리오:</strong> 10개 Agent가 상황 분석 → 액션 제시 → 담당자 판단·승인<br>
             <strong style="color:var(--gray-500)">확장 가능:</strong> 15개 Agent &mdash; 자금관리, 이상탐지, 회계연동 등<br>
-            <span style="font-size:10px;color:var(--gray-500)">Agent가 "지금 뭘 해야 하는지" 제안. 담당자는 승인만. 단계적 활성화 가능.</span>
+            <span style="font-size:10px;color:var(--gray-500)">Agent가 "지금 뭘 해야 하는지" 제시. 담당자는 승인만. 단계적 활성화 가능.</span>
           </div>
         </div>
       </div>
@@ -1371,17 +1371,17 @@
 <div class="slide closing-slide" data-slide="18">
   <div class="slide-content">
     <div class="closing-title">외환 업무에 쓰는 시간,<br>본업에 쓰세요.</div>
-    <div class="closing-desc">시스템이 제안하고, 담당자가 승인합니다.<br>통화 0건, 1클릭 승인, 기록 자동화 &mdash; 그것이 KustodyFi입니다.</div>
+    <div class="closing-desc">시스템이 분석·제시하고, 담당자가 판단·승인합니다.<br>통화 0건, 1클릭 승인, 기록 자동화 &mdash; 그것이 KustodyFi입니다.</div>
     <div class="closing-stats">
       <div><div class="stat-num">통화 0건</div><div class="stat-label">전화 한 통 없이 5개 은행 견적</div></div>
-      <div><div class="stat-num">1클릭</div><div class="stat-label">시스템 제안 → 담당자 승인</div></div>
+      <div><div class="stat-num">1클릭</div><div class="stat-label">시스템 분석·제시 → 담당자 판단·승인</div></div>
       <div><div class="stat-num">기록 자동화</div><div class="stat-label">체결, 포지션, 감사 증적</div></div>
     </div>
     <div style="margin-top:40px;padding:18px 28px;background:rgba(8,145,178,.06);border:1px solid rgba(8,145,178,.15);border-radius:14px;display:inline-block;opacity:0;animation:fadeUp .8s .9s forwards">
-      <div style="font-size:14px;color:#67e8f9;font-weight:700;margin-bottom:8px">KustodyFi &mdash; 시스템이 제안하고, 담당자가 승인합니다</div>
+      <div style="font-size:14px;color:#67e8f9;font-weight:700;margin-bottom:8px">KustodyFi &mdash; 시스템이 분석·제시하고, 담당자가 판단·승인합니다</div>
       <div style="font-size:12px;color:var(--gray-300);line-height:1.8">
-        <strong style="color:#fcd34d">Commodity Hedge</strong> &mdash; 시스템이 최적 Brent Swap 구성을 제안<br>
-        <strong style="color:#67e8f9">FX Hedge</strong> &mdash; USD delta를 산출하고 FX Forward를 제안<br>
+        <strong style="color:#fcd34d">Commodity Hedge</strong> &mdash; 시스템이 최적 Brent Swap 구성을 제시<br>
+        <strong style="color:#67e8f9">FX Hedge</strong> &mdash; USD delta를 산출하고 FX Forward를 제시<br>
         <strong style="color:#6ee7b7">워크플로우</strong> &mdash; 통화 0건, 1클릭 승인, 기록 자동화. 본업에 집중하세요.
       </div>
     </div>

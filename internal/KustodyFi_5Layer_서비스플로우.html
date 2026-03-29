@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KustodyFi 5-Layer 서비스 플로우</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #fff; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; color: #222; }
+.page { max-width: 1000px; margin: 0 auto; padding: 40px 32px 60px; }
+h1 { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 4px; }
+.page-sub { font-size: 13px; color: #999; text-align: center; margin-bottom: 36px; }
+
+/* Layers nav */
+.layers-nav {
+  display: flex; gap: 4px; margin-bottom: 36px; padding: 12px 16px;
+  background: #f8f8f8; border-radius: 10px; overflow-x: auto;
+}
+.ln-item {
+  flex: 1; text-align: center; padding: 8px 6px; border-radius: 6px;
+  font-size: 11px; font-weight: 600; line-height: 1.4; min-width: 100px;
+  color: #fff;
+}
+.ln-arrow { display: flex; align-items: center; color: #ccc; font-size: 16px; padding: 0 2px; }
+.ln1 { background: #1D9E75; } .ln2 { background: #D85A30; }
+.ln3 { background: #7F77DD; } .ln4 { background: #BA7517; }
+.ln5 { background: #333; }
+
+/* Section */
+.section { margin-bottom: 44px; }
+.section-header {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+  padding-bottom: 10px; border-bottom: 2px solid #eee;
+}
+.sb {
+  font-size: 10px; font-weight: 700; color: #fff; padding: 4px 10px;
+  border-radius: 4px; letter-spacing: 0.5px; white-space: nowrap;
+}
+.section-title { font-size: 17px; font-weight: 600; }
+.section-desc { font-size: 12px; color: #888; margin-top: 2px; }
+
+/* Timeline */
+.tl { position: relative; padding-left: 32px; }
+.tl::before { content:''; position:absolute; left:11px; top:8px; bottom:8px; width:2px; background:#e0e0e0; }
+.ti { position: relative; padding: 0 0 18px 0; }
+.ti:last-child { padding-bottom: 0; }
+.td {
+  position:absolute; left:-32px; top:6px; width:22px; height:22px; border-radius:50%;
+  border:2px solid #ccc; background:#fff; display:flex; align-items:center; justify-content:center;
+  font-size:9px; font-weight:700; color:#999;
+}
+.d1 { border-color:#1D9E75; color:#1D9E75; }
+.d2 { border-color:#D85A30; color:#D85A30; }
+.d3 { border-color:#7F77DD; color:#7F77DD; }
+.d4 { border-color:#BA7517; color:#BA7517; }
+.d5 { border-color:#333; color:#333; }
+.tc { background:#fafafa; border:1px solid #eee; border-radius:8px; padding:12px 16px; }
+.tt { font-size:14px; font-weight:600; margin-bottom:3px; }
+.td-desc { font-size:12px; color:#777; line-height:1.6; }
+.td-det { font-size:12px; color:#555; margin-top:6px; line-height:1.7; }
+.td-det strong { color:#333; }
+
+/* Split */
+.split { margin:20px 0; padding:16px; border:1px dashed #ccc; border-radius:10px; background:#fcfcfc; }
+.split-title { font-size:13px; font-weight:600; margin-bottom:14px; text-align:center; }
+.split-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.trk { border:1px solid #e0e0e0; border-radius:8px; padding:14px; background:#fff; }
+.trk-label { font-size:10px; font-weight:700; padding:3px 8px; border-radius:3px; display:inline-block; margin-bottom:6px; color:#fff; }
+.lb1 { background:#1D9E75; } .lb2 { background:#7F77DD; } .lb3 { background:#BA7517; } .lb4 { background:#888; }
+.trk h4 { font-size:13px; font-weight:600; margin-bottom:4px; }
+.trk p { font-size:12px; color:#666; line-height:1.5; margin-bottom:6px; }
+.trk ul { list-style:none; }
+.trk li { font-size:12px; color:#555; padding:2px 0 2px 14px; position:relative; line-height:1.5; }
+.trk li::before { content:'→'; position:absolute; left:0; color:#bbb; font-size:11px; }
+.trk li.hl { color:#333; font-weight:500; }
+.trk li.sub { font-size:11px; color:#999; padding-left:28px; }
+
+/* Callout */
+.co { margin:16px 0; padding:12px 16px; border-radius:8px; font-size:12px; line-height:1.6; }
+.co-amber { background:#fff8f0; border:1px solid #ffe0b2; color:#6d4c00; }
+.co-blue { background:#f0f7ff; border:1px solid #90caf9; color:#0d47a1; }
+.co-green { background:#f0fff4; border:1px solid #a5d6a7; color:#1b5e20; }
+.co strong { font-weight:600; }
+
+/* Contract timeline */
+.contract-map { margin:20px 0; }
+.cm-title { font-size:14px; font-weight:600; margin-bottom:14px; }
+.cm-table { width:100%; border-collapse:collapse; font-size:12px; }
+.cm-table th, .cm-table td { border:1px solid #e0e0e0; padding:10px 12px; text-align:left; vertical-align:top; }
+.cm-table th { background:#f5f5f5; font-weight:600; font-size:11px; color:#555; }
+.cm-table td { color:#444; line-height:1.5; }
+.cm-doc { font-weight:600; color:#333; }
+.cm-when { color:#7F77DD; font-weight:500; }
+
+/* 3-col cards */
+.cards3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-top:14px; }
+.card3 { background:#fafafa; border:1px solid #eee; border-radius:8px; padding:14px; }
+.card3 h4 { font-size:13px; font-weight:600; margin-bottom:6px; display:flex; align-items:center; gap:6px; }
+.card3 ul { list-style:none; }
+.card3 li { font-size:12px; color:#555; padding:2px 0 2px 14px; position:relative; line-height:1.5; }
+.card3 li::before { content:'→'; position:absolute; left:0; color:#bbb; font-size:11px; }
+.freq { font-size:10px; font-weight:500; color:#888; background:#f0f0f0; padding:2px 6px; border-radius:3px; }
+
+/* Footer */
+.footer { margin-top:40px; padding-top:20px; border-top:1px solid #eee; font-size:11px; color:#aaa; text-align:center; line-height:1.6; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>KustodyFi 5-Layer 서비스 플로우</h1>
+<p class="page-sub">Account → SEAL → 기관 연동 → 거래 수행 → 거래 후 관리</p>
+
+<div class="layers-nav">
+  <div class="ln-item ln1">Layer 1<br>Account</div>
+  <div class="ln-arrow">›</div>
+  <div class="ln-item ln2">Layer 2<br>SEAL</div>
+  <div class="ln-arrow">›</div>
+  <div class="ln-item ln3">Layer 3<br>기관 연동</div>
+  <div class="ln-arrow">›</div>
+  <div class="ln-item ln4">Layer 4<br>거래 수행</div>
+  <div class="ln-arrow">›</div>
+  <div class="ln-item ln5">Layer 5<br>거래 후 관리</div>
+</div>
+
+<!-- ===== CONTRACT TIMING MAP ===== -->
+<div class="section">
+  <div class="section-header">
+    <span class="sb" style="background:#D85A30;">계약서</span>
+    <div>
+      <div class="section-title">계약서 체결 타이밍</div>
+      <div class="section-desc">어떤 문서가 어느 Layer에서 체결되어야 하는지</div>
+    </div>
+  </div>
+
+  <table class="cm-table">
+    <tr>
+      <th style="width:25%">문서</th>
+      <th style="width:15%">당사자</th>
+      <th style="width:20%">체결 시점</th>
+      <th style="width:40%">전제조건 및 비고</th>
+    </tr>
+    <tr>
+      <td class="cm-doc">[1] KustodyFi 서비스이용약정서</td>
+      <td>KustodyFi ↔ 기업</td>
+      <td class="cm-when">Layer 1 시작 시<br>(서비스 가입 심사 직후)</td>
+      <td>KustodyFi의 서비스 가입 심사 완료 후 즉시 체결. Layer 2 이후 모든 서비스의 기본 계약.<br>Free tier는 웹 이용약관으로 대체 가능, Starter 이상은 정식 약정.</td>
+    </tr>
+    <tr>
+      <td class="cm-doc">[2-A] 외환거래약정서 (은행용)<br>[2-B] 외환파생상품거래약정서 (증권사용)</td>
+      <td>기업 ↔ 은행/증권사</td>
+      <td class="cm-when">Layer 3 중반~후반<br>(기관 온보딩 과정)</td>
+      <td>
+        <strong>기존 거래 기관:</strong> 추가약정서 형태로 기존 약정에 붙임. Layer 3 Step 1에서 기관 인지 후 1~2주.<br>
+        <strong>신규 기관:</strong> 기관의 KYC/CDD/AML 완료 + 계좌 개설 후 체결. Layer 3 Step 2~3주차.<br>
+        CSA 조건 (별지 4) 협상이 이 시점에서 이루어짐.
+      </td>
+    </tr>
+    <tr>
+      <td class="cm-doc">[3] 은행협상 체크리스트</td>
+      <td>(내부 문서)</td>
+      <td class="cm-when">Layer 3 진입 전<br>사전 준비용</td>
+      <td>은행/증권사 미팅 전에 내부적으로 준비. 별지 4 (CSA Summary)를 Term Sheet으로 활용.</td>
+    </tr>
+  </table>
+
+  <div class="co co-amber">
+    <strong>핵심 순서:</strong> [1] 서비스이용약정서 먼저 → TMS/SEAL 세팅 → 그 다음 [2-A]/[2-B] 기관 약정.<br>
+    이유: TMS가 세팅된 상태에서 은행에 가야 "이런 시스템으로 거래합니다"를 보여줄 수 있음. 빈손으로 약정 먼저 하면 은행이 "뭔데 이게?" 됨.
+  </div>
+</div>
+
+<!-- ===== LAYER 1: ACCOUNT ===== -->
+<div class="section">
+  <div class="section-header">
+    <span class="sb ln1">LAYER 1</span>
+    <div>
+      <div class="section-title">Account 온보딩</div>
+      <div class="section-desc">계좌 정보, 금리 조건, 기본 재무 데이터 세팅</div>
+    </div>
+  </div>
+
+  <div class="co co-green">
+    <strong>📋 [1] KustodyFi 서비스이용약정서 체결 — 이 시점에서</strong><br>
+    서비스 가입 심사 완료 직후, Layer 1 본격 세팅 전에 약정 체결. TMS/SEAL/AI Agent 이용의 법적 기반.
+  </div>
+
+  <div class="tl">
+    <div class="ti"><div class="td d1">1</div>
+      <div class="tc">
+        <div class="tt">서비스 가입 심사 (KustodyFi 자체)</div>
+        <div class="td-desc">사업자등록증 확인, 서비스 적격성 판단, 이용 약관 동의. KustodyFi는 금융기관이 아니므로 법적 AML/KYC 의무는 없음 — 정식 AML/KYC/CDD는 Layer 3에서 거래 기관이 수행.</div>
+        <div class="td-det"><span style="color:#999">소요:</span> 1~2 영업일 | <span style="color:#999">수집:</span> 사업자등록증, 회사명, 대표자명, 주요 거래 통화쌍, 연락처</div>
+      </div>
+    </div>
+    <div class="ti"><div class="td d1">2</div>
+      <div class="tc">
+        <div class="tt">계좌 등록 (Cash Balance)</div>
+        <div class="td-desc">보유 계좌 등록 — 통화별 잔고 연동 (오픈뱅킹 API → 스크래핑 → 수동)</div>
+        <div class="td-det"><strong>항목:</strong> 계좌번호, 은행명, 통화, 잔고 조회 방식, 계좌별 금리 조건</div>
+      </div>
+    </div>
+    <div class="ti"><div class="td d1">3</div>
+      <div class="tc">
+        <div class="tt">자금 스케줄 (Cash Schedule)</div>
+        <div class="td-desc">예정 외화 유출입 등록 — 엑셀 또는 ERP 연동. Recurring / One-off 분류</div>
+      </div>
+    </div>
+    <div class="ti"><div class="td d1">4</div>
+      <div class="tc">
+        <div class="tt">자금조달금리 (Funding Rate) 세팅</div>
+        <div class="td-desc">StableFX 이론가의 핵심 입력값. 실제 접근 가능 금리 입력 (KRW/USD MMDA 등)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LAYER 2: SEAL ===== -->
+<div class="section">
+  <div class="section-header">
+    <span class="sb ln2">LAYER 2</span>
+    <div>
+      <div class="section-title">SEAL 온보딩</div>
+      <div class="section-desc">거래 가능 인원, 프로덕트 제한, 한도, 승인 워크플로우</div>
+    </div>
+  </div>
+
+  <div class="tl">
+    <div class="ti"><div class="td d2">A</div>
+      <div class="tc">
+        <div class="tt">사용자 Role 설정</div>
+        <div class="td-det">
+          <strong>Dealer</strong> — 호가 요청, 거래 체결 |
+          <strong>Approver</strong> — 승인 권한 |
+          <strong>Viewer</strong> — 조회만 |
+          <strong>Admin</strong> — 정책 변경
+        </div>
+      </div>
+    </div>
+    <div class="ti"><div class="td d2">B</div>
+      <div class="tc">
+        <div class="tt">프로덕트 제한</div>
+        <div class="td-desc">허용 상품 유형 설정 — Spot ✅ / Forward ✅ (최대 만기 12M) / CCS ❌ 또는 승인 필수</div>
+        <div class="td-det">허용하지 않은 프로덕트는 Fail-closed 자동 차단</div>
+      </div>
+    </div>
+    <div class="ti"><div class="td d2">C</div>
+      <div class="tc">
+        <div class="tt">거래 한도</div>
+        <div class="td-det">
+          <strong>건별:</strong> 1건 최대 USD 500K |
+          <strong>일별:</strong> 1일 총 USD 2M |
+          <strong>총잔액:</strong> 미결제 USD 10M<br>
+          초과 시 자동 차단 → Approver 승인 필요
+        </div>
+      </div>
+    </div>
+    <div class="ti"><div class="td d2">D</div>
+      <div class="tc">
+        <div class="tt">승인 워크플로우</div>
+        <div class="td-desc">$200K 이하 → Dealer 단독 / $200K~500K → Approver 1명 / $500K 초과 → Dual sign-off</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LAYER 3: INSTITUTION ===== -->
+<div class="section">
+  <div class="section-header">
+    <span class="sb ln3">LAYER 3</span>
+    <div>
+      <div class="section-title">기관 온보딩</div>
+      <div class="section-desc">거래 은행/증권사 연결 — 기존 vs 신규 분기. AML/KYC/CDD는 기관이 수행.</div>
+    </div>
+  </div>
+
+  <div class="co co-blue" style="font-size:11px;">
+    <strong>참고 — 규제 환경:</strong> 2026년 1월 지정거래외국환은행 제도 폐지. 기업이 여러 금융기관을 자유롭게 선택하여 거래할 수 있는 방향으로 제도가 변경됨. Multi-RFQ를 통한 복수 기관 비교·선택 모델에 유리한 환경. 단, 기업의 선물환/통화스왑 등 파생상품 거래는 여전히 각 기관별 약정 필요.
+  </div>
+
+  <div class="tl">
+    <div class="ti"><div class="td d3">1</div>
+      <div class="tc">
+        <div class="tt">거래 기관 목록 등록 + 기존/신규 분류</div>
+        <div class="td-desc">기관명, 유형, 기존 거래 여부, 담당자. 예: 씨티은행 (기존 ✅) / KB증권 (신규 🆕)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="split">
+    <div class="split-title">기존 vs 신규 기관 분기</div>
+    <div class="split-grid">
+      <div class="trk">
+        <span class="trk-label lb1">기존 거래 기관</span>
+        <h4>계좌 + 약정이 이미 있음</h4>
+        <ul>
+          <li class="hl">기관에 KustodyFi 연동 사실 통지</li>
+          <li class="hl">"이 시스템을 통해서도 거래 지시가 올 수 있다" 인지</li>
+          <li>API 제공 가능 여부 확인</li>
+          <li class="hl">기존 약정에 추가약정서 체결</li>
+          <li class="sub">가격검증 서비스 통한 거래 신청 조항</li>
+          <li class="sub">Deal Ticket 거래 증빙 상호 인정 조항</li>
+          <li>기존 계좌 → TMS에 SSI 매핑</li>
+        </ul>
+        <div class="co co-blue" style="margin-top:8px;padding:8px 12px;">
+          <strong>소요:</strong> 1~2주 | <strong>계약:</strong> 추가약정서 (기존 약정 add-on)
+        </div>
+      </div>
+      <div class="trk">
+        <span class="trk-label lb2">신규 기관</span>
+        <h4>계좌도 약정도 없음</h4>
+        <ul>
+          <li class="hl">기관에 계좌 개설 신청</li>
+          <li class="hl">기관의 기업 KYC / CDD 수행</li>
+          <li class="sub">사업자등록증, 재무제표, 대표자 신원</li>
+          <li class="sub">실소유자 확인 (Beneficial Ownership)</li>
+          <li class="sub">AML 스크리닝 (UN/OFAC/EU 제재)</li>
+          <li class="hl">기관 심사 완료 + 계좌 발급</li>
+          <li class="hl">외환거래약정서 [2-A] / [2-B] 체결</li>
+          <li class="sub">CSA 조건 협상: IM 10~15%, 마진콜 70%, Netting Floor, MTA</li>
+          <li>API 제공 가능 여부 확인</li>
+          <li>SSI 등록</li>
+        </ul>
+        <div class="co co-amber" style="margin-top:8px;padding:8px 12px;">
+          <strong>소요:</strong> 3~6주 (기관 KYC가 병목) | <strong>계약:</strong> [2-A]/[2-B] 전문 체결
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="co co-green">
+    <strong>📋 [2-A]/[2-B] 외환거래약정서 체결 — 이 시점에서</strong><br>
+    기존 기관: 추가약정서로 빠르게 처리. 신규 기관: KYC 후 정식 약정서 체결. 양쪽 모두 CSA 별지 4 조건 확정.
+  </div>
+
+  <div class="tl" style="margin-top:16px;">
+    <div class="ti"><div class="td d3">2</div>
+      <div class="tc">
+        <div class="tt">기관별 연동 수준 확정</div>
+        <div class="td-det">
+          <strong>Type 1 — API (STP):</strong> RFQ/체결 API → 자동 호가, 자동 체결, 자동 확인서<br>
+          <strong>Type 2 — Deal Ticket:</strong> TMS가 Deal Ticket 생성 → 딜러가 전화/이메일 → 결과 입력
+        </div>
+      </div>
+    </div>
+    <div class="ti"><div class="td d3">3</div>
+      <div class="tc">
+        <div class="tt">Settlement Profile + 정산 경로 세팅</div>
+        <div class="td-desc">기관별 결제 계좌 매핑 + 외화 이체 경로 사전 세팅. 만기 결제 시 "어디서 어디로" 돈이 움직이는지를 미리 확정.</div>
+        <div class="td-det">
+          <strong>등록 항목 (기관별):</strong><br>
+          · 거래 기관 외화 계좌 (Nostro/Vostro, Correspondent Bank, SWIFT BIC)<br>
+          · 고객의 외화 계좌 (출금용) — 어느 은행, 어떤 통화, 계좌번호<br>
+          · 고객의 원화 계좌 (수취용) — 환전 후 원화 입금 계좌<br>
+          · 정산 경로 유형 확정:<br>
+          <span style="margin-left:16px;">A) <strong>동일 기관 내부 이체</strong> — 고객 외화계좌와 거래 기관이 같은 은행 → 내부 이체로 종결</span><br>
+          <span style="margin-left:16px;">B) <strong>타행/타사 외화 이체 필요</strong> — 외화가 다른 은행에 있거나, 거래 기관이 증권사인 경우</span><br><br>
+          <strong>경로 B인 경우 사전 세팅:</strong><br>
+          · 고객이 출금 은행에서 "외화 타행이체 약정" 등록 (영업점 방문 필요)<br>
+          · KFTC 외화자금이체 공동망 이용 가능 여부 확인 (USD/JPY/EUR/GBP/HKD 실시간)<br>
+          · 외화펌뱅킹 세팅 여부 확인 (대량 거래 기업)<br>
+          · 증권사의 경우: 증권사 측 "외화 타사이체 입금 약정" 등록<br><br>
+          <strong>TMS에 등록되는 것:</strong> 경로 유형(A/B), 출금 계좌, 입금 계좌, 이체 방식(KFTC/펌뱅킹/수동), 이체 가능 시간대
+        </div>
+      </div>
+    </div>
+    <div class="ti"><div class="td d3">4</div>
+      <div class="tc">
+        <div class="tt">초기증거금(IM) 예치</div>
+        <div class="td-det">
+          <strong>TMS →</strong> 기관별 초기증거금 소요액 산출 (계약금액 또는 Netting Amount의 10~15%)<br>
+          <strong>TMS →</strong> 예치 지시서 생성: 금액, 입금 계좌(기관 보증금 계정), 마감 시한<br>
+          <strong>고객 →</strong> 자기 은행 계좌에서 기관 보증금 계정으로 이체 실행 (원화 또는 외화)<br>
+          <strong>거래 기관 →</strong> 보증금 입금 확인 + 담보 설정 (잠김)<br>
+          <strong>TMS →</strong> 보증금 예치 완료 기록. 거래 가능 상태로 전환.
+        </div>
+      </div>
+    </div>
+    <div class="ti"><div class="td d3">5</div>
+      <div class="tc">
+        <div class="tt">테스트 거래 → Go-live</div>
+        <div class="td-desc">테스트 선물환 1건 체결 → 확인서 수신 → Settlement Instruction 생성 → 전체 플로우 검증 → 실거래 개시</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LAYER 4: TRADE EXECUTION ===== -->
+<div class="section">
+  <div class="section-header">
+    <span class="sb ln4">LAYER 4</span>
+    <div>
+      <div class="section-title">거래 수행</div>
+      <div class="section-desc">Invoice → 헷지 추천 → SEAL 승인 → 체결 (API or Deal Ticket)</div>
+    </div>
+  </div>
+
+  <div class="split">
+    <div class="split-title">실행 방식에 따른 분기</div>
+    <div class="split-grid">
+      <div class="trk">
+        <span class="trk-label lb1">B-1: API 연동 (STP)</span>
+        <h4>기관 API가 있는 경우</h4>
+        <ul>
+          <li>Invoice 업로드 → AI Agent OCR 파싱</li>
+          <li>StableFX 이론가 + 헷지 추천</li>
+          <li class="hl">SEAL 승인</li>
+          <li class="hl">Multi-RFQ API 자동 발송</li>
+          <li class="hl">최적 호가 자동 선택 + 체결 API</li>
+          <li>확인서 API 자동 수신</li>
+          <li>증빙 자동 제출 + Audit Trail</li>
+        </ul>
+        <div class="co co-blue" style="margin-top:8px;padding:8px 12px;">
+          사람 개입 최소. Invoice → 체결까지 자동.
+        </div>
+      </div>
+      <div class="trk">
+        <span class="trk-label lb2">B-2: Deal Ticket</span>
+        <h4>기관 API가 없는 경우 (초기 대부분)</h4>
+        <ul>
+          <li>Invoice 업로드 → AI Agent OCR 파싱</li>
+          <li>StableFX 이론가 + 헷지 추천</li>
+          <li class="hl">SEAL 승인</li>
+          <li class="hl">Deal Ticket 생성 (통화쌍, 방향, 금액, 만기, 이론가 범위, 최대 허용 스프레드)</li>
+          <li class="hl">딜러가 전화/이메일로 거래 체결</li>
+          <li class="hl">체결 결과 TMS 입력 → Deal Ticket 매칭</li>
+          <li>Deal Ticket ↔ 은행 확인서 = 거래 증빙 쌍</li>
+          <li>증빙 패키지 생성 + Audit Trail</li>
+        </ul>
+        <div class="co co-amber" style="margin-top:8px;padding:8px 12px;">
+          Step 5~6에서 사람 개입. Deal Ticket이 거래 근거.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="co co-blue">
+    <strong>Track A (가격 확인만) 고객:</strong> Layer 4가 없음. StableFX에서 이론가 보고, 본인이 직접 기존 은행에 전화해서 거래. 우리는 이론가만 제공.
+  </div>
+</div>
+
+<!-- ===== LAYER 5: POST-TRADE ===== -->
+<div class="section">
+  <div class="section-header">
+    <span class="sb ln5">LAYER 5</span>
+    <div>
+      <div class="section-title">거래 후 관리</div>
+      <div class="section-desc">MtM 모니터링, 마진콜, 결제, 보증금 해제 — 거래가 살아있는 동안 반복</div>
+    </div>
+  </div>
+
+  <p style="font-size:13px;color:#555;line-height:1.6;margin-bottom:16px;">
+    거래 체결 후부터 만기 결제까지, TMS에서 통합 관리. API 연동이든 Deal Ticket이든 TMS에 거래 기록이 있으니까 동일한 관리 플로우가 적용됩니다.
+  </p>
+
+  <div class="cards3">
+    <div class="card3">
+      <h4>일일 모니터링 <span class="freq">매일</span></h4>
+      <ul>
+        <li>미결제 포지션 MtM 산출</li>
+        <li>Dual Valuation (은행 + KustodyFi)</li>
+        <li>순평가손익 (Net MtM) 계산</li>
+        <li>담보비율 모니터링</li>
+        <li>70% 접근 시 사전 경고 알림</li>
+        <li>Netting 후 순노출금액 산정</li>
+      </ul>
+    </div>
+    <div class="card3">
+      <h4>담보 관리 <span class="freq">이벤트</span></h4>
+      <ul>
+        <li>마진콜 발생 시 추가담보 통지</li>
+        <li>T+1 추가 예치 관리</li>
+        <li>Netting으로 순노출 감소 시 초과담보 반환 요청</li>
+        <li>Netting Floor (최대 Notional의 10%) 자동 체크</li>
+        <li>담보비율 100% 초과 시 즉시 강제청산 경고</li>
+        <li>보증금 이자 추적</li>
+      </ul>
+    </div>
+    <div class="card3">
+      <h4>리포트 <span class="freq">매일/주간/월간</span></h4>
+      <ul>
+        <li>포지션 현황 (기관별, 통화쌍별)</li>
+        <li>담보소요액 vs 예치잔액</li>
+        <li>헷지 비율 (Invoice 대비)</li>
+        <li>Best Execution 증빙 리포트</li>
+        <li>월간 거래 실적</li>
+        <li>Audit Trail 조회</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="margin-top:20px;">
+    <div class="split-title" style="font-size:14px;font-weight:600;margin-bottom:14px;">만기 결제 플로우 — 정산 경로별 분기</div>
+
+    <!-- Pre-settlement -->
+    <div class="tl">
+      <div class="ti"><div class="td d5">1</div>
+        <div class="tc">
+          <div class="tt">만기 사전 알림 + 자금 확인</div>
+          <div class="td-det">
+            <strong>TMS →</strong> D-7, D-3, D-1 자동 알림 발송 (이메일/메신저/TMS 대시보드)<br>
+            <strong>TMS →</strong> Cash Schedule 대사: 만기일에 결제 자금(외화) 확보 가능한지 자동 체크<br>
+            <strong>TMS →</strong> 정산 경로 확인: 이 거래가 경로 A(내부이체)인지 B(타행이체)인지 표시<br>
+            <strong>고객 →</strong> 자금 확보 상태 확인. 부족 시 사전 환전 또는 자금 조달 진행
+          </div>
+        </div>
+      </div>
+
+      <div class="ti"><div class="td d5">2</div>
+        <div class="tc">
+          <div class="tt">만기 당일 — 결제 자금 입금 확인</div>
+          <div class="td-det">
+            <strong>해외 바이어 →</strong> 수출대금(USD 등) 송금 (수출기업의 경우)<br>
+            <strong>고객의 은행 →</strong> USD 입금 확인<br>
+            <strong>TMS →</strong> 오픈뱅킹/스크래핑으로 입금 상태 추적. 미입금 시 알림
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settlement split -->
+    <div class="split" style="margin-top:16px;">
+      <div class="split-title">정산 경로에 따라 플로우 분기</div>
+      <div class="split-grid">
+
+        <!-- Route A: Same institution -->
+        <div class="trk">
+          <span class="trk-label lb1">경로 A: 동일 기관 내부 이체</span>
+          <h4>외화 계좌와 거래 기관이 같은 은행</h4>
+          <p>예: 하나은행에서 선물환 체결 + 하나은행에 USD 계좌 보유</p>
+          <table style="width:100%;border-collapse:collapse;font-size:11px;margin-top:8px;">
+            <tr style="background:#f0f0f0;"><th style="padding:6px 8px;text-align:left;border:1px solid #ddd;">Actor</th><th style="padding:6px 8px;text-align:left;border:1px solid #ddd;">Action</th><th style="padding:6px 8px;text-align:left;border:1px solid #ddd;">Channel</th></tr>
+            <tr><td style="padding:6px 8px;border:1px solid #eee;font-weight:600;">TMS</td><td style="padding:6px 8px;border:1px solid #eee;">Settlement Instruction 생성<br>"하나은행 USD 계좌 → 하나은행 선물환 결제"</td><td style="padding:6px 8px;border:1px solid #eee;">자동 생성</td></tr>
+            <tr><td style="padding:6px 8px;border:1px solid #eee;font-weight:600;">고객</td><td style="padding:6px 8px;border:1px solid #eee;">하나은행 인터넷뱅킹에서 내부 외화 이체 실행<br>(또는 은행 담당자에게 전화 지시)</td><td style="padding:6px 8px;border:1px solid #eee;">인터넷뱅킹<br>/ 전화</td></tr>
+            <tr><td style="padding:6px 8px;border:1px solid #eee;font-weight:600;">은행</td><td style="padding:6px 8px;border:1px solid #eee;">내부 계좌 간 외화 이체 처리<br>선물환 약정환율로 원화 환전 실행</td><td style="padding:6px 8px;border:1px solid #eee;">은행 내부<br>(실시간)</td></tr>
+            <tr><td style="padding:6px 8px;border:1px solid #eee;font-weight:600;">은행</td><td style="padding:6px 8px;border:1px solid #eee;">원화 대금을 고객 KRW 계좌에 입금</td><td style="padding:6px 8px;border:1px solid #eee;">은행 내부</td></tr>
+            <tr><td style="padding:6px 8px;border:1px solid #eee;font-weight:600;">TMS</td><td style="padding:6px 8px;border:1px solid #eee;">결제 완료 확인 (잔고 변동 감지 또는 수동 확인)<br>Blotter 상태: CONFIRMED → SETTLED</td><td style="padding:6px 8px;border:1px solid #eee;">오픈뱅킹<br>/ 수동 입력</td></tr>
+          </table>
+          <div class="co co-blue" style="margin-top:8px;padding:8px 12px;">
+            <strong>소요:</strong> 당일 처리 (은행 영업시간 내)<br>
+            <strong>비용:</strong> 내부 이체이므로 이체 수수료 없음
+          </div>
+        </div>
+
+        <!-- Route B: Different institution -->
+        <div class="trk">
+          <span class="trk-label lb2">경로 B: 타행/타사 외화 이체</span>
+          <h4>외화 계좌와 거래 기관이 다른 금융기관</h4>
+          <p>예: 하나은행에 USD 계좌 → KB증권에서 선물환 체결</p>
+          <table style="width:100%;border-collapse:collapse;font-size:11px;margin-top:8px;">
+            <tr style="background:#f0f0f0;"><th style="padding:6px 8px;text-align:left;border:1px solid #ddd;">Actor</th><th style="padding:6px 8px;text-align:left;border:1px solid #ddd;">Action</th><th style="padding:6px 8px;text-align:left;border:1px solid #ddd;">Channel</th></tr>
+            <tr><td style="padding:6px 8px;border:1px solid #eee;font-weight:600;">TMS</td><td style="padding:6px 8px;border:1px solid #eee;">Settlement Instruction 생성<br>"하나은행 USD → KB증권 외화 입금 계좌"<br>금액, 수취인, 계좌번호, 이체 마감시간 명시</td><td style="padding:6px 8px;border:1px solid #eee;">자동 생성</td></tr>
+            <tr><td style="padding:6px 8px;border:1px solid #eee;font-weight:600;">고객</td><td style="padding:6px 8px;border:1px solid #eee;">하나은행 인터넷뱅킹/외화펌뱅킹에서<br>KB증권 외화 입금 계좌로 USD 이체 실행</td><td style="padding:6px 8px;border:1px solid #eee;">KFTC 외화이체<br>/ 외화펌뱅킹<br>/ 창구</td></tr>
+            <tr><td style="padding:6px 8px;border:1px solid #eee;font-weight:600;">하나은행<br>(출금 은행)</td><td style="padding:6px 8px;border:1px solid #eee;">외화 출금 처리 → KFTC 공동망으로 전송</td><td style="padding:6px 8px;border:1px solid #eee;">KFTC 외화<br>자금이체 공동망</td></tr>
+            <tr><td style="padding:6px 8px;border:1px solid #eee;font-weight:600;">KB증권<br>(거래 기관)</td><td style="padding:6px 8px;border:1px solid #eee;">USD 입금 확인<br>선물환 약정환율로 원화 환전 실행</td><td style="padding:6px 8px;border:1px solid #eee;">증권사 내부</td></tr>
+            <tr><td style="padding:6px 8px;border:1px solid #eee;font-weight:600;">KB증권</td><td style="padding:6px 8px;border:1px solid #eee;">원화 대금을 고객 KRW 계좌에 이체<br>(고객의 KB증권 계좌 또는 은행 계좌)</td><td style="padding:6px 8px;border:1px solid #eee;">증권사 → 은행<br>(원화 이체)</td></tr>
+            <tr><td style="padding:6px 8px;border:1px solid #eee;font-weight:600;">TMS</td><td style="padding:6px 8px;border:1px solid #eee;">결제 완료 확인<br>Blotter: CONFIRMED → SETTLED</td><td style="padding:6px 8px;border:1px solid #eee;">오픈뱅킹<br>/ 수동 입력</td></tr>
+          </table>
+          <div class="co co-amber" style="margin-top:8px;padding:8px 12px;">
+            <strong>소요:</strong> KFTC 실시간 (주요 5개 통화) / 기타 1~3시간<br>
+            <strong>비용:</strong> 외화 타행이체 수수료 발생 (은행별 상이)<br>
+            <strong>전제:</strong> Layer 3에서 "외화 타행이체 약정" 사전 등록 필수
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Post-settlement common -->
+    <div class="tl" style="margin-top:20px;">
+      <div class="ti"><div class="td d5">3</div>
+        <div class="tc">
+          <div class="tt">보증금 담보 해제 + 반환</div>
+          <div class="td-det">
+            <strong>거래 기관 →</strong> 결제 완료 확인 → 해당 거래의 담보 잠금 해제<br>
+            <strong>TMS →</strong> 담보소요액 재산정 (다른 미결제 거래 존재 시 Netting 재계산)<br>
+            <strong>TMS →</strong> 반환 가능 금액 산출: 기 예치액 − 재산정 담보소요액 (MTA 이상인 경우)<br>
+            <strong>고객 →</strong> 초과 보증금 반환 요청 (또는 다음 거래 담보로 재활용)<br>
+            <strong>거래 기관 →</strong> T+1 내 반환 금액 고객 계좌에 이체<br>
+            <strong>TMS →</strong> 보증금 이자 정산 추적
+          </div>
+        </div>
+      </div>
+
+      <div class="ti"><div class="td d5">4</div>
+        <div class="tc">
+          <div class="tt">인도일 불이행 시 처리 (15:00 Hard Cutoff)</div>
+          <div class="td-det">
+            <strong>TMS →</strong> 12:00 Soft Cutoff 경과 후 미이체 감지 → 긴급 알림 (고객 + Approver)<br>
+            <strong>TMS →</strong> 13:00, 14:00, 14:30 단계별 경고 알림 에스컬레이션<br>
+            <strong style="color:#E24B4A;">15:00 인도마감시한 도래 — 미인도 시:</strong><br>
+            <strong>거래 기관 →</strong> 별도 최고 없이 즉시 강제청산 실행 (반대매매)<br>
+            <strong>거래 기관 →</strong> 정산금 충당 후 계약보증금 잔액 → 거래 기관 귀속 (담보 몰수, T+1 유예 없음)<br>
+            <strong>TMS →</strong> Blotter: CONFIRMED → FORCE_CLOSED. 정산금 계산서 + 담보귀속 내역 자동 생성 (Audit Trail)<br>
+            <span style="color:#888;font-size:11px;">예외: 15:00 전에 지연 불가피 통지 + 당일 내 이행 소명 시 → 양 당사자 합의로 연장 가능 (영업시간 종료 시 한도)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ti"><div class="td d5">5</div>
+        <div class="tc">
+          <div class="tt">Rollover (만기 연장) 처리</div>
+          <div class="td-det">
+            <strong>고객 →</strong> 만기 전 연장 요청 (수출 선적 지연 등)<br>
+            <strong>TMS →</strong> 기존 거래 반대매매 + 새 만기로 재체결하는 Rollover Deal Ticket 생성<br>
+            <strong>SEAL →</strong> Rollover 승인 (건별 한도/일별 한도 재확인)<br>
+            <strong>거래 기관 →</strong> 기존 거래 청산 + 신규 거래 체결. 차액 정산 (유리/불리)<br>
+            <strong>TMS →</strong> 기존 거래 SETTLED + 신규 거래 CONFIRMED. 담보 재산정.
+          </div>
+        </div>
+      </div>
+
+      <div class="ti"><div class="td d5">6</div>
+        <div class="tc">
+          <div class="tt">거래 종결 기록</div>
+          <div class="td-det">
+            <strong>TMS →</strong> 전체 이력 Audit Trail 확정:<br>
+            <span style="margin-left:16px;">Invoice ↔ 헷지 추천 ↔ SEAL 승인 ↔ 체결(Deal Ticket/API)</span><br>
+            <span style="margin-left:16px;">↔ Settlement Instruction ↔ 외화 이체 ↔ 환전 ↔ 보증금 해제</span><br>
+            <strong>TMS →</strong> 기관 확인서 ↔ Deal Ticket 매칭 확인 (증빙 쌍 완성)
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="co co-green" style="margin-top:16px;">
+    <strong>KustodyFi의 역할 = "무엇을, 얼마를, 어디서 어디로, 언제까지"를 알려주는 것</strong><br>
+    실제 외화 이체 버튼은 고객이 자기 인터넷뱅킹/외화펌뱅킹에서 누름. 우리는 Settlement Instruction을 생성하고, 이체 완료 여부를 추적하고, 전체 정산 과정을 Audit Trail에 기록.<br>
+    장기적으로는 오픈뱅킹 API가 외화까지 확장되면 TMS에서 이체 지시까지 자동화 가능.
+  </div>
+</div>
+
+<!-- ===== FULL LIFECYCLE SUMMARY ===== -->
+<div class="section">
+  <div class="section-header">
+    <span class="sb" style="background:#555;">요약</span>
+    <div>
+      <div class="section-title">전체 라이프사이클</div>
+    </div>
+  </div>
+
+  <table class="cm-table">
+    <tr>
+      <th>Layer</th>
+      <th>소요</th>
+      <th>핵심 산출물</th>
+      <th>계약서</th>
+    </tr>
+    <tr>
+      <td><strong>1. Account</strong></td>
+      <td>Day 1~3</td>
+      <td>서비스 가입 심사, 계좌, 스케줄, 금리 세팅</td>
+      <td>[1] 서비스이용약정서</td>
+    </tr>
+    <tr>
+      <td><strong>2. SEAL</strong></td>
+      <td>Week 1~2</td>
+      <td>Role, 프로덕트, 한도, 워크플로우</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><strong>3. 기관 (기존)</strong></td>
+      <td>Week 2~3</td>
+      <td>연동 인지, 추가약정, SSI, IM</td>
+      <td>추가약정서</td>
+    </tr>
+    <tr>
+      <td><strong>3. 기관 (신규)</strong></td>
+      <td>Week 2~6</td>
+      <td>계좌 개설, 기관이 수행하는 KYC/CDD/AML, 약정 체결, SSI, IM 예치</td>
+      <td>[2-A] / [2-B]</td>
+    </tr>
+    <tr>
+      <td><strong>4. 거래 수행</strong></td>
+      <td>Go-live~</td>
+      <td>Invoice→헷지, API or Deal Ticket</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><strong>5. 거래 후 관리</strong></td>
+      <td>반복</td>
+      <td>MtM, 마진콜, 결제, 담보 해제</td>
+      <td>—</td>
+    </tr>
+  </table>
+
+  <div style="font-size:12px;color:#999;margin-top:12px;line-height:1.6;">
+    Track A (가격만): Layer 1 → 바로 StableFX 사용. 1~3영업일.<br>
+    Track B + 기존 기관: Layer 1→2→3. 2~3주. 추가약정서.<br>
+    Track B + 신규 기관: Layer 1→2→3. 4~6주 (기관 KYC/CDD가 병목). 정식 약정서.
+  </div>
+</div>
+
+<div class="footer">
+  KustodyFi Co., Ltd. — 5-Layer 서비스 플로우 v1.3 (DRAFT)<br>
+  L1 Account → L2 SEAL → L3 Institution → L4 Trade → L5 Post-Trade
+</div>
+
+</div>
+</body>
+</html>

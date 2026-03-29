@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="KustodyFi는 중소기업이 선물환 헷지에 접근할 수 있게 하는 AI 기반 FX 관리 플랫폼입니다. 증거금 기반 Credit Line, Multi-RFQ 경쟁 입찰, 자동 헷지 제안을 제공합니다.">
+<meta name="description" content="KustodyFi는 중소기업이 선물환 헷지에 접근할 수 있게 하는 공정가치 기반 FX 관리 플랫폼입니다. 증거금 기반 Credit Line, Multi-RFQ 경쟁 입찰, 공정가치 산출 근거 아카이빙을 제공합니다.">
 <meta property="og:title" content="KustodyFi — 중소기업 환율 헷지 플랫폼">
-<meta property="og:description" content="은행 한도 없이도 선물환 헷지가 가능합니다. 증거금 기반 Credit Line + Multi-RFQ 경쟁 입찰로 환율 리스크를 관리하세요.">
+<meta property="og:description" content="은행 한도 없이도 선물환 헷지가 가능합니다. 증거금 기반 Credit Line + Multi-RFQ 경쟁 입찰 + 공정가치 기반 환율 리스크 관리.">
 <meta property="og:type" content="website">
-<title>KustodyFi — AI-Powered FX Management</title>
+<title>KustodyFi — 공정가치 기반 기업 외환 플랫폼</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
@@ -552,11 +552,11 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 14px; font-weight: 800; font-family: 'Inter', sans-serif;
   }
-  .how-step:nth-child(1) .how-step-num { background: rgba(37,99,235,.1); color: var(--accent); }
-  .how-step:nth-child(2) .how-step-num { background: rgba(8,145,178,.1); color: var(--primary); }
-  .how-step:nth-child(3) .how-step-num { background: rgba(217,119,6,.1); color: var(--warning); }
-  .how-step:nth-child(4) .how-step-num { background: rgba(5,150,105,.1); color: var(--success); }
-  .how-step:nth-child(5) .how-step-num { background: rgba(124,58,237,.1); color: var(--violet); }
+  .how-step:nth-of-type(1) .how-step-num { background: rgba(37,99,235,.1); color: var(--accent); }
+  .how-step:nth-of-type(2) .how-step-num { background: rgba(8,145,178,.1); color: var(--primary); }
+  .how-step:nth-of-type(3) .how-step-num { background: rgba(217,119,6,.1); color: var(--warning); }
+  .how-step:nth-of-type(4) .how-step-num { background: rgba(5,150,105,.1); color: var(--success); }
+  .how-step:nth-of-type(5) .how-step-num { background: rgba(124,58,237,.1); color: var(--violet); }
   .how-step-title { font-size: 15px; font-weight: 700; margin-bottom: 8px; color: var(--dark); }
   .how-step-desc { font-size: 12px; color: var(--gray-500); line-height: 1.6; }
   .how-arrow { display: flex; align-items: center; font-size: 20px; color: var(--gray-300); padding: 0 4px; flex-shrink: 0; }
@@ -1068,7 +1068,9 @@
       <a href="#stablefx">StableFX</a>
       <a href="#savings">절감 효과</a>
       <a href="#how">How it Works</a>
+      <a href="#services">서비스</a>
       <a href="agents.html">Agents</a>
+      <a href="docs.html">문서</a>
       <a href="#" onclick="event.preventDefault();openInstGate()" style="color:var(--primary);font-weight:600">For Institutions</a>
       <a href="#cta" class="nav-cta">데모 신청</a>
     </div>
@@ -1084,7 +1086,9 @@
   <a href="#stablefx" onclick="closeMobileMenu()">StableFX</a>
   <a href="#savings" onclick="closeMobileMenu()">절감 효과</a>
   <a href="#how" onclick="closeMobileMenu()">How it Works</a>
+  <a href="#services" onclick="closeMobileMenu()">서비스</a>
   <a href="agents.html" onclick="closeMobileMenu()">Agents</a>
+  <a href="docs.html" onclick="closeMobileMenu()">문서</a>
   <a href="#" style="color:var(--primary);font-weight:600" onclick="event.preventDefault();closeMobileMenu();openInstGate()">For Institutions</a>
   <a href="#cta" class="mobile-menu-cta" onclick="closeMobileMenu()">데모 신청하기</a>
 </div>
@@ -1112,9 +1116,9 @@
         <span class="hl">그래서 뭘 해야 하죠?</span>
       </h1>
       <p class="hero-desc">
-        KustodyFi가 알려드립니다. 승인만 하세요.<br>
-        환전할 타이밍, 어떤 은행이 유리한지, 취합해서 효율적으로 거래할지 &mdash;<br>
-        복잡한 판단은 시스템이, 결정은 담당자님이.
+        매일 환율 뉴스가 쏟아지지만, 우리 회사 선물환이 적정가인지 알려주는 곳은 없었습니다.<br>
+        KustodyFi가 시장 금리 기반 공정가치를 산출하고, 은행 호가를 비교하고, 최적의 거래를 설계합니다.<br>
+        승인만 하세요.
       </p>
       <div class="hero-ctas">
         <a href="#cta" class="btn btn-primary">데모 신청하기 &#8594;</a>
@@ -1122,21 +1126,21 @@
       </div>
     </div>
     <div class="hero-visual">
-      <div class="hero-float hero-float-1">&#9889; AI Agent 실행 중</div>
-      <div class="hero-float hero-float-2">&#10003; Best Rate 자동 선택</div>
+      <div class="hero-float hero-float-1">&#9878; 공정가치 산출 중</div>
+      <div class="hero-float hero-float-2">&#10003; Best Rate 자동 비교</div>
       <div class="hero-card">
         <div class="hero-card-label">MULTI-RFQ &mdash; SELL USD $350K</div>
         <div class="hero-card-row">
           <span class="hero-card-bank">K은행</span>
-          <span class="hero-card-rate normal">1,433.50</span>
+          <span class="hero-card-rate normal">1,449.50</span>
         </div>
         <div class="hero-card-row">
           <span class="hero-card-bank">S은행</span>
-          <span class="hero-card-rate normal">1,434.30</span>
+          <span class="hero-card-rate normal">1,450.30</span>
         </div>
         <div class="hero-card-row">
           <span class="hero-card-bank">H은행</span>
-          <span class="hero-card-rate best">1,434.80</span>
+          <span class="hero-card-rate best">1,450.80</span>
           <span class="hero-card-best-tag">BEST</span>
         </div>
         <div class="hero-card-footer">
@@ -1182,18 +1186,18 @@
 <section class="section" id="solution">
   <div class="section-inner">
     <div class="section-label">SOLUTION</div>
-    <div class="section-title">KustodyFi가 <span class="hl">'뭘 해야 할지'</span> 알려드립니다</div>
-    <div class="section-desc">담당자님은 판단하고 승인만 하세요.<br>환전 타이밍, 어떤 은행이 유리한지, 취합해서 효율적으로 거래할지 &mdash;<br>복잡한 판단은 시스템이 합니다.</div>
+    <div class="section-title">KustodyFi가 <span class="hl">공정가치 기준</span>을 제시합니다</div>
+    <div class="section-desc">환율을 맞추지 않습니다. 지금 시장 금리로 마땅히 나와야 할 가격을 산출합니다.<br>은행이 제시하는 가격과 비교하고, 더 나은 조건을 찾을 수 있도록 데이터를 제공합니다.</div>
 
     <div class="solution-grid">
       <div class="solution-card hedge" data-anim>
         <div class="solution-icon">&#128737;</div>
-        <h3>"미래 환율을 지금 확정"<br>선물환 헷지를 쉽게</h3>
-        <p>3개월 후 받을 수출대금의 환율을 오늘 고정. 환율이 오르든 내리든, 확정된 금액을 받습니다.</p>
+        <h3>"자금 일정에 맞춰 환율 확정"<br>Cash Schedule 기반 헷지</h3>
+        <p>정확한 자금 일정을 알면 환율 예측 없이도 합리적인 환전이 가능합니다. 선물환으로 환율을 확정하거나, 현물환 분할매도로 리스크를 분산합니다.</p>
         <ul class="solution-features">
-          <li>증거금을 담보로 설정하면 선물환 거래 가능</li>
-          <li>증거금에 이자 지급, 결제 완료 시 회수 가능</li>
-          <li>수출/수입 일정에 맞춘 헷지 자동 제안</li>
+          <li>증거금 담보 기반 선물환 거래 (RP 수준 금리 적용)</li>
+          <li>현물환 분할매도 + 선물환 헷지 병행 가능</li>
+          <li>Cash Schedule 기반 집행 일정 최적화</li>
           <li>여러 기관 조건 자동 비교 (Multi-RFQ)</li>
         </ul>
       </div>
@@ -1209,13 +1213,13 @@
       </div>
       <div class="solution-card ai" data-anim>
         <div class="solution-icon">&#9889;</div>
-        <h3>"입금부터 헷지까지"<br>시스템이 준비합니다</h3>
-        <p>외화 입금 감지, 헷지 필요 여부 판단, 최적 조건 비교까지 시스템이 준비. 담당자님은 승인만.</p>
+        <h3>"자금 현황부터 집행까지"<br>시스템이 데이터를 준비합니다</h3>
+        <p>계좌별 자금 인식, 과부족 파악, 유휴 외화 수익화까지. 담당자님은 데이터를 보고 판단합니다.</p>
         <ul class="solution-features">
-          <li>입금 자동 감지 + 알림</li>
-          <li>소액 건 취합(Pooling)하여 효율적 거래</li>
-          <li>카카오톡/이메일로 제안 수신</li>
-          <li>승인 클릭 한 번이면 체결 완료</li>
+          <li>계좌별 자금 인식 + 과부족 현황 파악</li>
+          <li>유휴 외화 RP 수준 금리 운용 안내</li>
+          <li>서비스 내 알림으로 현황 데이터 수신</li>
+          <li>담당자 확인 후 승인 클릭으로 체결</li>
         </ul>
       </div>
     </div>
@@ -1270,23 +1274,23 @@
             <span class="mp-rate-pair">USD / KRW</span>
             <span class="mp-rate-badge">MOCK</span>
           </div>
-          <div class="mp-rate-value">&#8361;1,443.10</div>
-          <div class="mp-rate-change down">&#9660; 5.80 (-0.40%)</div>
+          <div class="mp-rate-value">&#8361;1,450.50</div>
+          <div class="mp-rate-change down">&#9660; 3.20 (-0.22%)</div>
           <div class="mp-range">
             <div class="mp-range-bar">
-              <div class="mp-range-dot" style="left: 33%"></div>
+              <div class="mp-range-dot" style="left: 43%"></div>
             </div>
             <div class="mp-range-labels">
-              <span>1일 최저 1,440.50</span>
-              <span>1일 최고 1,448.20</span>
+              <span>1일 최저 1,447.20</span>
+              <span>1일 최고 1,454.80</span>
             </div>
           </div>
           <div class="mp-banks">
-            <div class="mp-bank"><div class="mp-bank-name">K은행</div><div class="mp-bank-rate">1,433.50</div></div>
-            <div class="mp-bank"><div class="mp-bank-name">S은행</div><div class="mp-bank-rate">1,434.30</div></div>
-            <div class="mp-bank best"><div class="mp-bank-name">H은행 BEST</div><div class="mp-bank-rate">1,434.80</div></div>
-            <div class="mp-bank"><div class="mp-bank-name">W은행</div><div class="mp-bank-rate">1,433.90</div></div>
-            <div class="mp-bank"><div class="mp-bank-name">N은행</div><div class="mp-bank-rate">1,434.10</div></div>
+            <div class="mp-bank"><div class="mp-bank-name">K은행</div><div class="mp-bank-rate">1,449.50</div></div>
+            <div class="mp-bank"><div class="mp-bank-name">S은행</div><div class="mp-bank-rate">1,450.30</div></div>
+            <div class="mp-bank best"><div class="mp-bank-name">H은행 BEST</div><div class="mp-bank-rate">1,450.80</div></div>
+            <div class="mp-bank"><div class="mp-bank-name">W은행</div><div class="mp-bank-rate">1,449.90</div></div>
+            <div class="mp-bank"><div class="mp-bank-name">N은행</div><div class="mp-bank-rate">1,450.10</div></div>
           </div>
         </div>
 
@@ -1297,15 +1301,15 @@
           </div>
           <div class="mp-fwd-desc">미래에 입금될 외화가 있다면, 지금 환율을 미리 확정할 수 있습니다</div>
           <div class="mp-fwd-grid">
-            <div class="mp-fwd-item"><div class="mp-fwd-tenor">1개월</div><div class="mp-fwd-points neg">-1.60</div><div class="mp-fwd-rate">1,441.50</div></div>
-            <div class="mp-fwd-item"><div class="mp-fwd-tenor">3개월</div><div class="mp-fwd-points neg">-4.80</div><div class="mp-fwd-rate">1,438.30</div></div>
-            <div class="mp-fwd-item"><div class="mp-fwd-tenor">6개월</div><div class="mp-fwd-points neg">-8.50</div><div class="mp-fwd-rate">1,434.60</div></div>
-            <div class="mp-fwd-item"><div class="mp-fwd-tenor">1년</div><div class="mp-fwd-points neg">-15.20</div><div class="mp-fwd-rate">1,427.90</div></div>
+            <div class="mp-fwd-item"><div class="mp-fwd-tenor">1개월</div><div class="mp-fwd-points neg">-2.00</div><div class="mp-fwd-rate">1,448.50</div></div>
+            <div class="mp-fwd-item"><div class="mp-fwd-tenor">3개월</div><div class="mp-fwd-points neg">-7.00</div><div class="mp-fwd-rate">1,443.50</div></div>
+            <div class="mp-fwd-item"><div class="mp-fwd-tenor">6개월</div><div class="mp-fwd-points neg">-15.00</div><div class="mp-fwd-rate">1,435.50</div></div>
+            <div class="mp-fwd-item"><div class="mp-fwd-tenor">1년</div><div class="mp-fwd-points neg">-35.00</div><div class="mp-fwd-rate">1,415.50</div></div>
           </div>
           <div class="mp-fwd-example">
             <div class="mp-fwd-example-text">
               예시: USD 100만불, 3개월 후 입금 예정<br>
-              지금 선물환 계약 &rarr; <strong>&#8361;1,438.30</strong>에 매도 확정, 환율 하락 위험 제거
+              지금 선물환 계약 &rarr; <strong>&#8361;1,443.50</strong>에 매도 확정, 환율 하락 위험 제거
             </div>
           </div>
           <div class="mp-hedge-options">
@@ -1315,7 +1319,7 @@
             </div>
             <div class="mp-hedge-opt">
               <div class="mp-hedge-opt-icon holding">&#128176;</div>
-              <div><h4>지금 외화 보유 중</h4><p>AI가 공정가치 대비 유불리 구간 안내<br>여러 은행 견적 자동 비교</p></div>
+              <div><h4>지금 외화 보유 중</h4><p>현재 환율의 공정가치 대비 통계적 구간 안내<br>여러 은행 견적 자동 비교</p></div>
             </div>
           </div>
         </div>
@@ -1437,20 +1441,20 @@
       <span class="m-fx-rate-pair">USDKRW</span>
       <span class="m-fx-rate-tag">MOCK</span>
     </div>
-    <div class="m-fx-rate-value">&#8361;1,443.10</div>
-    <div class="m-fx-rate-change down">&#9660; 5.80 (-0.40%)</div>
+    <div class="m-fx-rate-value">&#8361;1,450.50</div>
+    <div class="m-fx-rate-change down">&#9660; 3.20 (-0.22%)</div>
     <div class="m-fx-rate-range">
-      <div class="m-fx-range-bar"><div class="m-fx-range-dot" style="left: 33%"></div></div>
-      <div class="m-fx-range-labels"><span>1일 최저 1,440.50</span><span>1일 최고 1,448.20</span></div>
+      <div class="m-fx-range-bar"><div class="m-fx-range-dot" style="left: 43%"></div></div>
+      <div class="m-fx-range-labels"><span>1일 최저 1,447.20</span><span>1일 최고 1,454.80</span></div>
     </div>
   </div>
 
   <div class="m-fx-banks">
-    <div class="m-fx-bank-chip"><div class="m-fx-bank-name">K은행</div><div class="m-fx-bank-rate">1,433.50</div></div>
-    <div class="m-fx-bank-chip"><div class="m-fx-bank-name">S은행</div><div class="m-fx-bank-rate">1,434.30</div></div>
-    <div class="m-fx-bank-chip best"><div class="m-fx-bank-name">H은행 BEST</div><div class="m-fx-bank-rate">1,434.80</div></div>
-    <div class="m-fx-bank-chip"><div class="m-fx-bank-name">W은행</div><div class="m-fx-bank-rate">1,433.90</div></div>
-    <div class="m-fx-bank-chip"><div class="m-fx-bank-name">N은행</div><div class="m-fx-bank-rate">1,434.10</div></div>
+    <div class="m-fx-bank-chip"><div class="m-fx-bank-name">K은행</div><div class="m-fx-bank-rate">1,449.50</div></div>
+    <div class="m-fx-bank-chip"><div class="m-fx-bank-name">S은행</div><div class="m-fx-bank-rate">1,450.30</div></div>
+    <div class="m-fx-bank-chip best"><div class="m-fx-bank-name">H은행 BEST</div><div class="m-fx-bank-rate">1,450.80</div></div>
+    <div class="m-fx-bank-chip"><div class="m-fx-bank-name">W은행</div><div class="m-fx-bank-rate">1,449.90</div></div>
+    <div class="m-fx-bank-chip"><div class="m-fx-bank-name">N은행</div><div class="m-fx-bank-rate">1,450.10</div></div>
   </div>
 
   <!-- Forward Card -->
@@ -1461,14 +1465,14 @@
     </div>
     <div class="m-fx-card-desc">수출대금이 들어올 예정이라면, 지금 환율을 미리 고정할 수 있습니다</div>
     <div class="m-fx-fwd-grid">
-      <div class="m-fx-fwd-item"><div class="m-fx-fwd-tenor">1개월</div><div class="m-fx-fwd-points neg">-1.60</div><div class="m-fx-fwd-rate">1,441.50</div></div>
-      <div class="m-fx-fwd-item"><div class="m-fx-fwd-tenor">3개월</div><div class="m-fx-fwd-points neg">-4.80</div><div class="m-fx-fwd-rate">1,438.30</div></div>
-      <div class="m-fx-fwd-item"><div class="m-fx-fwd-tenor">6개월</div><div class="m-fx-fwd-points neg">-8.50</div><div class="m-fx-fwd-rate">1,434.60</div></div>
-      <div class="m-fx-fwd-item"><div class="m-fx-fwd-tenor">1년</div><div class="m-fx-fwd-points neg">-15.20</div><div class="m-fx-fwd-rate">1,427.90</div></div>
+      <div class="m-fx-fwd-item"><div class="m-fx-fwd-tenor">1개월</div><div class="m-fx-fwd-points neg">-2.00</div><div class="m-fx-fwd-rate">1,448.50</div></div>
+      <div class="m-fx-fwd-item"><div class="m-fx-fwd-tenor">3개월</div><div class="m-fx-fwd-points neg">-7.00</div><div class="m-fx-fwd-rate">1,443.50</div></div>
+      <div class="m-fx-fwd-item"><div class="m-fx-fwd-tenor">6개월</div><div class="m-fx-fwd-points neg">-15.00</div><div class="m-fx-fwd-rate">1,435.50</div></div>
+      <div class="m-fx-fwd-item"><div class="m-fx-fwd-tenor">1년</div><div class="m-fx-fwd-points neg">-35.00</div><div class="m-fx-fwd-rate">1,415.50</div></div>
     </div>
     <div class="m-fx-card-example">
       예시: USD 100만불, 3개월 후 입금 예정<br>
-      지금 선물환 계약 시 <strong>&#8361;1,438.30</strong>에 매도 확정<br>
+      지금 선물환 계약 시 <strong>&#8361;1,443.50</strong>에 매도 확정<br>
       환율 하락 위험 없이 수익 확정 가능
     </div>
     <button class="m-fx-card-btn" style="background:var(--accent)" onclick="location.href='#cta'">선물환 상담 요청하기 &#8594;</button>
@@ -1478,9 +1482,9 @@
   <div class="m-fx-card">
     <div class="m-fx-card-title">
       나에게 맞는 외환 관리
-      <span class="tag" style="background:rgba(5,150,105,.08);color:var(--success)">맞춤 제안</span>
+      <span class="tag" style="background:rgba(5,150,105,.08);color:var(--success)">공정가치 분석</span>
     </div>
-    <div class="m-fx-card-desc">상황에 따라 최적의 방법이 다릅니다. KustodyFi가 제안해드립니다.</div>
+    <div class="m-fx-card-desc">상황에 따라 최적의 방법이 다릅니다. KustodyFi가 데이터를 제시합니다.</div>
     <div class="m-fx-hedge-options">
       <div class="m-fx-hedge-option">
         <div class="m-fx-hedge-option-icon incoming">&#128197;</div>
@@ -1493,11 +1497,11 @@
         <div class="m-fx-hedge-option-icon holding">&#128176;</div>
         <div class="m-fx-hedge-option-text">
           <h4>지금 외화를 보유 중인가요?</h4>
-          <p>더 좋은 환율에 팔고 싶다면 현재 호가가 공정가치 대비 유리한 구간인지 AI가 분석하고<br>여러 은행 견적을 자동 비교합니다</p>
+          <p>현재 환율이 공정가치 대비 어떤 구간인지 통계적으로 안내하고<br>여러 은행 견적을 자동 비교합니다</p>
         </div>
       </div>
     </div>
-    <button class="m-fx-card-btn" style="background:var(--success)" onclick="location.href='#cta'">맞춤 상담 받기 &#8594;</button>
+    <button class="m-fx-card-btn" style="background:var(--success)" onclick="location.href='#cta'">공정가치 분석 받기 &#8594;</button>
   </div>
 
   <!-- FX Swap Card -->
@@ -1561,8 +1565,8 @@
 <section class="section" id="savings" style="background:var(--white)">
   <div class="section-inner">
     <div class="section-label">FAIR PRICING</div>
-    <div class="section-title">환율을 예측할 수는 없어도,<br><span class="hl">합당한 가격</span>인지 알려드릴 수 있습니다</div>
-    <div class="section-desc">지금 거래하는 환율이 시장 대비 얼마나 유리한지, 경쟁 입찰과 선물환 활용으로 실질적으로 얼마를 아낄 수 있는지 보여드립니다.</div>
+    <div class="section-title">은행이 제시한 가격,<br><span class="hl">공정가치</span> 대비 어떤가요?</div>
+    <div class="section-desc">시장 금리로 산출한 공정가치와 은행 호가를 비교합니다.<br>경쟁 입찰과 선물환 활용으로 실질적으로 얼마를 아낄 수 있는지 보여드립니다.</div>
 
     <div class="savings-calc" id="savingsCalc" style="margin-top:40px">
       <div class="savings-calc-header">
@@ -1600,20 +1604,20 @@
           <div style="font-size:11px;font-weight:700;color:var(--primary);letter-spacing:1px;margin-bottom:10px">SPOT 경쟁 입찰 (3bp)</div>
           <div style="font-size:12px;color:var(--gray-600);line-height:1.7;margin-bottom:10px">
             <span id="calcSpotVol" style="font-weight:700;color:var(--dark)">$2.5M</span>/월 &times; 12개월<br>
-            &times; <span id="calcSpotImprove" style="font-weight:700;color:var(--primary-dark)">0.45원/$</span>
-            <span style="color:var(--gray-400);font-size:11px">(1,485 &times; 0.03%)</span>
+            &times; <span id="calcSpotImprove" style="font-weight:700;color:var(--primary-dark)">0.44원/$</span>
+            <span style="color:var(--gray-400);font-size:11px">(1,450 &times; 0.03%)</span>
           </div>
-          <div style="font-size:20px;font-weight:900;font-family:'Inter',sans-serif;color:var(--primary-dark)" id="savingsSpot">&#8361;13,365,000</div>
+          <div style="font-size:20px;font-weight:900;font-family:'Inter',sans-serif;color:var(--primary-dark)" id="savingsSpot">&#8361;13,050,000</div>
           <div style="font-size:11px;color:var(--gray-500)">/ year</div>
         </div>
         <div style="padding:18px 20px;border-radius:14px;background:rgba(37,99,235,.04);border:1px solid rgba(37,99,235,.12)">
           <div style="font-size:11px;font-weight:700;color:var(--accent);letter-spacing:1px;margin-bottom:10px">FORWARD 헷지 활용 (최대 20bp)</div>
           <div style="font-size:12px;color:var(--gray-600);line-height:1.7;margin-bottom:10px">
             <span id="calcFwdVol" style="font-weight:700;color:var(--dark)">$2.5M</span>/월 &times; 12개월<br>
-            &times; <span id="calcFwdImprove" style="font-weight:700;color:var(--accent)">2.97원/$</span>
-            <span style="color:var(--gray-400);font-size:11px">(1,485 &times; 0.20%)</span>
+            &times; <span id="calcFwdImprove" style="font-weight:700;color:var(--accent)">2.90원/$</span>
+            <span style="color:var(--gray-400);font-size:11px">(1,450 &times; 0.20%)</span>
           </div>
-          <div style="font-size:20px;font-weight:900;font-family:'Inter',sans-serif;color:var(--accent)" id="savingsFwd">&#8361;89,100,000</div>
+          <div style="font-size:20px;font-weight:900;font-family:'Inter',sans-serif;color:var(--accent)" id="savingsFwd">&#8361;87,000,000</div>
           <div style="font-size:11px;color:var(--gray-500)">/ year</div>
         </div>
       </div>
@@ -1621,7 +1625,7 @@
       <div class="savings-total">
         <div class="savings-total-left">
           <div class="savings-total-label">연간 총 절감 예상</div>
-          <div class="savings-total-amount" id="savingsTotal">&#8361;102,465,000</div>
+          <div class="savings-total-amount" id="savingsTotal">&#8361;100,050,000</div>
           <div class="savings-total-sub" id="savingsSub">월 $5,000,000 | Spot 50% + Forward 50%</div>
         </div>
         <a href="#cta" class="savings-total-cta">데모 신청하기 &#8594;</a>
@@ -1643,15 +1647,15 @@
 <section class="section how" id="how">
   <div class="section-inner">
     <div class="section-label">HOW IT WORKS</div>
-    <div class="section-title">담당자님은 <span class="hl">확인만 하면 됩니다</span></div>
-    <div class="section-desc">외화 입금 감지부터 헷지 전략 제안, 은행 비교, 체결까지. 알림이 오면 확인만 하세요.</div>
+    <div class="section-title">담당자님은 <span class="hl">데이터를 보고 판단합니다</span></div>
+    <div class="section-desc">자금 현황 파악, 공정가치 산출, 은행 비교까지 시스템이 준비합니다.<br>의사결정은 담당자님이.</div>
 
     <div class="how-flow">
       <div class="how-step" data-anim>
         <div class="how-step-num">1</div>
         <div class="how-step-content">
-          <div class="how-step-title">입금 감지</div>
-          <div class="how-step-desc">Open Banking API로 외화 입금 실시간 감지</div>
+          <div class="how-step-title">자금 현황</div>
+          <div class="how-step-desc">계좌별 잔고 인식 + 입출금 현황 파악</div>
         </div>
       </div>
       <div class="how-arrow">&rarr;</div>
@@ -1666,8 +1670,8 @@
       <div class="how-step" data-anim>
         <div class="how-step-num">3</div>
         <div class="how-step-content">
-          <div class="how-step-title">헷지 제안</div>
-          <div class="how-step-desc">결제 일정 분석, 선물환/현물환 헷지 전략 자동 제안</div>
+          <div class="how-step-title">공정가치 산출</div>
+          <div class="how-step-desc">시장 금리 기반 공정가치 산출 + 은행 호가 대비 분석</div>
         </div>
       </div>
       <div class="how-arrow">&rarr;</div>
@@ -1700,11 +1704,91 @@
       <div class="how-mode agent" data-anim>
         <div class="how-mode-tag">MODE 2</div>
         <h3>AI Agent Auto Mode</h3>
-        <p>AI가 모든 것을 준비하고 제안합니다. CFO(또는 지정 담당자)는 알림을 받고 승인만 클릭. 인적 시간 0분.</p>
+        <p>시스템이 공정가치 산출, 은행 비교, 자금 현황을 준비합니다. CFO(또는 지정 담당자)는 데이터를 확인하고 판단합니다.</p>
         <div style="margin-top:12px;padding:10px 14px;border-radius:10px;background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.15);font-size:12px;color:var(--success-light);font-weight:600;display:inline-flex;align-items:center;gap:8px">
           &#10003; Human-in-the-Loop &mdash; 결정권한은 그대로, 승인 없이는 체결되지 않습니다
         </div>
       </div>
+    </div>
+
+    <!-- Hedge Modes -->
+    <div style="margin-top:48px;padding:40px;border-radius:24px;background:var(--gray-50);border:1px solid var(--gray-200)">
+      <div style="font-size:12px;font-weight:800;letter-spacing:2px;color:var(--primary);margin-bottom:16px">HEDGE EXECUTION</div>
+      <div style="font-size:28px;font-weight:900;color:var(--dark);letter-spacing:-1px;margin-bottom:10px">두 가지 <span style="background:var(--gradient-main);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">헷지 실행 모드</span></div>
+      <div style="font-size:15px;color:var(--gray-500);margin-bottom:32px;max-width:700px">Cash Balance + Cash Schedule + DF(할인계수)로 정확한 Spot Delta를 산출합니다.<br>열린 포지션을 어떻게 닫을지, 두 가지 방식을 선택할 수 있습니다.</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div style="padding:28px;border-radius:20px;background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.2)">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+            <div style="width:40px;height:40px;border-radius:12px;background:rgba(5,150,105,.12);display:flex;align-items:center;justify-content:center;font-size:20px">&#128737;</div>
+            <div>
+              <div style="font-size:16px;font-weight:900;color:var(--dark)">Full Hedge Mode</div>
+              <div style="font-size:12px;color:var(--success);font-weight:600">환노출도 해소형</div>
+            </div>
+          </div>
+          <p style="font-size:14px;color:var(--gray-600);line-height:1.8;margin-bottom:16px">
+            Spot Delta가 산출되면, 열린 포지션만큼 일정 기간에 걸쳐 분할 집행합니다.
+            기간 내 거래량 가중평균 환율에 수렴하여, 방향성 판단 없이 환노출도를 0으로 만듭니다.
+          </p>
+          <div style="padding:12px 16px;border-radius:10px;background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.15);font-size:12px;color:var(--success);line-height:1.6">
+            &#10003; 환율 예측 없이 시장 평균 수준의 환율 확보<br>
+            &#10003; 선물환 + 현물환 분할매도 병행 가능<br>
+            &#10003; 확정 수익, 리스크 최소화
+          </div>
+        </div>
+        <div style="padding:28px;border-radius:20px;background:rgba(217,119,6,.06);border:1px solid rgba(217,119,6,.2)">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+            <div style="width:40px;height:40px;border-radius:12px;background:rgba(217,119,6,.12);display:flex;align-items:center;justify-content:center;font-size:20px">&#128293;</div>
+            <div>
+              <div style="font-size:16px;font-weight:900;color:var(--dark)">Alpha Mode</div>
+              <div style="font-size:12px;color:var(--warning);font-weight:600">초과수익 추구형</div>
+            </div>
+          </div>
+          <p style="font-size:14px;color:var(--gray-600);line-height:1.8;margin-bottom:16px">
+            같은 Delta 해소 물량이지만, 공정가치 대비 통계적 가격 괴리가 유리한 구간에서 집중 집행합니다.
+            시장 평균보다 나은 환율을 확보하여 초과수익을 추구합니다.
+          </p>
+          <div style="padding:12px 16px;border-radius:10px;background:rgba(217,119,6,.08);border:1px solid rgba(217,119,6,.15);font-size:12px;color:var(--warning);line-height:1.6">
+            &#9889; 공정가치 대비 유리한 타이밍에 비중 확대<br>
+            &#9889; 통계적 가격 괴리 기반, 방향성 예측 아님<br>
+            &#9889; 시장 평균 대비 초과수익 추구
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;padding:14px 18px;border-radius:12px;background:rgba(8,145,178,.04);border:1px solid rgba(8,145,178,.12);font-size:13px;color:var(--gray-600);display:flex;align-items:center;gap:10px">
+        &#128274; 두 모드 모두 담당자 승인 없이는 체결되지 않습니다 (Human-in-the-Loop)
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SERVICES OVERVIEW ===== -->
+<section class="section" id="services" style="background:var(--gray-50)">
+  <div class="section-inner">
+    <div class="section-label">PLATFORM SERVICES</div>
+    <div class="section-title">공정가치 산출 <span class="hl">그 이상</span></div>
+    <div class="section-desc">기본 서비스부터 차별화 기능, 회계 감사 지원까지. KustodyFi가 제공하는 전체 서비스 라인업입니다.</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:40px">
+      <a href="fx_dashboard.html" data-anim style="display:flex;flex-direction:column;gap:12px;padding:28px 24px;border-radius:16px;background:var(--white);border:1px solid var(--gray-200);text-decoration:none;transition:all .3s">
+        <div style="font-size:28px">&#128202;</div>
+        <div style="font-size:17px;font-weight:900;color:var(--dark)">서비스 대시보드</div>
+        <div style="font-size:13px;color:var(--gray-600);line-height:1.7">포지션 현황, 헷지 비율, 만기 캘린더, 조건부 알림, 은행 호가 비교, 유휴자금 수익화</div>
+        <div style="font-size:13px;font-weight:700;color:var(--primary);margin-top:auto">자세히 보기 &#8594;</div>
+      </a>
+      <a href="fx_audit.html" data-anim style="display:flex;flex-direction:column;gap:12px;padding:28px 24px;border-radius:16px;background:var(--white);border:1px solid var(--gray-200);text-decoration:none;transition:all .3s">
+        <div style="font-size:28px">&#128203;</div>
+        <div style="font-size:17px;font-weight:900;color:var(--dark)">회계 점검 &amp; 감사 지원</div>
+        <div style="font-size:13px;color:var(--gray-600);line-height:1.7">공정가치 산출 근거 아카이빙, 재현 가능한 프라이싱, 감사 보고서 자동 생성</div>
+        <div style="font-size:13px;font-weight:700;color:var(--accent);margin-top:auto">자세히 보기 &#8594;</div>
+      </a>
+      <a href="fx_onboarding.html" data-anim style="display:flex;flex-direction:column;gap:12px;padding:28px 24px;border-radius:16px;background:var(--white);border:1px solid var(--gray-200);text-decoration:none;transition:all .3s">
+        <div style="font-size:28px">&#128300;</div>
+        <div style="font-size:17px;font-weight:900;color:var(--dark)">과거 거래 분석 온보딩</div>
+        <div style="font-size:13px;color:var(--gray-600);line-height:1.7">거래 기록 업로드 &rarr; 패턴 분석 &rarr; 공정가치 대비 회고 분석 &rarr; 절감 시뮬레이션</div>
+        <div style="font-size:13px;font-weight:700;color:var(--success);margin-top:auto">자세히 보기 &#8594;</div>
+      </a>
     </div>
   </div>
 </section>
@@ -1732,7 +1816,7 @@
         <div class="usecase-header">
           <div class="usecase-icon">&#127981;</div>
           <h3>수출 중견기업</h3>
-          <p>수출대금 달러 입금 &rarr; 원화 매도. 외환 전담자 없이 AI Agent가 공정가치 분석 + Multi-RFQ로 유리한 호가 확보. CFO 승인만.</p>
+          <p>수출대금 달러 입금 &rarr; 원화 매도. Cash Schedule 기반 집행 일정 최적화 + Multi-RFQ로 공정가치 대비 유리한 호가 확보.</p>
         </div>
         <div class="usecase-footer">
           <span class="usecase-tag">USDKRW 매도</span>
@@ -1743,7 +1827,7 @@
         <div class="usecase-header">
           <div class="usecase-icon">&#128674;</div>
           <h3>수입업체</h3>
-          <p>원자재 결제를 위한 달러 매수. 결제 스케줄 기반으로 AI가 현재 호가의 공정가치 대비 유불리를 분석. 선물환 자동 체결.</p>
+          <p>원자재 결제를 위한 달러 매수. 결제 스케줄 기반 공정가치 산출 + 은행 호가 비교. 선물환 또는 현물환 분할매수 선택.</p>
         </div>
         <div class="usecase-footer">
           <span class="usecase-tag">USDKRW 매수</span>
@@ -1754,7 +1838,7 @@
         <div class="usecase-header">
           <div class="usecase-icon">&#9992;</div>
           <h3>항공사</h3>
-          <p>해외 정산이 많은 항공사. 다통화 티켓 매출 정산, 연료비 결제 등 대규모 외환 노출을 AI Agent가 통합 관리.</p>
+          <p>해외 정산이 많은 항공사. 다통화 티켓 매출 정산, 연료비 결제 등 대규모 외환 노출의 공정가치 분석 + 통합 비교.</p>
         </div>
         <div class="usecase-footer">
           <span class="usecase-tag">Multi-Currency</span>
@@ -1765,7 +1849,7 @@
         <div class="usecase-header">
           <div class="usecase-icon">&#9889;</div>
           <h3>발전소 / 에너지</h3>
-          <p>LNG·석탄 등 해외 연료 수입 결제. 장기 계약의 정기 결제를 AI Agent가 스케줄 관리하고 환율 최적화.</p>
+          <p>LNG·석탄 등 해외 연료 수입 결제. 장기 계약의 정기 결제를 Cash Schedule 기반으로 관리하고 공정가치 대비 분석.</p>
         </div>
         <div class="usecase-footer">
           <span class="usecase-tag">USDKRW 매수</span>
@@ -1773,6 +1857,7 @@
         </div>
       </div>
     </div>
+
   </div>
 </section>
 
@@ -1820,10 +1905,10 @@
       <input type="email" name="email" placeholder="업무 이메일" required>
       <select name="volume">
         <option value="" disabled selected>월 평균 외환 거래 규모</option>
-        <option value="under_100k">$100K 미만</option>
-        <option value="100k_1m">$100K ~ $1M</option>
-        <option value="1m_10m">$1M ~ $10M</option>
-        <option value="over_10m">$10M 이상</option>
+        <option value="1m_5m">$1M ~ $5M</option>
+        <option value="5m_10m">$5M ~ $10M</option>
+        <option value="10m_25m">$10M ~ $25M</option>
+        <option value="over_25m">$25M 이상</option>
       </select>
       <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray-400);cursor:pointer">
         <input type="checkbox" name="privacy" required style="width:16px;height:16px;accent-color:var(--primary);flex-shrink:0;cursor:pointer">
@@ -2150,15 +2235,15 @@
 
   // Savings Calculator
   (function() {
-    const SPOT_RATE = 1485.0;
+    const SPOT_RATE = 1450.0;
     const SPOT_BP = 3;      // Spot: 3bp improvement
     const FWD_BP = 20;      // Forward: max 20bp improvement
 
     const volSlider = document.getElementById('savingsSlider');
     const fwdSlider = document.getElementById('savingsFwdSlider');
 
-    const spotImprove = SPOT_RATE * (SPOT_BP / 10000);   // 0.45원/$
-    const fwdImprove = SPOT_RATE * (FWD_BP / 10000);     // 2.97원/$
+    const spotImprove = SPOT_RATE * (SPOT_BP / 10000);   // 0.44원/$
+    const fwdImprove = SPOT_RATE * (FWD_BP / 10000);     // 2.90원/$
 
     function fmt(n) {
       return '\u20a9' + Math.round(n).toLocaleString('ko-KR');

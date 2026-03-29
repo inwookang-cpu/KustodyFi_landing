@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>외화 타행이체 플로우</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #fff; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; color: #222; }
+.page { max-width: 960px; margin: 0 auto; padding: 40px 32px 60px; }
+h1 { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 4px; }
+.page-sub { font-size: 13px; color: #999; text-align: center; margin-bottom: 36px; }
+
+.section { margin-bottom: 44px; }
+.sh { display:flex; align-items:center; gap:12px; margin-bottom:16px; padding-bottom:10px; border-bottom:2px solid #eee; }
+.sb { font-size:10px; font-weight:700; color:#fff; padding:4px 10px; border-radius:4px; letter-spacing:0.5px; white-space:nowrap; }
+.sh-title { font-size:17px; font-weight:600; }
+.sh-desc { font-size:12px; color:#888; margin-top:2px; }
+
+/* Actor table */
+.actor-table { width:100%; border-collapse:collapse; font-size:12px; margin:16px 0; }
+.actor-table th { background:#f5f5f5; font-weight:600; font-size:11px; color:#555; padding:10px 12px; text-align:left; border:1px solid #e0e0e0; }
+.actor-table td { padding:10px 12px; border:1px solid #e0e0e0; color:#444; line-height:1.6; vertical-align:top; }
+.actor-table td.actor { font-weight:600; color:#333; white-space:nowrap; width:14%; }
+.actor-table td.action { width:46%; }
+.actor-table td.channel { width:20%; color:#666; }
+.actor-table td.note { width:20%; font-size:11px; color:#888; }
+.actor-table tr.step-header td { background:#f8f8f8; font-weight:600; color:#555; font-size:11px; letter-spacing:0.3px; }
+
+/* Callout */
+.co { margin:16px 0; padding:14px 18px; border-radius:8px; font-size:12px; line-height:1.7; }
+.co-amber { background:#fff8f0; border:1px solid #ffe0b2; color:#6d4c00; }
+.co-blue { background:#f0f7ff; border:1px solid #90caf9; color:#0d47a1; }
+.co-green { background:#f0fff4; border:1px solid #a5d6a7; color:#1b5e20; }
+.co-gray { background:#f8f8f8; border:1px solid #e0e0e0; color:#555; }
+.co strong { font-weight:600; }
+
+/* Flow diagram */
+.flow-row { display:flex; align-items:stretch; gap:0; margin:20px 0; }
+.flow-box { flex:1; padding:14px; border:1px solid #e0e0e0; text-align:center; position:relative; }
+.flow-box:first-child { border-radius:8px 0 0 8px; }
+.flow-box:last-child { border-radius:0 8px 8px 0; }
+.flow-box h4 { font-size:12px; font-weight:600; margin-bottom:4px; }
+.flow-box p { font-size:11px; color:#777; line-height:1.4; }
+.flow-arrow { display:flex; align-items:center; font-size:18px; color:#ccc; padding:0 2px; }
+.fb-customer { background:#e8f5e9; }
+.fb-bank-out { background:#e3f2fd; }
+.fb-kftc { background:#fff3e0; }
+.fb-bank-in { background:#f3e5f5; }
+.fb-tms { background:#fafafa; }
+
+/* Method compare */
+.methods { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin:20px 0; }
+.method-card { border:1px solid #e0e0e0; border-radius:8px; padding:16px; }
+.method-card h4 { font-size:13px; font-weight:600; margin-bottom:8px; }
+.method-card ul { list-style:none; }
+.method-card li { font-size:12px; color:#555; padding:3px 0 3px 14px; position:relative; line-height:1.5; }
+.method-card li::before { content:'·'; position:absolute; left:4px; color:#aaa; font-weight:700; }
+.method-badge { display:inline-block; font-size:10px; font-weight:600; padding:2px 8px; border-radius:3px; margin-bottom:6px; }
+.mb-best { background:#e8f5e9; color:#2e7d32; }
+.mb-mid { background:#fff3e0; color:#e65100; }
+.mb-manual { background:#f5f5f5; color:#888; }
+
+/* Timeline */
+.tl { position:relative; padding-left:32px; }
+.tl::before { content:''; position:absolute; left:11px; top:8px; bottom:8px; width:2px; background:#e0e0e0; }
+.ti { position:relative; padding:0 0 18px 0; }
+.ti:last-child { padding-bottom:0; }
+.td { position:absolute; left:-32px; top:6px; width:22px; height:22px; border-radius:50%; border:2px solid #ccc; background:#fff; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:700; color:#999; }
+.d-setup { border-color:#7F77DD; color:#7F77DD; }
+.d-exec { border-color:#1D9E75; color:#1D9E75; }
+.d-err { border-color:#D85A30; color:#D85A30; }
+.tc { background:#fafafa; border:1px solid #eee; border-radius:8px; padding:12px 16px; }
+.tt { font-size:14px; font-weight:600; margin-bottom:3px; }
+.td-det { font-size:12px; color:#555; margin-top:6px; line-height:1.7; }
+.td-det strong { color:#333; }
+
+.footer { margin-top:40px; padding-top:20px; border-top:1px solid #eee; font-size:11px; color:#aaa; text-align:center; line-height:1.6; }
+
+/* Cut-off timeline */
+.cutoff { position:relative; margin:20px 0; }
+.cutoff-row { display:flex; align-items:stretch; min-height:54px; position:relative; }
+.cutoff-time { width:80px; flex-shrink:0; text-align:right; padding:8px 14px 8px 0; font-size:12px; font-weight:600; color:#555; position:relative; }
+.cutoff-time::after { content:''; position:absolute; right:0; top:0; bottom:0; width:3px; background:#e0e0e0; }
+.cutoff-dot { position:absolute; right:-6px; top:12px; width:12px; height:12px; border-radius:50%; border:2px solid #ccc; background:#fff; z-index:1; }
+.cutoff-dot.dot-tms { border-color:#7F77DD; background:#7F77DD; }
+.cutoff-dot.dot-cust { border-color:#1D9E75; background:#1D9E75; }
+.cutoff-dot.dot-bank { border-color:#3B8BD4; background:#3B8BD4; }
+.cutoff-dot.dot-warn { border-color:#D85A30; background:#D85A30; }
+.cutoff-dot.dot-dead { border-color:#E24B4A; background:#E24B4A; }
+.cutoff-body { flex:1; padding:6px 0 6px 20px; }
+.cutoff-label { font-size:13px; font-weight:600; color:#333; margin-bottom:2px; }
+.cutoff-desc { font-size:12px; color:#777; line-height:1.5; }
+.cutoff-actor { display:inline-block; font-size:10px; font-weight:600; padding:2px 6px; border-radius:3px; margin-right:6px; color:#fff; }
+.ca-tms { background:#7F77DD; }
+.ca-cust { background:#1D9E75; }
+.ca-bank { background:#3B8BD4; }
+.ca-warn { background:#D85A30; }
+.ca-dead { background:#E24B4A; }
+.cutoff-divider { border:none; border-top:1px dashed #ddd; margin:8px 0 8px 94px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>외화 타행이체 플로우</h1>
+<p class="page-sub">Layer 3 (사전 세팅) + Layer 5 (실행) — 누가, 무엇을, 어떻게</p>
+
+<!-- ===== OVERVIEW ===== -->
+<div class="section">
+  <div class="sh">
+    <span class="sb" style="background:#555;">개요</span>
+    <div>
+      <div class="sh-title">왜 외화 타행이체가 필요한가</div>
+    </div>
+  </div>
+
+  <p style="font-size:13px;color:#555;line-height:1.7;margin-bottom:16px;">
+    선물환을 체결한 기관(은행 또는 증권사)과, 고객이 외화를 보유한 은행이 다를 때 발생합니다.
+    예: 하나은행에 USD 계좌가 있는데, KB증권에서 선물환을 체결한 경우 — 만기일에 하나은행 USD를 KB증권으로 옮겨야 결제가 됩니다.
+  </p>
+
+  <div class="flow-row">
+    <div class="flow-box fb-customer">
+      <h4>고객</h4>
+      <p>이체 지시 실행</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box fb-bank-out">
+      <h4>출금 은행</h4>
+      <p>하나은행<br>USD 출금</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box fb-kftc">
+      <h4>이체 경로</h4>
+      <p>KFTC 공동망<br>/ 외화펌뱅킹</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box fb-bank-in">
+      <h4>거래 기관</h4>
+      <p>KB증권<br>USD 입금</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box fb-tms">
+      <h4>TMS</h4>
+      <p>완료 확인<br>+ Audit Trail</p>
+    </div>
+  </div>
+
+  <div class="co co-gray">
+    <strong>KustodyFi의 역할:</strong> Settlement Instruction 생성 (어디서 어디로, 얼마, 언제까지) + 이체 완료 추적 + 기록.
+    실제 이체 버튼은 고객이 자기 은행 인터넷뱅킹/외화펌뱅킹에서 직접 누름. 우리는 금융기관이 아니므로 직접 이체 불가.
+  </div>
+</div>
+
+<!-- ===== CUT-OFF TIMELINE ===== -->
+<div class="section">
+  <div class="sh">
+    <span class="sb" style="background:#E24B4A;">타임라인</span>
+    <div>
+      <div class="sh-title">만기일 Cut-off 타임라인</div>
+      <div class="sh-desc">역산 기준: KFTC 외화이체 마감 15:00 / 은행 영업 09:00~15:30</div>
+    </div>
+  </div>
+
+  <div class="co co-gray" style="margin-bottom:20px;">
+    <strong>이 타임라인은 TMS가 고객에게 자동 안내하는 기준표입니다.</strong> Settlement Instruction에 포함되며, 각 시점에 알림이 발송됩니다.<br>
+    고객(재무팀)은 이 표를 보고 "언제까지 뭘 해야 하는지"를 한눈에 확인할 수 있습니다.
+  </div>
+
+  <!-- D-7 ~ D-1 사전 준비 -->
+  <p style="font-size:11px;font-weight:600;color:#999;letter-spacing:0.5px;margin-bottom:8px;margin-left:94px;">사전 준비 (만기 전)</p>
+
+  <div class="cutoff">
+    <div class="cutoff-row">
+      <div class="cutoff-time">D-7<div class="cutoff-dot dot-tms"></div></div>
+      <div class="cutoff-body">
+        <div class="cutoff-label"><span class="cutoff-actor ca-tms">TMS</span>만기 사전 알림 ①</div>
+        <div class="cutoff-desc">만기 예정 거래 목록 + 결제 금액 + 정산 경로(A/B) 안내.<br>Cash Schedule 대사: 결제일에 외화 잔고 충분한지 예측.</div>
+      </div>
+    </div>
+
+    <div class="cutoff-row">
+      <div class="cutoff-time">D-5<div class="cutoff-dot dot-cust"></div></div>
+      <div class="cutoff-body">
+        <div class="cutoff-label"><span class="cutoff-actor ca-cust">고객</span>자금 확보 계획 수립</div>
+        <div class="cutoff-desc">결제 자금 부족 예상 시: 환전 예약, 외화 매입, 자금 이동 등 사전 조치.<br>인터넷뱅킹 외화이체 한도 확인 — 결제 금액 대비 충분한지.</div>
+      </div>
+    </div>
+
+    <div class="cutoff-row">
+      <div class="cutoff-time">D-3<div class="cutoff-dot dot-tms"></div></div>
+      <div class="cutoff-body">
+        <div class="cutoff-label"><span class="cutoff-actor ca-tms">TMS</span>만기 사전 알림 ②</div>
+        <div class="cutoff-desc">잔고 재확인. 부족 시 경고 알림: "USD XXX 부족 예상. 환전 필요."<br>이체 한도 초과 예상 시: "영업점 방문 또는 한도 상향 필요" 안내.</div>
+      </div>
+    </div>
+
+    <div class="cutoff-row">
+      <div class="cutoff-time">D-1<br><span style="font-size:10px;color:#999;font-weight:400;">전일</span><div class="cutoff-dot dot-tms"></div></div>
+      <div class="cutoff-body">
+        <div class="cutoff-label"><span class="cutoff-actor ca-tms">TMS</span>Settlement Instruction 발송</div>
+        <div class="cutoff-desc">
+          최종 결제 지시서 발송 (이메일 + TMS 대시보드 + 메신저):<br>
+          · 거래 ID, 통화쌍, 결제 금액, 약정환율<br>
+          · 출금 계좌 (은행명 + 계좌번호)<br>
+          · 입금 계좌 (기관명 + 계좌번호 + SWIFT BIC)<br>
+          · <strong style="color:#E24B4A;">이체 마감: 당일 12:00 (정오)</strong><br>
+          · 이체 방식 (KFTC / 외화펌뱅킹 / 수동)<br>
+          · 참조: Invoice 번호, 선물환 확인서 번호
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="cutoff-divider" style="margin-left:0;border-top:2px solid #E24B4A;margin:24px 0;">
+  <p style="font-size:11px;font-weight:600;color:#E24B4A;letter-spacing:0.5px;margin-bottom:8px;margin-left:94px;">만기 당일 (D-Day) — 시간순</p>
+
+  <div class="cutoff">
+    <div class="cutoff-row">
+      <div class="cutoff-time">09:00<div class="cutoff-dot dot-tms"></div></div>
+      <div class="cutoff-body">
+        <div class="cutoff-label"><span class="cutoff-actor ca-tms">TMS</span>출금 계좌 잔고 최종 확인</div>
+        <div class="cutoff-desc">오픈뱅킹/스크래핑으로 실시간 잔고 체크.<br>
+          ✅ 충분 → "결제 준비 완료" 상태 표시<br>
+          ❌ 부족 → <strong>긴급 알림</strong>: "USD XXX 부족. 즉시 환전 또는 자금 조달 필요."</div>
+      </div>
+    </div>
+
+    <div class="cutoff-row">
+      <div class="cutoff-time" style="color:#1D9E75;">09:00<br>~12:00<div class="cutoff-dot dot-cust"></div></div>
+      <div class="cutoff-body">
+        <div class="cutoff-label"><span class="cutoff-actor ca-cust">고객 (Dealer)</span>외화 타행이체 실행 ⭐</div>
+        <div class="cutoff-desc">
+          출금 은행 인터넷뱅킹 / 외화펌뱅킹에서 이체 실행.<br>
+          Settlement Instruction에 기재된 그대로 입력:<br>
+          · 수취인: [기관명] 외화입금계좌<br>
+          · 금액: USD [결제금액]<br>
+          · 적요: 선물환 확인서 번호<br>
+          <strong style="color:#E24B4A;">⚠️ 12:00(정오) 전에 완료 필수</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="cutoff-row">
+      <div class="cutoff-time">11:00<div class="cutoff-dot dot-tms"></div></div>
+      <div class="cutoff-body">
+        <div class="cutoff-label"><span class="cutoff-actor ca-tms">TMS</span>중간 체크 — 이체 미실행 시 리마인더</div>
+        <div class="cutoff-desc">잔고 변동이 없으면 → "아직 이체가 감지되지 않았습니다" 알림.<br>Dealer + Approver에게 동시 발송.</div>
+      </div>
+    </div>
+
+    <div class="cutoff-row">
+      <div class="cutoff-time" style="color:#D85A30;">13:00<div class="cutoff-dot dot-warn"></div></div>
+      <div class="cutoff-body">
+        <div class="cutoff-label"><span class="cutoff-actor ca-warn">TMS</span>마감 30분 전 경고</div>
+        <div class="cutoff-desc">이체 미실행 시 → <strong>"KFTC 이체 마감 30분 전. 즉시 이체하세요."</strong><br>
+          이체 불가능한 상황이면 → "영업점 창구 또는 은행 담당자에게 전화하세요." Fallback 안내.</div>
+      </div>
+    </div>
+
+    <div class="cutoff-row">
+      <div class="cutoff-time" style="color:#E24B4A;font-weight:700;">12:00<div class="cutoff-dot dot-dead"></div></div>
+      <div class="cutoff-body">
+        <div class="cutoff-label"><span class="cutoff-actor ca-dead">DEADLINE</span>외화이체 권장 마감</div>
+        <div class="cutoff-desc">이 시점까지 이체 완료되어야 거래 기관이 당일 내 결제 처리 가능.<br>
+          이 시점 이후 이체 시: KFTC 15:00 마감에 걸릴 리스크 + 거래 기관 처리 시간 부족.</div>
+      </div>
+    </div>
+
+    <div class="cutoff-row">
+      <div class="cutoff-time" style="color:#E24B4A;">15:00<div class="cutoff-dot dot-dead"></div></div>
+      <div class="cutoff-body">
+        <div class="cutoff-label"><span class="cutoff-actor ca-dead">HARD CUTOFF</span>KFTC 외화자금이체 마감</div>
+        <div class="cutoff-desc">금융결제원 외화이체 공동망 당일 마감. 이후 이체 불가.<br>
+          <strong>이 시점까지 미이체 시:</strong> 인도마감시한(15:00) 도래 → 즉시 강제청산 + 담보 몰수. T+1 유예 없음.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="cutoff-divider" style="margin-left:0;border-top:1px solid #ddd;margin:24px 0;">
+  <p style="font-size:11px;font-weight:600;color:#999;letter-spacing:0.5px;margin-bottom:8px;margin-left:94px;">결제 처리 (거래 기관)</p>
+
+  <div class="cutoff">
+    <div class="cutoff-row">
+      <div class="cutoff-time">이체 후<br><span style="font-size:10px;color:#999;font-weight:400;">즉시~수분</span><div class="cutoff-dot dot-bank"></div></div>
+      <div class="cutoff-body">
+        <div class="cutoff-label"><span class="cutoff-actor ca-bank">거래 기관</span>외화 입금 확인</div>
+        <div class="cutoff-desc">입금액 = 선물환 계약 금액 매칭 확인. 불일치 시 고객에 연락.</div>
+      </div>
+    </div>
+
+    <div class="cutoff-row">
+      <div class="cutoff-time">입금 후<br><span style="font-size:10px;color:#999;font-weight:400;">즉시</span><div class="cutoff-dot dot-bank"></div></div>
+      <div class="cutoff-body">
+        <div class="cutoff-label"><span class="cutoff-actor ca-bank">거래 기관</span>약정환율 환전 + 원화 이체</div>
+        <div class="cutoff-desc">선물환 약정환율로 원화 환전 실행 → 고객 원화 수취 계좌에 이체.<br>
+          예: USD 500K × ₩1,430/$ = ₩7.15억 → 고객 KRW 계좌 입금.</div>
+      </div>
+    </div>
+
+    <div class="cutoff-row">
+      <div class="cutoff-time">환전 후<div class="cutoff-dot dot-cust"></div></div>
+      <div class="cutoff-body">
+        <div class="cutoff-label"><span class="cutoff-actor ca-cust">고객</span>원화 입금 확인</div>
+        <div class="cutoff-desc">원화 계좌 입금 확인. TMS에서 "결제 완료" 확인 (또는 수동 입력).</div>
+      </div>
+    </div>
+
+    <div class="cutoff-row">
+      <div class="cutoff-time">당일<div class="cutoff-dot dot-tms"></div></div>
+      <div class="cutoff-body">
+        <div class="cutoff-label"><span class="cutoff-actor ca-tms">TMS</span>Blotter 상태 업데이트 + Audit Trail</div>
+        <div class="cutoff-desc">CONFIRMED → SETTLED. 전체 정산 체인 기록 확정.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary table -->
+  <div style="margin-top:24px;">
+    <table class="actor-table">
+      <tr>
+        <th style="width:12%;background:#fce4ec;">시점</th>
+        <th style="width:12%;background:#fce4ec;">Actor</th>
+        <th style="width:40%;background:#fce4ec;">해야 할 일</th>
+        <th style="width:18%;background:#fce4ec;">놓치면?</th>
+        <th style="width:18%;background:#fce4ec;">TMS 알림</th>
+      </tr>
+      <tr>
+        <td class="actor">D-7</td><td>TMS</td><td>만기 사전 알림, 자금 예측</td><td>—</td><td>이메일 + 대시보드</td>
+      </tr>
+      <tr>
+        <td class="actor">D-5</td><td>고객</td><td>자금 확보 계획, 한도 확인</td><td>만기일 자금 부족</td><td>—</td>
+      </tr>
+      <tr>
+        <td class="actor">D-3</td><td>TMS</td><td>잔고 재확인, 부족 시 경고</td><td>—</td><td>경고 알림</td>
+      </tr>
+      <tr>
+        <td class="actor">D-1</td><td>TMS</td><td>Settlement Instruction 발송</td><td>—</td><td>이메일 + 메신저</td>
+      </tr>
+      <tr style="background:#fff8f0;">
+        <td class="actor">D-Day<br>09:00</td><td>TMS</td><td>잔고 최종 확인</td><td>부족 미감지</td><td>긴급 알림 (부족 시)</td>
+      </tr>
+      <tr style="background:#e8f5e9;">
+        <td class="actor" style="color:#1D9E75;">09:00<br>~12:00</td><td style="font-weight:600;color:#1D9E75;">고객</td><td style="font-weight:600;">⭐ 외화 타행이체 실행</td><td style="color:#E24B4A;">KFTC 마감 리스크</td><td>11:00 리마인더</td>
+      </tr>
+      <tr style="background:#fff3e0;">
+        <td class="actor" style="color:#D85A30;">13:00</td><td>TMS</td><td>마감 30분 전 최종 경고</td><td>—</td><td>긴급 경고</td>
+      </tr>
+      <tr style="background:#fce4ec;">
+        <td class="actor" style="color:#E24B4A;font-weight:700;">12:00</td><td style="color:#E24B4A;">—</td><td style="color:#E24B4A;font-weight:600;">이체 권장 마감 (Soft Deadline)</td><td style="color:#E24B4A;">기관 처리 지연</td><td>—</td>
+      </tr>
+      <tr style="background:#fce4ec;">
+        <td class="actor" style="color:#E24B4A;font-weight:700;">15:00</td><td style="color:#E24B4A;">KFTC</td><td style="color:#E24B4A;font-weight:600;">인도마감시한 — 미인도 시 즉시 담보 몰수</td><td style="color:#E24B4A;font-weight:600;">강제청산 + 담보귀속</td><td>—</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="co co-amber">
+    <strong>고객에게 전달하는 핵심 메시지:</strong><br>
+    "만기일 <strong>오전 중에 이체를 완료</strong>하세요. 늦어도 <strong>12:00</strong>까지. KFTC 마감(15:00)에 걸리면 당일 결제가 불가능합니다."<br><br>
+    <strong>외화펌뱅킹 고객:</strong> 펌뱅킹은 은행에 따라 마감 시간이 다를 수 있음 (통상 14:00~14:30). 사전에 은행과 마감시간 확인 필수.<br>
+    <strong>영업점 창구 Fallback:</strong> 인터넷뱅킹 한도 초과 또는 시스템 장애 시 은행 창구 방문. 15:30 영업 마감 전에 도착해야 함.
+  </div>
+</div>
+
+<!-- ===== TRANSFER METHODS ===== -->
+<div class="section">
+  <div class="sh">
+    <span class="sb" style="background:#BA7517;">방식</span>
+    <div>
+      <div class="sh-title">국내 외화 이체 방식 비교</div>
+      <div class="sh-desc">고객이 선택할 수 있는 3가지 경로</div>
+    </div>
+  </div>
+
+  <div class="methods">
+    <div class="method-card">
+      <span class="method-badge mb-best">권장</span>
+      <h4>KFTC 외화자금이체 공동망</h4>
+      <ul>
+        <li>금융결제원이 운영하는 은행 간 외화 이체 공동 인프라</li>
+        <li>주요 5개 통화 실시간 (USD, JPY, EUR, GBP, HKD)</li>
+        <li>기타 통화는 미지원 또는 지연</li>
+        <li>기업 인터넷뱅킹에서 바로 가능</li>
+        <li>수수료: 은행별 상이 (통상 건당 ₩5,000~₩20,000). 볼륨 협상 또는 경로 A 유도로 절감 가능</li>
+        <li>이용 시간: 09:00~15:00 (은행 영업일)</li>
+      </ul>
+    </div>
+    <div class="method-card">
+      <span class="method-badge mb-mid">대량 거래</span>
+      <h4>외화펌뱅킹</h4>
+      <ul>
+        <li>은행과 기업 간 전용망(전문송수신) 방식</li>
+        <li>대량 건수 일괄 처리에 적합</li>
+        <li>사전에 은행과 펌뱅킹 계약 + 전용망 세팅 필요</li>
+        <li>하나은행, 우리은행 등 주요 시중은행 제공</li>
+        <li>환율 조회, 이체, 송금 업무 통합</li>
+        <li>초기 세팅 비용 있음</li>
+      </ul>
+    </div>
+    <div class="method-card">
+      <span class="method-badge mb-manual">Fallback</span>
+      <h4>영업점 창구 / 전화</h4>
+      <ul>
+        <li>인터넷뱅킹 한도 초과 시 또는 시스템 장애 시</li>
+        <li>은행 창구 방문 또는 담당자 전화 지시</li>
+        <li>처리 시간: 1~3시간 (은행 내부 승인 프로세스)</li>
+        <li>대금 규모가 클 경우 은행 측 추가 확인 가능</li>
+        <li>수수료: 창구 기준 적용</li>
+        <li>Audit Trail: 고객이 TMS에 수동 입력</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="co co-blue">
+    <strong>TMS의 역할:</strong> Settlement Profile에 기관별로 어떤 이체 방식을 사용하는지 사전 등록.
+    만기일에 Settlement Instruction 생성 시 해당 방식에 맞는 안내 (계좌번호, 금액, 마감시간 등)를 자동 포함.
+  </div>
+</div>
+
+<!-- ===== PHASE 1: SETUP (Layer 3) ===== -->
+<div class="section">
+  <div class="sh">
+    <span class="sb" style="background:#7F77DD;">사전 세팅</span>
+    <div>
+      <div class="sh-title">Layer 3 — 외화 타행이체 사전 준비</div>
+      <div class="sh-desc">기관 온보딩 시 한 번만 세팅하면 이후 반복 사용</div>
+    </div>
+  </div>
+
+  <table class="actor-table">
+    <tr>
+      <th>Step</th><th>Actor</th><th>Action</th><th>Channel</th><th>비고</th>
+    </tr>
+    <tr class="step-header"><td colspan="5">A. 출금 은행 쪽 세팅 (고객의 외화 계좌가 있는 은행)</td></tr>
+    <tr>
+      <td>A-1</td>
+      <td class="actor">고객</td>
+      <td class="action">출금 은행 영업점 방문하여 <strong>"외화 타행이체 약정"</strong> 등록 신청.<br>이체 대상 계좌(거래 기관의 외화 입금 계좌) 지정.</td>
+      <td class="channel">영업점 방문<br>(서류 + 인감)</td>
+      <td class="note">1회성. 약정 등록 후 인터넷뱅킹에서 반복 이체 가능.</td>
+    </tr>
+    <tr>
+      <td>A-2</td>
+      <td class="actor">출금 은행</td>
+      <td class="action">외화 타행이체 약정 심사 + 등록 완료.<br>고객 인터넷뱅킹에 이체 대상 계좌 활성화.</td>
+      <td class="channel">은행 내부</td>
+      <td class="note">소요: 당일~1영업일. 은행에 따라 즉시 가능.</td>
+    </tr>
+    <tr>
+      <td>A-3</td>
+      <td class="actor">고객</td>
+      <td class="action">(대량 거래 시) 출금 은행과 <strong>외화펌뱅킹 계약</strong> 체결 + 전용망 세팅.</td>
+      <td class="channel">은행 기업금융부</td>
+      <td class="note">선택사항. 월 건수가 많은 경우에만. 세팅 1~2주.</td>
+    </tr>
+    <tr>
+      <td>A-4</td>
+      <td class="actor">고객</td>
+      <td class="action">인터넷뱅킹 외화이체 <strong>1일 한도</strong> 확인/상향 요청.<br>선물환 결제 금액이 기본 한도를 초과하지 않는지 확인.</td>
+      <td class="channel">인터넷뱅킹<br>/ 영업점</td>
+      <td class="note">기본 한도가 낮으면 만기일에 이체 불가. 반드시 사전 확인.</td>
+    </tr>
+
+    <tr class="step-header"><td colspan="5">B. 거래 기관 쪽 세팅 (선물환 체결한 은행/증권사)</td></tr>
+    <tr>
+      <td>B-1</td>
+      <td class="actor">고객</td>
+      <td class="action">거래 기관에 <strong>"외화 입금 계좌"</strong> 확인 요청.<br>해당 기관이 외화를 수취할 수 있는 계좌번호, 은행명, SWIFT BIC 등.</td>
+      <td class="channel">기관 담당자<br>/ 이메일</td>
+      <td class="note">증권사의 경우 외화 입금용 별도 계좌가 있을 수 있음.</td>
+    </tr>
+    <tr>
+      <td>B-2</td>
+      <td class="actor">거래 기관<br>(증권사)</td>
+      <td class="action">(증권사인 경우) 고객 명의 <strong>"외화 타사이체 입금 약정"</strong> 등록.<br>본인 명의 외화계좌에서만 입금 가능하도록 제한.</td>
+      <td class="channel">증권사 영업점<br>/ HTS</td>
+      <td class="note">증권사 규정상 사전 약정 없으면 외화 입금 불가한 경우 있음.</td>
+    </tr>
+
+    <tr class="step-header"><td colspan="5">C. TMS 등록</td></tr>
+    <tr>
+      <td>C-1</td>
+      <td class="actor">TMS<br>(KustodyFi)</td>
+      <td class="action">Settlement Profile에 정산 경로 등록:<br>
+        · 출금 계좌: 은행명, 계좌번호, 통화<br>
+        · 입금 계좌: 기관명, 계좌번호, SWIFT BIC<br>
+        · 이체 방식: KFTC / 외화펌뱅킹 / 수동<br>
+        · 이체 가능 시간대<br>
+        · 1일 이체 한도
+      </td>
+      <td class="channel">TMS 설정 화면</td>
+      <td class="note">만기 결제 시 이 정보로 Settlement Instruction 자동 생성.</td>
+    </tr>
+    <tr>
+      <td>C-2</td>
+      <td class="actor">고객 + TMS</td>
+      <td class="action"><strong>테스트 이체 1건 실행</strong> (소액, 예: $100).<br>출금 → 입금 → 거래 기관 확인 → TMS 반영까지 전체 경로 검증.</td>
+      <td class="channel">인터넷뱅킹<br>→ KFTC<br>→ TMS</td>
+      <td class="note">필수. 만기 당일에 처음 해보면 늦음.</td>
+    </tr>
+  </table>
+
+  <div class="co co-amber">
+    <strong>세팅 총 소요:</strong> 1~3영업일 (은행 약정 + 증권사 약정 + TMS 등록 + 테스트 이체)<br>
+    <strong>병목:</strong> 출금 은행 영업점 방문이 가장 번거로움. 증권사 측 약정도 영업점 방문 필요할 수 있음.<br>
+    <strong>핵심:</strong> 이 세팅은 1회만 하면 됨. 이후 모든 만기 결제에 동일 경로 재사용.
+  </div>
+</div>
+
+<!-- ===== PHASE 2: EXECUTION (Layer 5) ===== -->
+<div class="section">
+  <div class="sh">
+    <span class="sb" style="background:#1D9E75;">실행</span>
+    <div>
+      <div class="sh-title">Layer 5 — 만기일 외화 타행이체 실행</div>
+      <div class="sh-desc">만기 당일 결제 플로우 — Actor별 시간순</div>
+    </div>
+  </div>
+
+  <table class="actor-table">
+    <tr>
+      <th style="width:8%">시간</th><th style="width:12%">Actor</th><th style="width:45%">Action</th><th style="width:15%">Channel</th><th style="width:20%">비고</th>
+    </tr>
+
+    <tr class="step-header"><td colspan="5">오전 — 사전 확인</td></tr>
+    <tr>
+      <td>D-1<br>전일</td>
+      <td class="actor">TMS</td>
+      <td class="action"><strong>Settlement Instruction 생성 + 발송</strong><br>
+        · 거래 ID, 통화쌍, 결제 금액<br>
+        · 출금 계좌 (하나은행 USD XXXX-XXXX)<br>
+        · 입금 계좌 (KB증권 외화입금 YYYY-YYYY)<br>
+        · 이체 마감 시한 (예: 당일 14:00)<br>
+        · 이체 방식 (KFTC 외화자금이체)<br>
+        · 참조: Invoice 번호, 선물환 확인서 번호
+      </td>
+      <td class="channel">이메일<br>+ TMS 대시보드<br>+ 메신저 알림</td>
+      <td class="note">Dealer + Approver + 담보관리 담당자에게 동시 발송</td>
+    </tr>
+    <tr>
+      <td>09:00</td>
+      <td class="actor">TMS</td>
+      <td class="action">출금 은행 잔고 확인 (오픈뱅킹/스크래핑).<br>결제 자금 충분 여부 체크. 부족 시 긴급 알림.</td>
+      <td class="channel">오픈뱅킹 API<br>/ 스크래핑</td>
+      <td class="note">자금 부족이면 고객이 즉시 환전 또는 자금 조달해야 함</td>
+    </tr>
+
+    <tr class="step-header"><td colspan="5">오전~오후 — 이체 실행</td></tr>
+    <tr>
+      <td>09:00<br>~14:00</td>
+      <td class="actor">고객<br>(Dealer)</td>
+      <td class="action">출금 은행 인터넷뱅킹/외화펌뱅킹에 로그인.<br>Settlement Instruction에 기재된 대로 외화 타행이체 실행.<br>
+        · 수취인: KB증권 외화입금계좌<br>
+        · 금액: USD 500,000<br>
+        · 비고/적요: 선물환 확인서 번호 기재
+      </td>
+      <td class="channel">인터넷뱅킹<br>/ 외화펌뱅킹</td>
+      <td class="note">⚠️ 마감시간 전에 실행 필수. KFTC는 15:00까지.</td>
+    </tr>
+    <tr>
+      <td>즉시</td>
+      <td class="actor">출금 은행<br>(하나은행)</td>
+      <td class="action">외화 출금 처리.<br>KFTC 외화자금이체 공동망을 통해 수취 기관으로 전송.</td>
+      <td class="channel">KFTC 공동망</td>
+      <td class="note">주요 5개 통화: 실시간. 기타: 미지원.</td>
+    </tr>
+    <tr>
+      <td>즉시<br>~수분</td>
+      <td class="actor">거래 기관<br>(KB증권)</td>
+      <td class="action">외화 입금 확인.<br>선물환 결제 매칭: 입금액 = 선물환 계약 금액 확인.</td>
+      <td class="channel">증권사 내부</td>
+      <td class="note">금액 불일치 시 거래 기관에서 고객에 연락</td>
+    </tr>
+
+    <tr class="step-header"><td colspan="5">오후 — 환전 + 원화 수취</td></tr>
+    <tr>
+      <td>입금 후<br>즉시</td>
+      <td class="actor">거래 기관<br>(KB증권)</td>
+      <td class="action"><strong>선물환 약정환율로 원화 환전 실행.</strong><br>
+        USD 500,000 × ₩1,430/$ = ₩715,000,000<br>
+        원화 대금을 고객 원화 수취 계좌에 이체.</td>
+      <td class="channel">증권사 내부<br>→ 원화 이체</td>
+      <td class="note">원화 수취 계좌는 Settlement Profile에 사전 등록된 계좌</td>
+    </tr>
+    <tr>
+      <td>환전 후</td>
+      <td class="actor">고객</td>
+      <td class="action">원화 계좌 입금 확인.</td>
+      <td class="channel">인터넷뱅킹</td>
+      <td class="note">—</td>
+    </tr>
+
+    <tr class="step-header"><td colspan="5">결제 후 — TMS 기록</td></tr>
+    <tr>
+      <td>수시</td>
+      <td class="actor">TMS</td>
+      <td class="action">출금 은행 잔고 변동 감지 → 이체 실행 확인.<br>원화 계좌 입금 감지 → 환전 완료 확인.<br>Blotter 상태: <strong>CONFIRMED → SETTLED</strong></td>
+      <td class="channel">오픈뱅킹 API<br>/ 수동 확인</td>
+      <td class="note">API 미연동 시 고객이 TMS에 수동으로 "결제 완료" 입력</td>
+    </tr>
+    <tr>
+      <td>당일</td>
+      <td class="actor">TMS</td>
+      <td class="action"><strong>Audit Trail 기록 확정:</strong><br>
+        Invoice → 헷지추천 → SEAL승인 → 체결(Deal Ticket/API)<br>
+        → Settlement Instruction → 외화이체(시각, 금액, 경로)<br>
+        → 입금확인 → 환전 → 원화수취 → 보증금해제</td>
+      <td class="channel">TMS 내부</td>
+      <td class="note">전체 체인이 불변 로그로 기록됨</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ===== ERROR HANDLING ===== -->
+<div class="section">
+  <div class="sh">
+    <span class="sb" style="background:#D85A30;">예외 처리</span>
+    <div>
+      <div class="sh-title">만기일 이체 실패 시나리오</div>
+    </div>
+  </div>
+
+  <table class="actor-table">
+    <tr>
+      <th style="width:20%">시나리오</th><th style="width:35%">원인</th><th style="width:25%">TMS 대응</th><th style="width:20%">결과</th>
+    </tr>
+    <tr>
+      <td class="actor">자금 부족</td>
+      <td>출금 계좌에 결제 금액 미달</td>
+      <td>D-1 및 당일 09:00 잔고 체크 시 알림 발송.<br>"USD XXX 부족. 환전 또는 자금 조달 필요."</td>
+      <td>고객이 당일 환전/입금으로 해결.<br>미해결 시 15:00 인도마감시한 → 즉시 강제청산 + 담보 몰수.</td>
+    </tr>
+    <tr>
+      <td class="actor">이체 한도 초과</td>
+      <td>인터넷뱅킹 1일 외화이체 한도보다 결제 금액이 큼</td>
+      <td>Settlement Instruction에 "한도 초과 경고" 표시.<br>"영업점 창구 또는 전화 지시로 이체하세요."</td>
+      <td>Fallback: 은행 창구/전화로 처리. 1~3시간 추가 소요.</td>
+    </tr>
+    <tr>
+      <td class="actor">KFTC 마감 초과</td>
+      <td>15:00 이후 이체 시도</td>
+      <td>11:00에 리마인더 알림.<br>11:30에 최종 경고.</td>
+      <td>Fallback: 은행 영업점 직접 이체. 15:00 전 미도착 시 강제청산 + 담보 몰수.</td>
+    </tr>
+    <tr>
+      <td class="actor">수취 계좌 오류</td>
+      <td>입금 계좌번호/은행 코드 불일치</td>
+      <td>Layer 3 테스트 이체(C-2)에서 사전 검증됨.<br>그래도 발생 시: 출금 은행에서 반환 처리.</td>
+      <td>반환 처리 1~2영업일. 재이체 필요.<br>15:00 전 미도착 시 강제청산 + 담보 몰수.</td>
+    </tr>
+    <tr>
+      <td class="actor">통화 미지원</td>
+      <td>KFTC 공동망에서 해당 통화 미지원 (5개 통화 외)</td>
+      <td>Settlement Instruction에 "KFTC 미지원 통화" 표시.<br>"영업점 창구에서 외화 송금으로 처리하세요."</td>
+      <td>은행 창구 처리. 소요 1~3시간. 수수료 높을 수 있음.</td>
+    </tr>
+  </table>
+
+  <div class="co co-amber">
+    <strong>핵심 방어선:</strong> Layer 3에서 테스트 이체(C-2)를 반드시 수행하고, 만기 D-1에 Settlement Instruction을 미리 발송하는 것.
+    대부분의 이체 실패는 "처음 해보는 경로 + 당일 급하게"에서 발생. 사전 검증이 유일한 해결책.
+  </div>
+</div>
+
+<!-- ===== IMPORT FLOW ===== -->
+<div class="section">
+  <div class="sh">
+    <span class="sb" style="background:#555;">반대 방향</span>
+    <div>
+      <div class="sh-title">참고 — 수입기업 (외화 매수) 결제 플로우</div>
+      <div class="sh-desc">수출기업과 자금 흐름 방향이 반대</div>
+    </div>
+  </div>
+
+  <p style="font-size:12px;color:#666;line-height:1.7;margin-bottom:12px;">
+    수출기업은 USD를 받아서 KRW로 환전 (Sell USD). 수입기업은 KRW로 USD를 사서 지급 (Buy USD).<br>
+    수입기업의 경우 외화 타행이체 방향이 반대:
+  </p>
+
+  <div class="flow-row">
+    <div class="flow-box fb-customer">
+      <h4>고객</h4>
+      <p>원화 출금 지시</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box fb-bank-in">
+      <h4>거래 기관</h4>
+      <p>원화 입금<br>약정환율로<br>USD 환전</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box fb-kftc">
+      <h4>이체 경로</h4>
+      <p>KFTC<br>/ 외화펌뱅킹</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box fb-bank-out">
+      <h4>결제 은행</h4>
+      <p>해외 송금<br>(바이어에게)</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box fb-tms">
+      <h4>TMS</h4>
+      <p>완료 확인<br>+ Audit Trail</p>
+    </div>
+  </div>
+
+  <div class="co co-blue">
+    <strong>차이점:</strong> 수입기업은 원화를 먼저 거래 기관에 보내고, 거래 기관이 약정환율로 USD 환전 후 해외 송금 실행.<br>
+    TMS Settlement Instruction은 "원화 이체 지시"가 되고, 외화 타행이체가 아닌 원화 타행이체가 됨 (일반 펌뱅킹으로 가능).
+  </div>
+</div>
+
+<!-- ===== FUTURE ===== -->
+<div class="section">
+  <div class="sh">
+    <span class="sb" style="background:#1D9E75;">향후</span>
+    <div>
+      <div class="sh-title">장기 로드맵 — 이체 자동화</div>
+    </div>
+  </div>
+
+  <div class="tl">
+    <div class="ti"><div class="td d-setup">1</div>
+      <div class="tc">
+        <div class="tt">현재 (2026)</div>
+        <div class="td-det">
+          TMS가 Settlement Instruction 생성 → 고객이 직접 이체 실행.<br>
+          오픈뱅킹 API로 잔고 확인/변동 추적은 가능하지만 이체 지시는 불가.
+        </div>
+      </div>
+    </div>
+    <div class="ti"><div class="td d-exec">2</div>
+      <div class="tc">
+        <div class="tt">오픈뱅킹 외화이체 API 확장 시</div>
+        <div class="td-det">
+          금융결제원이 오픈뱅킹에 외화이체 API를 추가하면 →<br>
+          TMS에서 SEAL 승인 후 이체 API 호출 → 고객은 승인만 (2FA) → 자동 실행.<br>
+          Settlement Instruction → 이체 실행 → 완료 확인이 TMS 안에서 원스톱.
+        </div>
+      </div>
+    </div>
+    <div class="ti"><div class="td d-exec">3</div>
+      <div class="tc">
+        <div class="tt">은행 API 직접 연동 시 (B-1 STP 기관)</div>
+        <div class="td-det">
+          거래 기관이 자체 API를 열어주면 →<br>
+          체결 → 결제 지시 → 외화 이체 요청 → 환전 → 원화 입금까지 전체 자동화.<br>
+          고객은 Invoice 올리는 것만. 나머지는 TMS + SEAL + 기관 API.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  KustodyFi Co., Ltd. — 외화 타행이체 플로우 v1.1 (DRAFT)<br>
+  Cut-off 타임라인 + Layer 3 (사전 세팅) + Layer 5 (만기일 실행) + 예외 처리 + 향후 로드맵
+</div>
+
+</div>
+</body>
+</html>

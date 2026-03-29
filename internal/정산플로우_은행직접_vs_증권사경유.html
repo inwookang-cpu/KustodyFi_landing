@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KustodyFi 정산 플로우 — 은행 직접 vs 증권사 경유</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #fff; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; color: #222; }
+.page { max-width: 1020px; margin: 0 auto; padding: 40px 32px 60px; }
+h1 { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 4px; }
+.page-sub { font-size: 13px; color: #999; text-align: center; margin-bottom: 36px; }
+
+.section { margin-bottom: 44px; }
+.sh { display:flex; align-items:center; gap:12px; margin-bottom:16px; padding-bottom:10px; border-bottom:2px solid #eee; }
+.sb { font-size:10px; font-weight:700; color:#fff; padding:4px 10px; border-radius:4px; letter-spacing:0.5px; white-space:nowrap; }
+
+/* Side by side layout */
+.compare { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.model { border:1px solid #e0e0e0; border-radius:10px; overflow:hidden; }
+.model-header { padding:14px 18px; color:#fff; }
+.mh-bank { background:#3B8BD4; }
+.mh-sec { background:#7F77DD; }
+.model-header h3 { font-size:14px; font-weight:600; margin-bottom:2px; }
+.model-header p { font-size:11px; opacity:0.85; }
+.model-body { padding:18px; }
+
+/* Step rows */
+.step { display:flex; gap:10px; padding:8px 0; border-bottom:1px solid #f0f0f0; }
+.step:last-child { border-bottom:none; }
+.step-num { width:24px; height:24px; border-radius:50%; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; color:#fff; flex-shrink:0; margin-top:2px; }
+.sn-bank { background:#3B8BD4; }
+.sn-sec { background:#7F77DD; }
+.step-content { flex:1; }
+.step-actor { font-size:10px; font-weight:600; padding:1px 6px; border-radius:3px; display:inline-block; margin-bottom:3px; color:#fff; }
+.sa-cust { background:#1D9E75; }
+.sa-bank { background:#3B8BD4; }
+.sa-sec { background:#7F77DD; }
+.sa-tms { background:#888; }
+.sa-buyer { background:#BA7517; }
+.step-title { font-size:12px; font-weight:600; color:#333; margin-bottom:2px; }
+.step-desc { font-size:11px; color:#777; line-height:1.5; }
+.step-channel { font-size:10px; color:#aaa; margin-top:3px; }
+
+/* Highlight step */
+.step.highlight { background:#fef2f2; border-radius:6px; padding:8px; margin:4px -8px; }
+.step.success { background:#f0fdf4; border-radius:6px; padding:8px; margin:4px -8px; }
+
+/* Callout */
+.co { margin:16px 0; padding:14px 18px; border-radius:8px; font-size:12px; line-height:1.7; }
+.co-amber { background:#fff8f0; border:1px solid #ffe0b2; color:#6d4c00; }
+.co-blue { background:#f0f7ff; border:1px solid #90caf9; color:#0d47a1; }
+.co-green { background:#f0fff4; border:1px solid #a5d6a7; color:#1b5e20; }
+.co-gray { background:#f8f8f8; border:1px solid #e0e0e0; color:#555; }
+.co strong { font-weight:600; }
+
+/* Comparison table */
+.cmp-table { width:100%; border-collapse:collapse; font-size:12px; margin:16px 0; }
+.cmp-table th { background:#f5f5f5; font-weight:600; font-size:11px; color:#555; padding:10px 12px; text-align:left; border:1px solid #e0e0e0; }
+.cmp-table td { padding:10px 12px; border:1px solid #e0e0e0; color:#444; line-height:1.5; vertical-align:top; }
+.cmp-table .bank-col { background:#f0f7ff; }
+.cmp-table .sec-col { background:#f3f0ff; }
+
+/* Flow diagram */
+.flow-row { display:flex; align-items:stretch; gap:0; margin:16px 0; }
+.flow-box { flex:1; padding:10px 8px; border:1px solid #e0e0e0; text-align:center; font-size:11px; }
+.flow-box:first-child { border-radius:6px 0 0 6px; }
+.flow-box:last-child { border-radius:0 6px 6px 0; }
+.flow-box h4 { font-size:11px; font-weight:600; margin-bottom:2px; }
+.flow-box p { font-size:10px; color:#777; line-height:1.3; }
+.flow-arrow { display:flex; align-items:center; font-size:16px; color:#ccc; padding:0 2px; }
+.fb-cust { background:#e8f5e9; }
+.fb-bank { background:#e3f2fd; }
+.fb-sec { background:#ede7f6; }
+.fb-kftc { background:#fff3e0; }
+.fb-buyer { background:#fff8e1; }
+.fb-tms { background:#fafafa; }
+
+.footer { margin-top:40px; padding-top:20px; border-top:1px solid #eee; font-size:11px; color:#aaa; text-align:center; line-height:1.6; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>정산 플로우 — 은행 직접 vs 증권사 경유</h1>
+<p class="page-sub">동일한 선물환 거래 (Sell USD $500K, ₩1,430/$) 기준 두 모델 비교</p>
+
+<!-- ===== OVERVIEW ===== -->
+<div class="section">
+  <div class="sh">
+    <span class="sb" style="background:#555;">개요</span>
+    <div>
+      <div style="font-size:17px;font-weight:600;">두 가지 정산 모델</div>
+      <div style="font-size:12px;color:#888;margin-top:2px;">FI 파트너가 은행이냐 증권사냐에 따라 자금 흐름이 다름</div>
+    </div>
+  </div>
+
+  <p style="font-size:13px;color:#555;line-height:1.7;margin-bottom:20px;">
+    KustodyFi의 FI 파트너는 초기에 증권사가 될 확률이 높습니다. 은행은 자체 외환 시스템이 있어서 우리와 연동할 동기가 약하지만, 증권사는 종합금융투자사업자로서 외환 업무를 확장하려는 니즈가 있고, 우리 TMS/SEAL 인프라가 그 가치를 채워줄 수 있기 때문입니다.
+  </p>
+
+  <!-- Bank direct flow -->
+  <p style="font-size:11px;font-weight:600;color:#3B8BD4;margin-bottom:4px;">모델 A: 은행 직접</p>
+  <div class="flow-row">
+    <div class="flow-box fb-buyer"><h4>해외 바이어</h4><p>USD 송금</p></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box fb-bank"><h4>은행</h4><p>USD 입금<br>+ 환전<br>+ KRW 입금</p></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box fb-cust"><h4>고객</h4><p>KRW 수취</p></div>
+    <div class="flow-arrow" style="color:#fff;">→</div>
+    <div class="flow-box fb-tms"><h4>TMS</h4><p>결제 확인<br>담보 해제</p></div>
+  </div>
+
+  <!-- Securities company route flow -->
+  <p style="font-size:11px;font-weight:600;color:#7F77DD;margin-bottom:4px;margin-top:16px;">모델 B: 증권사 경유</p>
+  <div class="flow-row">
+    <div class="flow-box fb-buyer"><h4>해외 바이어</h4><p>USD 송금</p></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box fb-bank"><h4>고객 은행</h4><p>USD 입금</p></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box fb-kftc"><h4>KFTC</h4><p>외화 타행이체</p></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box fb-sec"><h4>증권사</h4><p>USD 수취<br>+ 환전</p></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box fb-cust"><h4>고객</h4><p>KRW 수취</p></div>
+    <div class="flow-arrow" style="color:#fff;">→</div>
+    <div class="flow-box fb-tms"><h4>TMS</h4><p>확인<br>+해제</p></div>
+  </div>
+
+  <div class="co co-gray" style="margin-top:16px;">
+    <strong>핵심 차이:</strong> 모델 A는 거래와 결제가 같은 은행에서 이루어짐 (이체 불요). 모델 B는 외화가 고객 은행 → 증권사로 이동해야 하므로 외화 타행이체가 필수. 따라서 Cut-off 타임라인이 더 빡빡함.
+  </div>
+</div>
+
+<!-- ===== SIDE BY SIDE ===== -->
+<div class="section">
+  <div class="sh">
+    <span class="sb" style="background:#BA7517;">상세</span>
+    <div>
+      <div style="font-size:17px;font-weight:600;">만기일 정산 — Step by Step</div>
+      <div style="font-size:12px;color:#888;margin-top:2px;">수출기업 예시: Sell USD $500K, 약정환율 ₩1,430/$</div>
+    </div>
+  </div>
+
+  <div class="compare">
+    <!-- MODEL A: BANK DIRECT -->
+    <div class="model">
+      <div class="model-header mh-bank">
+        <h3>모델 A: 은행 직접</h3>
+        <p>하나은행에서 선물환 체결 + 하나은행에 USD 계좌</p>
+      </div>
+      <div class="model-body">
+
+        <div class="step">
+          <div class="step-num sn-bank">1</div>
+          <div class="step-content">
+            <span class="step-actor sa-buyer">해외 바이어</span>
+            <div class="step-title">수출대금 USD 입금</div>
+            <div class="step-desc">바이어가 고객의 하나은행 USD 계좌로 $500K 송금</div>
+            <div class="step-channel">SWIFT / Correspondent Bank</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num sn-bank">2</div>
+          <div class="step-content">
+            <span class="step-actor sa-tms">TMS</span>
+            <div class="step-title">입금 확인 + 결제 준비</div>
+            <div class="step-desc">오픈뱅킹으로 USD 입금 감지. "결제 준비 완료" 알림.</div>
+          </div>
+        </div>
+
+        <div class="step success">
+          <div class="step-num sn-bank">3</div>
+          <div class="step-content">
+            <span class="step-actor sa-cust">고객</span>
+            <div class="step-title">은행에 결제 지시</div>
+            <div class="step-desc">하나은행 인터넷뱅킹에서 선물환 결제 지시.<br>
+              <strong>외화 이체 불요</strong> — 같은 은행 내부 처리.</div>
+            <div class="step-channel">인터넷뱅킹 / 전화</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num sn-bank">4</div>
+          <div class="step-content">
+            <span class="step-actor sa-bank">하나은행</span>
+            <div class="step-title">환전 실행</div>
+            <div class="step-desc">USD $500K × ₩1,430/$ = ₩7.15억<br>
+              고객 KRW 계좌에 원화 즉시 입금.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num sn-bank">5</div>
+          <div class="step-content">
+            <span class="step-actor sa-bank">하나은행</span>
+            <div class="step-title">담보 해제 + 보증금 반환</div>
+            <div class="step-desc">결제 완료 확인 → 보증금 잠금 해제 → 보증금 + 이자 반환.</div>
+            <div class="step-channel">은행 내부 (즉시)</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num sn-bank">6</div>
+          <div class="step-content">
+            <span class="step-actor sa-tms">TMS</span>
+            <div class="step-title">SETTLED + Audit Trail</div>
+            <div class="step-desc">Blotter: CONFIRMED → SETTLED. 전체 체인 기록 확정.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MODEL B: SECURITIES COMPANY -->
+    <div class="model">
+      <div class="model-header mh-sec">
+        <h3>모델 B: 증권사 경유</h3>
+        <p>KB증권에서 선물환 체결 + 하나은행에 USD 계좌</p>
+      </div>
+      <div class="model-body">
+
+        <div class="step">
+          <div class="step-num sn-sec">1</div>
+          <div class="step-content">
+            <span class="step-actor sa-buyer">해외 바이어</span>
+            <div class="step-title">수출대금 USD 입금</div>
+            <div class="step-desc">바이어가 고객의 하나은행 USD 계좌로 $500K 송금</div>
+            <div class="step-channel">SWIFT / Correspondent Bank</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num sn-sec">2</div>
+          <div class="step-content">
+            <span class="step-actor sa-tms">TMS</span>
+            <div class="step-title">입금 확인 + Settlement Instruction</div>
+            <div class="step-desc">USD 입금 감지 → "하나은행 USD → KB증권 외화입금계좌로 $500K 이체" 지시서 발송.</div>
+          </div>
+        </div>
+
+        <div class="step highlight">
+          <div class="step-num sn-sec">3</div>
+          <div class="step-content">
+            <span class="step-actor sa-cust">고객 (Dealer)</span>
+            <div class="step-title">⭐ 외화 타행이체 실행</div>
+            <div class="step-desc">하나은행 인터넷뱅킹/펌뱅킹에서 KB증권 외화입금계좌로 USD $500K 이체.<br>
+              <strong style="color:#E24B4A;">12:00(정오) 전에 완료 필수.</strong></div>
+            <div class="step-channel">KFTC 외화이체 공동망 (실시간)</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num sn-sec">4</div>
+          <div class="step-content">
+            <span class="step-actor sa-sec">KB증권</span>
+            <div class="step-title">USD 입금 확인</div>
+            <div class="step-desc">KFTC 통해 USD $500K 입금 확인. 선물환 계약과 매칭.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num sn-sec">5</div>
+          <div class="step-content">
+            <span class="step-actor sa-sec">KB증권</span>
+            <div class="step-title">환전 실행</div>
+            <div class="step-desc">USD $500K × ₩1,430/$ = ₩7.15억</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num sn-sec">6</div>
+          <div class="step-content">
+            <span class="step-actor sa-sec">KB증권</span>
+            <div class="step-title">원화 이체</div>
+            <div class="step-desc">₩7.15억을 고객 원화 계좌로 이체.<br>
+              KB증권 내 KRW 계좌 또는 고객 은행(하나) KRW 계좌.</div>
+            <div class="step-channel">증권사 → 은행 (원화 타행이체)</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num sn-sec">7</div>
+          <div class="step-content">
+            <span class="step-actor sa-sec">KB증권</span>
+            <div class="step-title">담보 해제 + 보증금 반환</div>
+            <div class="step-desc">결제 완료 → 보증금 잠금 해제 → 보증금 + 이자를 고객에 반환.</div>
+            <div class="step-channel">증권사 → 고객 계좌 (당일)</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num sn-sec">8</div>
+          <div class="step-content">
+            <span class="step-actor sa-tms">TMS</span>
+            <div class="step-title">SETTLED + Audit Trail</div>
+            <div class="step-desc">Blotter: CONFIRMED → SETTLED. 전체 체인 기록 확정.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== COMPARISON TABLE ===== -->
+<div class="section">
+  <div class="sh">
+    <span class="sb" style="background:#555;">비교</span>
+    <div>
+      <div style="font-size:17px;font-weight:600;">모델 A vs 모델 B 비교표</div>
+    </div>
+  </div>
+
+  <table class="cmp-table">
+    <tr>
+      <th style="width:22%">항목</th>
+      <th style="width:39%" class="bank-col">모델 A: 은행 직접</th>
+      <th style="width:39%" class="sec-col">모델 B: 증권사 경유</th>
+    </tr>
+    <tr>
+      <td style="font-weight:600;">거래 기관</td>
+      <td class="bank-col">은행 (하나, 씨티 등)</td>
+      <td class="sec-col">증권사 (KB, NH, 미래에셋 등)</td>
+    </tr>
+    <tr>
+      <td style="font-weight:600;">외화 이체</td>
+      <td class="bank-col">불요 (같은 은행 내부 처리)</td>
+      <td class="sec-col"><strong>필수</strong> — 은행 → 증권사 (KFTC)</td>
+    </tr>
+    <tr>
+      <td style="font-weight:600;">이체 수수료</td>
+      <td class="bank-col">₩0 (내부이체)</td>
+      <td class="sec-col">₩5,000~₩20,000/건 (볼륨 협상 가능)</td>
+    </tr>
+    <tr>
+      <td style="font-weight:600;">원화 수취</td>
+      <td class="bank-col">같은 은행 KRW 계좌에 즉시 입금</td>
+      <td class="sec-col">증권사 → 고객 은행 KRW 계좌 (원화 타행이체 추가 발생)</td>
+    </tr>
+    <tr>
+      <td style="font-weight:600;">원화 이체 수수료</td>
+      <td class="bank-col">₩0</td>
+      <td class="sec-col">통상 무료 (증권사→은행 원화이체). 은행에 따라 입금 수수료 발생 가능</td>
+    </tr>
+    <tr>
+      <td style="font-weight:600;">보증금 예치</td>
+      <td class="bank-col">은행 보증금 계정 (원화 또는 외화)</td>
+      <td class="sec-col">증권사 보증금 계정 (원화 또는 외화)</td>
+    </tr>
+    <tr>
+      <td style="font-weight:600;">보증금 이자</td>
+      <td class="bank-col">은행 약정 이율 (통상 낮음)</td>
+      <td class="sec-col">증권사 약정 이율 (CMA 수준 가능)</td>
+    </tr>
+    <tr>
+      <td style="font-weight:600;">보증금 반환 경로</td>
+      <td class="bank-col">은행 내부이체 (즉시)</td>
+      <td class="sec-col">증권사 → 고객 은행 (원화 타행이체, 당일 처리)</td>
+    </tr>
+    <tr>
+      <td style="font-weight:600;">약정서</td>
+      <td class="bank-col">[2-A] 은행용</td>
+      <td class="sec-col">[2-B] 증권사용 (적합성 원칙/설명의무 추가)</td>
+    </tr>
+    <tr>
+      <td style="font-weight:600;">고객 행동 부담</td>
+      <td class="bank-col">낮음 (결제 지시만)</td>
+      <td class="sec-col"><strong>높음</strong> (외화 타행이체 + 12:00 마감 준수)</td>
+    </tr>
+    <tr>
+      <td style="font-weight:600;">정산 스텝 수</td>
+      <td class="bank-col">6단계</td>
+      <td class="sec-col">8단계</td>
+    </tr>
+    <tr>
+      <td style="font-weight:600;">사전 세팅 (Layer 3)</td>
+      <td class="bank-col">SSI 등록만</td>
+      <td class="sec-col">SSI + 외화 타행이체 약정 + 증권사 외화입금 약정 + 테스트 이체</td>
+    </tr>
+    <tr>
+      <td style="font-weight:600;">당일 담보해제</td>
+      <td class="bank-col">확실 (내부 처리)</td>
+      <td class="sec-col">12:00 전 이체 완료 시 가능. 이후 이체 시 익일 리스크</td>
+    </tr>
+    <tr>
+      <td style="font-weight:600;">15:00 Hard Cutoff</td>
+      <td class="bank-col">적용 (약정서 제20조)</td>
+      <td class="sec-col">적용 (약정서 제20조) + KFTC 마감도 15:00</td>
+    </tr>
+  </table>
+
+  <div class="co co-amber">
+    <strong>증권사 경유의 장점 (은행 대비):</strong><br>
+    · 증권사가 외환 업무 확장 의지가 있어서 <strong>파트너십 체결이 쉬움</strong> — 은행은 이미 자체 시스템이 있어서 우리와 연동할 동기가 약함<br>
+    · 보증금에 대해 <strong>CMA 수준 이자</strong>를 줄 수 있음 — 은행 보증금 계정은 통상 무이자 또는 저금리<br>
+    · 종합금융투자사업자는 <strong>일반환전 업무</strong>가 허용됨 (2023년 외국환거래규정 개정) — 자체 환전 가능<br>
+    · 은행 대비 <strong>수수료 구조가 유연</strong> — 건별 협상 여지가 큼
+  </div>
+
+  <div class="co co-blue">
+    <strong>증권사 경유의 주의점:</strong><br>
+    · 자본시장법 제166조의2 — 일반투자자 대상 장외파생은 <strong>위험회피 목적에 한정</strong>. 고객이 전문투자자인지 확인 필요<br>
+    · 외화 타행이체가 필수 — <strong>12:00 마감 + 사전 약정</strong>이 고객 부담<br>
+    · 원화 수취도 타행이체 → 환전 후 고객이 원화를 받는 데 <strong>추가 1~2시간</strong> 소요<br>
+    · 보증금 반환도 타행이체 → <strong>당일 해제가 조금 더 빡빡</strong> (증권사 내부 처리 + 원화이체)
+  </div>
+</div>
+
+<!-- ===== SECURITIES CUTOFF TIMELINE ===== -->
+<div class="section">
+  <div class="sh">
+    <span class="sb" style="background:#7F77DD;">증권사</span>
+    <div>
+      <div style="font-size:17px;font-weight:600;">모델 B (증권사 경유) 만기일 타임라인</div>
+      <div style="font-size:12px;color:#888;margin-top:2px;">은행 직접보다 스텝이 많아서 시간 관리가 더 중요</div>
+    </div>
+  </div>
+
+  <table class="cmp-table">
+    <tr>
+      <th style="width:10%">시간</th>
+      <th style="width:12%">Actor</th>
+      <th style="width:40%">Action</th>
+      <th style="width:18%">Channel</th>
+      <th style="width:20%">비고</th>
+    </tr>
+    <tr style="background:#f8f8f8;"><td colspan="5" style="font-weight:600;font-size:11px;color:#7F77DD;">오전 — 자금 확인 + 외화이체</td></tr>
+    <tr>
+      <td style="font-weight:600;">09:00</td>
+      <td style="font-weight:600;">TMS</td>
+      <td>하나은행 USD 계좌 잔고 확인. 부족 시 긴급 알림.</td>
+      <td>오픈뱅킹</td>
+      <td>—</td>
+    </tr>
+    <tr style="background:#f0fdf4;">
+      <td style="font-weight:700;color:#1D9E75;">09:00<br>~12:00</td>
+      <td style="font-weight:700;color:#1D9E75;">고객</td>
+      <td style="font-weight:600;">⭐ 외화 타행이체 실행<br>하나은행 USD → KB증권 외화입금계좌 $500K</td>
+      <td>KFTC 외화이체<br>/ 펌뱅킹</td>
+      <td style="color:#E24B4A;font-weight:600;">12:00 전 완료 필수</td>
+    </tr>
+    <tr>
+      <td style="font-weight:600;">11:00</td>
+      <td style="font-weight:600;">TMS</td>
+      <td>미이체 시 리마인더: "마감 1시간 전입니다"</td>
+      <td>이메일 + 메신저</td>
+      <td>—</td>
+    </tr>
+    <tr style="background:#fef2f2;">
+      <td style="font-weight:700;color:#E24B4A;">12:00</td>
+      <td style="color:#E24B4A;">DEADLINE</td>
+      <td style="color:#E24B4A;font-weight:600;">외화이체 Soft Cutoff</td>
+      <td>—</td>
+      <td style="color:#E24B4A;">이후 이체 시 담보해제 익일 리스크</td>
+    </tr>
+
+    <tr style="background:#f8f8f8;"><td colspan="5" style="font-weight:600;font-size:11px;color:#7F77DD;">오후 — 증권사 처리</td></tr>
+    <tr>
+      <td style="font-weight:600;">12:00<br>~12:30</td>
+      <td style="font-weight:600;">KB증권</td>
+      <td>USD 입금 확인. 선물환 계약과 매칭.</td>
+      <td>증권사 내부</td>
+      <td>KFTC 실시간 (주요 5개 통화)</td>
+    </tr>
+    <tr>
+      <td style="font-weight:600;">12:30<br>~13:00</td>
+      <td style="font-weight:600;">KB증권</td>
+      <td>약정환율 ₩1,430/$로 환전 실행.<br>₩7.15억 산출.</td>
+      <td>증권사 내부</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td style="font-weight:600;">13:00<br>~13:30</td>
+      <td style="font-weight:600;">KB증권</td>
+      <td>₩7.15억을 고객 원화 계좌(하나은행 KRW)에 이체.</td>
+      <td>원화 타행이체</td>
+      <td>원화이체 수수료: 통상 무료</td>
+    </tr>
+    <tr>
+      <td style="font-weight:600;">13:30</td>
+      <td style="font-weight:600;">고객</td>
+      <td>하나은행 KRW 계좌 입금 확인.</td>
+      <td>인터넷뱅킹</td>
+      <td>—</td>
+    </tr>
+
+    <tr style="background:#f8f8f8;"><td colspan="5" style="font-weight:600;font-size:11px;color:#1D9E75;">오후 — 담보해제 (당일)</td></tr>
+    <tr>
+      <td style="font-weight:600;">13:30</td>
+      <td style="font-weight:600;">TMS</td>
+      <td>결제 완료 확인 (원화 입금 감지). Blotter: SETTLED.<br>담보소요액 재산정 + 담보해제 요청서 자동 생성·발송.</td>
+      <td>오픈뱅킹 + API/이메일</td>
+      <td>—</td>
+    </tr>
+    <tr style="background:#f0fdf4;">
+      <td style="font-weight:600;color:#1D9E75;">14:00<br>~15:00</td>
+      <td style="font-weight:600;color:#1D9E75;">KB증권</td>
+      <td style="color:#1D9E75;">담보 잠금 해제 → 보증금 + 이자를 고객 계좌에 반환.</td>
+      <td>원화 타행이체<br>(증권사 → 은행)</td>
+      <td style="color:#1D9E75;font-weight:600;">당일 반환 완료</td>
+    </tr>
+    <tr>
+      <td style="font-weight:600;">15:00</td>
+      <td style="font-weight:600;">TMS</td>
+      <td>보증금 반환 입금 확인. Audit Trail 최종 확정.</td>
+      <td>오픈뱅킹</td>
+      <td>—</td>
+    </tr>
+
+    <tr style="background:#fef2f2;"><td colspan="5" style="font-weight:600;font-size:11px;color:#E24B4A;">Hard Cutoff</td></tr>
+    <tr style="background:#fef2f2;">
+      <td style="font-weight:700;color:#E24B4A;">15:00</td>
+      <td style="color:#E24B4A;font-weight:600;">약정서 제20조</td>
+      <td style="color:#E24B4A;font-weight:600;">인도마감시한. 미인도 시 즉시 강제청산 + 담보 몰수.</td>
+      <td>—</td>
+      <td style="color:#E24B4A;">T+1 유예 없음</td>
+    </tr>
+  </table>
+
+  <div class="co co-green">
+    <strong>12:00에 이체 완료하면 이 스케줄대로 당일 15:00까지 전부 끝남:</strong><br>
+    외화이체(12:00) → 입금확인(12:30) → 환전(13:00) → 원화이체(13:30) → 담보해제(14~15:00) → 보증금반환(15:00) ✅
+  </div>
+</div>
+
+<!-- ===== RECOMMENDATION ===== -->
+<div class="section">
+  <div class="sh">
+    <span class="sb" style="background:#1D9E75;">전략</span>
+    <div>
+      <div style="font-size:17px;font-weight:600;">고객에게 어떤 모델을 권장할 것인가</div>
+    </div>
+  </div>
+
+  <table class="cmp-table">
+    <tr>
+      <th style="width:30%">고객 상황</th>
+      <th style="width:25%">권장 모델</th>
+      <th style="width:45%">이유</th>
+    </tr>
+    <tr>
+      <td>주거래 은행에서 선물환도 가능</td>
+      <td style="font-weight:600;color:#3B8BD4;">모델 A (은행 직접)</td>
+      <td>이체 불요, 수수료 0, 가장 단순. 당일 담보해제 확실.</td>
+    </tr>
+    <tr>
+      <td>은행이 선물환 안 해주거나<br>스프레드가 너무 넓은 경우</td>
+      <td style="font-weight:600;color:#7F77DD;">모델 B (증권사 경유)</td>
+      <td>증권사가 더 좋은 호가를 줄 수 있음. Multi-RFQ 효과 극대화.</td>
+    </tr>
+    <tr>
+      <td>초기 KustodyFi 고객<br>(FI 파트너 = 증권사)</td>
+      <td style="font-weight:600;color:#7F77DD;">모델 B (증권사 경유)</td>
+      <td>초기 FI 파트너가 증권사일 확률이 높으므로 기본 경로.</td>
+    </tr>
+    <tr>
+      <td>거래 규모가 크고<br>수수료에 민감한 경우</td>
+      <td style="font-weight:600;">A + B 병행</td>
+      <td>큰 건은 모델 A (수수료 절감), 은행이 안 해주는 건은 모델 B로 분산.</td>
+    </tr>
+  </table>
+
+  <div class="co co-amber">
+    <strong>TMS에서의 구현:</strong> 고객은 기관 온보딩(Layer 3) 때 기관별로 모델 A/B를 지정.
+    한 고객이 하나은행(모델 A) + KB증권(모델 B)을 동시에 쓸 수 있음.
+    만기 결제 시 TMS가 해당 거래의 기관을 확인하고 적합한 Settlement Instruction을 자동 생성.
+  </div>
+</div>
+
+<div class="footer">
+  KustodyFi Co., Ltd. — 정산 플로우: 은행 직접 vs 증권사 경유 v1.0 (DRAFT)<br>
+  모델 A (은행 6단계) vs 모델 B (증권사 8단계) | 12:00 Soft Cutoff | 15:00 Hard Cutoff + 담보 몰수
+</div>
+
+</div>
+</body>
+</html>

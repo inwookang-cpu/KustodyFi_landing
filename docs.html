@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="KustodyFi 문서 센터 — 약정서, 서비스 플로우, 결제 가이드를 한 곳에서 확인하고 다운로드할 수 있습니다.">
+<title>KustodyFi — 문서 센터 (Document Center)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  :root {
+    --primary: #0891b2;
+    --primary-dark: #0e7490;
+    --primary-light: #67e8f9;
+    --accent: #2563eb;
+    --accent-light: #93c5fd;
+    --success: #059669;
+    --success-light: #6ee7b7;
+    --warning: #d97706;
+    --warning-light: #fcd34d;
+    --danger: #dc2626;
+    --dark: #0f172a;
+    --gray-900: #1e293b;
+    --gray-700: #334155;
+    --gray-600: #475569;
+    --gray-500: #64748b;
+    --gray-400: #94a3b8;
+    --gray-300: #cbd5e1;
+    --gray-200: #e2e8f0;
+    --gray-100: #f1f5f9;
+    --gray-50: #f8fafc;
+    --white: #ffffff;
+    --gradient-main: linear-gradient(135deg, #0891b2 0%, #2563eb 100%);
+    --max-w: 1200px;
+    --section-py: 100px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Noto Sans KR', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--gray-900); background: var(--white); line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== NAV ===== */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: rgba(255,255,255,.85); backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0,0,0,.06); transition: all .3s;
+  }
+  .nav-inner {
+    max-width: var(--max-w); margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px; height: 64px;
+  }
+  .nav-logo {
+    font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 800;
+    letter-spacing: -0.5px; color: var(--dark); text-decoration: none;
+  }
+  .nav-logo span { color: var(--primary); }
+  .nav-links { display: flex; gap: 24px; align-items: center; }
+  .nav-links a {
+    font-size: 14px; font-weight: 500; color: var(--gray-600);
+    text-decoration: none; transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--primary); }
+  .nav-cta {
+    padding: 8px 20px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    color: var(--white) !important; background: var(--gradient-main);
+    border: none; cursor: pointer; transition: transform .2s, box-shadow .2s;
+  }
+  .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(8,145,178,.3); }
+
+  /* ===== MOBILE NAV ===== */
+  .nav-hamburger {
+    display: none; width: 32px; height: 32px; border: none; background: none;
+    cursor: pointer; position: relative; flex-shrink: 0;
+  }
+  .nav-hamburger span {
+    display: block; width: 20px; height: 2px; background: var(--gray-700);
+    position: absolute; left: 6px; transition: all .3s;
+  }
+  .nav-hamburger span:nth-child(1) { top: 9px; }
+  .nav-hamburger span:nth-child(2) { top: 15px; }
+  .nav-hamburger span:nth-child(3) { top: 21px; }
+  .mobile-menu {
+    display: none; position: fixed; top: 56px; left: 0; right: 0; bottom: 0;
+    background: rgba(255,255,255,.98); backdrop-filter: blur(20px);
+    z-index: 999; padding: 24px; flex-direction: column; gap: 8px;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    display: block; padding: 16px 20px; border-radius: 12px;
+    font-size: 16px; font-weight: 600; color: var(--gray-700);
+    text-decoration: none; background: var(--gray-50); transition: all .2s;
+  }
+  .mobile-menu a:hover { background: rgba(8,145,178,.06); color: var(--primary); }
+  .mobile-menu .mobile-menu-cta {
+    margin-top: 12px; text-align: center;
+    color: var(--white); background: var(--gradient-main);
+  }
+
+  /* ===== SECTIONS ===== */
+  .section { padding: var(--section-py) 40px; }
+  .section-inner { max-width: var(--max-w); margin: 0 auto; }
+  .section-label {
+    font-size: 13px; font-weight: 700; letter-spacing: 3px;
+    color: var(--primary); text-transform: uppercase; margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: 40px; font-weight: 900; line-height: 1.3;
+    color: var(--dark); margin-bottom: 16px; letter-spacing: -0.5px;
+  }
+  .section-title .hl {
+    background: var(--gradient-main);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .section-desc {
+    font-size: 17px; color: var(--gray-500); line-height: 1.8; max-width: 640px;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 70vh; display: flex; align-items: center;
+    background: radial-gradient(ellipse at 30% 40%, rgba(8,145,178,.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 60%, rgba(37,99,235,.04) 0%, transparent 60%),
+                var(--white);
+    padding-top: 64px;
+  }
+  .hero-inner {
+    max-width: var(--max-w); margin: 0 auto; padding: 80px 40px;
+    text-align: center;
+  }
+  .hero-badge {
+    display: inline-block; padding: 6px 14px; border-radius: 20px;
+    font-size: 12px; font-weight: 600; color: var(--primary);
+    background: rgba(8,145,178,.08); border: 1px solid rgba(8,145,178,.15);
+    margin-bottom: 24px; opacity: 0; animation: fadeUp .8s .2s forwards;
+  }
+  .hero-title {
+    font-size: 48px; font-weight: 900; line-height: 1.25;
+    color: var(--dark); margin-bottom: 24px; letter-spacing: -1px;
+    opacity: 0; animation: fadeUp .8s .3s forwards;
+  }
+  .hero-title .hl {
+    background: var(--gradient-main);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .hero-desc {
+    font-size: 17px; color: var(--gray-500); line-height: 1.8; margin-bottom: 36px;
+    max-width: 640px; margin-left: auto; margin-right: auto;
+    opacity: 0; animation: fadeUp .8s .5s forwards;
+  }
+  .hero-ctas {
+    display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+    opacity: 0; animation: fadeUp .8s .7s forwards;
+  }
+
+  /* ===== BUTTONS ===== */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 14px 28px; border-radius: 10px; font-size: 15px; font-weight: 700;
+    text-decoration: none; transition: all .25s; cursor: pointer; border: none;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .btn-primary {
+    color: var(--white); background: var(--gradient-main);
+    box-shadow: 0 4px 16px rgba(8,145,178,.25);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(8,145,178,.35); }
+  .btn-outline {
+    color: var(--gray-700); background: var(--white); border: 1.5px solid var(--gray-200);
+  }
+  .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+  /* ===== DOCUMENT CARDS ===== */
+  .doc-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px;
+  }
+  .doc-card {
+    background: var(--white); border-radius: 16px; padding: 32px;
+    border: 1px solid var(--gray-200); transition: all .3s;
+    position: relative; overflow: hidden;
+    opacity: 0; transform: translateY(24px);
+  }
+  .doc-card.visible { opacity: 1; transform: translateY(0); }
+  .doc-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.08); }
+  .doc-card.visible:hover { transform: translateY(-4px); }
+  .doc-card::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+  }
+  .doc-card.border-primary::before { background: var(--primary); }
+  .doc-card.border-accent::before { background: var(--accent); }
+  .doc-card.border-warning::before { background: var(--warning); }
+  .doc-card.border-success::before { background: var(--success); }
+  .doc-card.border-gray::before { background: var(--gray-400); }
+
+  .doc-card-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; margin-bottom: 20px;
+    background: rgba(8,145,178,.06);
+  }
+  .doc-card-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 12px; margin-bottom: 12px;
+  }
+  .doc-card h3 {
+    font-size: 17px; font-weight: 800; color: var(--dark); line-height: 1.4;
+  }
+  .doc-card p {
+    font-size: 14px; color: var(--gray-500); line-height: 1.7; margin-bottom: 16px;
+  }
+  .doc-card-tags {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px;
+  }
+  .doc-tag {
+    display: inline-block; padding: 3px 10px; border-radius: 6px;
+    font-size: 11px; font-weight: 600;
+    background: rgba(8,145,178,.06); color: var(--primary);
+    border: 1px solid rgba(8,145,178,.12);
+  }
+  .doc-tag-warning {
+    background: rgba(217,119,6,.06); color: var(--warning);
+    border: 1px solid rgba(217,119,6,.15);
+  }
+  .doc-card-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 16px; border-top: 1px solid var(--gray-100);
+  }
+  .doc-file-size {
+    font-size: 12px; color: var(--gray-400); font-family: 'Inter', sans-serif;
+  }
+  .doc-status {
+    display: inline-block; padding: 3px 10px; border-radius: 6px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+    background: rgba(217,119,6,.08); color: var(--warning);
+    border: 1px solid rgba(217,119,6,.15);
+  }
+  .btn-download {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    color: var(--white); background: var(--gradient-main);
+    text-decoration: none; transition: all .2s; border: none; cursor: pointer;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .btn-download:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(8,145,178,.3); }
+  .btn-locked {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    color: var(--gray-500); background: var(--gray-100);
+    text-decoration: none; border: 1px solid var(--gray-200); cursor: default;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .btn-download svg {
+    width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2;
+    stroke-linecap: round; stroke-linejoin: round;
+  }
+  .btn-view {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 14px; font-weight: 600; color: var(--primary);
+    text-decoration: none; transition: all .2s;
+  }
+  .btn-view:hover { color: var(--accent); gap: 8px; }
+
+  /* ===== NOTE ===== */
+  .doc-note {
+    margin-top: 32px; padding: 20px 24px; border-radius: 12px;
+    background: rgba(217,119,6,.04); border: 1px solid rgba(217,119,6,.12);
+    font-size: 14px; color: var(--gray-600); line-height: 1.7;
+  }
+  .doc-note a {
+    color: var(--primary); font-weight: 600; text-decoration: none;
+  }
+  .doc-note a:hover { text-decoration: underline; }
+
+  /* ===== CTA SECTION ===== */
+  .cta-section {
+    background: var(--dark); text-align: center;
+  }
+  .cta-title {
+    font-size: 36px; font-weight: 900; color: var(--white);
+    margin-bottom: 16px; letter-spacing: -0.5px;
+  }
+  .cta-title .hl {
+    background: var(--gradient-main);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .cta-desc {
+    font-size: 17px; color: var(--gray-400); margin-bottom: 36px;
+    line-height: 1.8;
+  }
+  .cta-buttons {
+    display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+  }
+  .btn-cta-primary {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 14px 28px; border-radius: 10px; font-size: 15px; font-weight: 700;
+    color: var(--white); background: var(--gradient-main);
+    text-decoration: none; transition: all .25s; border: none; cursor: pointer;
+    font-family: 'Noto Sans KR', sans-serif;
+    box-shadow: 0 4px 16px rgba(8,145,178,.25);
+  }
+  .btn-cta-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(8,145,178,.35); }
+  .btn-cta-outline {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 14px 28px; border-radius: 10px; font-size: 15px; font-weight: 700;
+    color: var(--gray-300); background: transparent; border: 1.5px solid var(--gray-600);
+    text-decoration: none; transition: all .25s; cursor: pointer;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .btn-cta-outline:hover { border-color: var(--primary); color: var(--primary-light); }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    padding: 48px 40px; background: var(--gray-900);
+    border-top: 1px solid rgba(255,255,255,.06);
+  }
+  .footer-inner {
+    max-width: var(--max-w); margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .footer-logo { font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 800; color: var(--white); }
+  .footer-logo span { color: var(--primary); }
+  .footer-info { font-size: 12px; color: var(--gray-500); line-height: 1.8; text-align: right; }
+  .footer-info a { color: var(--primary-light); text-decoration: none; }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+    .hero-badge, .hero-title, .hero-desc, .hero-ctas { opacity: 1; }
+    .doc-card { opacity: 1; transform: none; }
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .nav-hamburger { display: block; }
+    .nav-inner { padding: 0 20px; height: 56px; }
+
+    .section { padding: 60px 20px; }
+    .hero { min-height: auto; padding-top: 56px; }
+    .hero-inner { padding: 48px 20px; }
+    .hero-title { font-size: 28px; letter-spacing: -0.5px; }
+    .hero-desc { font-size: 15px; margin-bottom: 28px; }
+    .hero-ctas { flex-direction: column; align-items: stretch; }
+    .hero-ctas .btn { justify-content: center; }
+
+    .section-title { font-size: 26px; }
+    .section-desc { font-size: 15px; }
+
+    .doc-grid {
+      grid-template-columns: 1fr; gap: 16px; margin-top: 32px;
+    }
+    .doc-card { padding: 24px; }
+    .doc-card h3 { font-size: 16px; }
+
+    .cta-title { font-size: 24px; }
+    .cta-desc { font-size: 15px; }
+    .cta-buttons { flex-direction: column; align-items: stretch; }
+    .cta-buttons a { text-align: center; justify-content: center; }
+
+    .footer { padding: 32px 20px; }
+    .footer-inner { flex-direction: column; gap: 16px; text-align: center; }
+    .footer-info { text-align: center; font-size: 11px; }
+    .footer-logo { font-size: 16px; }
+  }
+
+  @media (min-width: 769px) and (max-width: 900px) {
+    .doc-grid { grid-template-columns: 1fr 1fr; }
+    .footer-inner { flex-direction: column; gap: 24px; text-align: center; }
+    .footer-info { text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">Kustody<span>Fi</span></a>
+    <div class="nav-links">
+      <a href="index.html">홈</a>
+      <a href="#agreements">약정서</a>
+      <a href="#flows">서비스 플로우</a>
+      <a href="#settlement">결제 가이드</a>
+      <a href="index.html#cta" class="nav-cta">데모 신청</a>
+    </div>
+    <button class="nav-hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="mobile-menu">
+  <a href="index.html">홈</a>
+  <a href="#agreements" onclick="document.querySelector('.mobile-menu').classList.remove('open')">약정서</a>
+  <a href="#flows" onclick="document.querySelector('.mobile-menu').classList.remove('open')">서비스 플로우</a>
+  <a href="#settlement" onclick="document.querySelector('.mobile-menu').classList.remove('open')">결제 가이드</a>
+  <a href="index.html#cta" class="mobile-menu-cta">데모 신청</a>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">Document Center</div>
+    <h1 class="hero-title">서비스 도입 전, <span class="hl">미리 확인하세요</span></h1>
+    <p class="hero-desc">약정서, 서비스 플로우, 결제 가이드. KustodyFi 도입에 필요한 문서를 한 곳에서 확인하고 다운로드할 수 있습니다.</p>
+    <div class="hero-ctas">
+      <a href="#agreements" class="btn btn-primary">약정서 목록 보기 &#8594;</a>
+      <a href="index.html" class="btn btn-outline">KustodyFi 홈</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 1: 약정서 ===== -->
+<section id="agreements" class="section">
+  <div class="section-inner">
+    <div class="section-label">AGREEMENTS</div>
+    <h2 class="section-title">약정서 <span class="hl">미리보기</span></h2>
+    <p class="section-desc">서비스 도입 시 체결하는 약정서 목록입니다. 실제 문서는 데모 신청 및 NDA 체결 후 제공됩니다.</p>
+
+    <div class="doc-grid">
+      <!-- Card 1 -->
+      <div class="doc-card border-primary" data-anim>
+        <div class="doc-card-icon">&#x1F4CB;</div>
+        <div class="doc-card-header">
+          <h3>[1] 서비스이용약정서</h3>
+          <span class="doc-status">DRAFT v3</span>
+        </div>
+        <p>KustodyFi 플랫폼 이용에 관한 기본 약정서. 서비스 범위, 이용 조건, 책임 범위를 규정합니다.</p>
+        <div class="doc-card-tags">
+          <span class="doc-tag">Layer 1</span>
+          <span class="doc-tag">서비스 가입 시</span>
+        </div>
+        <div class="doc-card-footer">
+          <span class="doc-file-size">~18 KB &middot; DOCX</span>
+          <span class="btn-locked">&#128274; 데모 신청 후 제공</span>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="doc-card border-accent" data-anim>
+        <div class="doc-card-icon">&#x1F3E6;</div>
+        <div class="doc-card-header">
+          <h3>[2-A] 외환거래약정서 (은행용)</h3>
+          <span class="doc-status">DRAFT</span>
+        </div>
+        <p>은행과의 외환 거래(Spot/Forward)에 관한 약정서. 기존 은행 거래선이 있는 경우 부가 약정으로 처리합니다.</p>
+        <div class="doc-card-tags">
+          <span class="doc-tag">Layer 3</span>
+          <span class="doc-tag">기관 연결 시</span>
+        </div>
+        <div class="doc-card-footer">
+          <span class="doc-file-size">~23 KB &middot; DOCX</span>
+          <span class="btn-locked">&#128274; 데모 신청 후 제공</span>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="doc-card border-warning" data-anim>
+        <div class="doc-card-icon">&#x1F4CA;</div>
+        <div class="doc-card-header">
+          <h3>[2-B] 외환파생상품거래약정서 (증권사용)</h3>
+          <span class="doc-status">DRAFT</span>
+        </div>
+        <p>증권사와의 외환 파생상품 거래에 관한 약정서. 증거금 관리, 만기 결제, 강제 반대매매 조건을 포함합니다. 제20조: Hard Cutoff(15:00) 이후 16:00까지 미결제 시 담보는 금융기관에 귀속.</p>
+        <div class="doc-card-tags">
+          <span class="doc-tag">Layer 3</span>
+          <span class="doc-tag">증권사 경유 시</span>
+        </div>
+        <div class="doc-card-footer">
+          <span class="doc-file-size">~23 KB &middot; DOCX</span>
+          <span class="btn-locked">&#128274; 데모 신청 후 제공</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-note">
+      약정서 원문은 데모 신청 후 NDA 체결 시 제공됩니다. 사전 법무 검토가 필요하시면 <a href="mailto:sales@kustodyfi.com">sales@kustodyfi.com</a>으로 문의해주세요.
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 2: 서비스 플로우 ===== -->
+<section id="flows" class="section" style="background: var(--gray-50);">
+  <div class="section-inner">
+    <div class="section-label">SERVICE FLOWS</div>
+    <h2 class="section-title">서비스 <span class="hl">운영 플로우</span></h2>
+    <p class="section-desc">KustodyFi 플랫폼의 실제 운영 흐름을 확인할 수 있습니다.</p>
+
+    <div class="doc-grid">
+      <!-- Card 1 -->
+      <div class="doc-card border-primary" data-anim>
+        <div class="doc-card-icon">&#x1F504;</div>
+        <h3>5-Layer 서비스 플로우</h3>
+        <p>계정 개설(Layer 1)부터 사후 관리(Layer 5)까지, 서비스 전체 운영 플로우. SEAL 승인 체계, 거래 한도, 기관 연결 절차를 포함합니다.</p>
+        <div class="doc-card-tags">
+          <span class="doc-tag">전체 플로우</span>
+          <span class="doc-tag doc-tag-warning">DRAFT v1.3</span>
+        </div>
+        <div class="doc-card-footer">
+          <a href="internal/KustodyFi_5Layer_서비스플로우.html" class="btn-view" target="_blank">열람하기 &#8594;</a>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="doc-card border-accent" data-anim>
+        <div class="doc-card-icon">&#x1F4C4;</div>
+        <h3>Invoice &#8594; Forward &#8594; 증빙 자동제출</h3>
+        <p>Invoice 업로드부터 OCR 추출, 헷지 매칭, 실수요 증빙 자동 생성 및 은행 제출까지 7단계 자동화 플로우.</p>
+        <div class="doc-card-tags">
+          <span class="doc-tag">자동화</span>
+          <span class="doc-tag">증빙 관리</span>
+        </div>
+        <div class="doc-card-footer">
+          <a href="internal/Invoice_Forward_증빙자동제출_플로우.html" class="btn-view" target="_blank">열람하기 &#8594;</a>
+        </div>
+      </div>
+
+      <!-- Card 3: Contact -->
+      <div class="doc-card border-gray" data-anim>
+        <div class="doc-card-icon" style="background: rgba(100,116,139,.06);">&#x1F4AC;</div>
+        <h3>추가 문서 요청</h3>
+        <p>필요한 문서가 있으시면 요청해주세요. 맞춤형 서비스 설계서, 기술 사양서 등을 제공합니다.</p>
+        <div class="doc-card-tags">
+          <span class="doc-tag" style="background: rgba(100,116,139,.06); color: var(--gray-500); border-color: rgba(100,116,139,.12);">맞춤 문서</span>
+          <span class="doc-tag" style="background: rgba(100,116,139,.06); color: var(--gray-500); border-color: rgba(100,116,139,.12);">기술 사양서</span>
+        </div>
+        <div class="doc-card-footer">
+          <a href="mailto:sales@kustodyfi.com" class="btn-view">문의하기 &#8594;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 3: 결제 가이드 ===== -->
+<section id="settlement" class="section">
+  <div class="section-inner">
+    <div class="section-label">SETTLEMENT GUIDES</div>
+    <h2 class="section-title">결제 &amp; 정산 <span class="hl">가이드</span></h2>
+    <p class="section-desc">선물환 만기 결제, 외화 타행이체, 정산 경로별 비교 가이드입니다.</p>
+
+    <div class="doc-grid">
+      <!-- Card 1 -->
+      <div class="doc-card border-warning" data-anim>
+        <div class="doc-card-icon" style="background: rgba(217,119,6,.06);">&#x23F0;</div>
+        <h3>만기 결제 Cutoff 타임라인</h3>
+        <p>D-7부터 D-Day까지 만기 결제 타임라인. 12:00 Soft Cutoff, 15:00 Hard Cutoff, 16:00 담보 귀속 기준을 설명합니다.</p>
+        <div class="doc-card-tags">
+          <span class="doc-tag doc-tag-warning">필독</span>
+          <span class="doc-tag">결제일</span>
+        </div>
+        <div class="doc-card-footer">
+          <a href="internal/만기결제_Cutoff_타임라인.html" class="btn-view" target="_blank">열람하기 &#8594;</a>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="doc-card border-accent" data-anim>
+        <div class="doc-card-icon" style="background: rgba(37,99,235,.06);">&#x1F500;</div>
+        <h3>외화 타행이체 플로우</h3>
+        <p>외화 보유 은행과 거래 기관이 다를 때의 이체 플로우. KFTC, FX펌뱅킹, 창구 3가지 방법을 비교합니다.</p>
+        <div class="doc-card-tags">
+          <span class="doc-tag">타행이체</span>
+          <span class="doc-tag">KFTC</span>
+        </div>
+        <div class="doc-card-footer">
+          <a href="internal/외화_타행이체_플로우.html" class="btn-view" target="_blank">열람하기 &#8594;</a>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="doc-card border-success" data-anim>
+        <div class="doc-card-icon" style="background: rgba(5,150,105,.06);">&#x2696;&#xFE0F;</div>
+        <h3>정산 플로우: 은행 직접 vs 증권사 경유</h3>
+        <p>은행 직접 정산(6단계)과 증권사 경유 정산(8단계)의 비교. 수수료, 소요 시간, 고객 부담을 분석합니다.</p>
+        <div class="doc-card-tags">
+          <span class="doc-tag">정산 비교</span>
+          <span class="doc-tag">모델 선택</span>
+        </div>
+        <div class="doc-card-footer">
+          <a href="internal/정산플로우_은행직접_vs_증권사경유.html" class="btn-view" target="_blank">열람하기 &#8594;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="section cta-section">
+  <div class="section-inner" style="text-align: center;">
+    <h2 class="cta-title">문서 확인이 끝나셨나요?</h2>
+    <p class="cta-desc">30분 데모에서 실제 플랫폼 화면을 직접 확인하세요.</p>
+    <div class="cta-buttons">
+      <a href="index.html#cta" class="btn-cta-primary">데모 신청하기 &#8594;</a>
+      <a href="fx_onboarding.html" class="btn-cta-outline">온보딩 절차 보기</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">Kustody<span>Fi</span></div>
+      <div style="font-size:12px;color:var(--gray-500);margin-top:8px">AI-Powered FX Management Platform</div>
+    </div>
+    <div class="footer-info">
+      주식회사 커스터디파이 | 대표 강인우<br>
+      서울시 서초구 서초중앙로 123, 지하1층 46호<br>
+      사업자등록번호 382-86-03882<br>
+      <a href="mailto:sales@kustodyfi.com">sales@kustodyfi.com</a><br>
+      <a href="privacy.html" style="color:var(--gray-400)">개인정보처리방침</a><br>
+      <span style="color:var(--gray-600)">&copy; 2026 KustodyFi. All rights reserved.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Scroll-triggered animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const siblings = el.parentElement.querySelectorAll('[data-anim]');
+        const idx = Array.from(siblings).indexOf(el);
+        setTimeout(() => el.classList.add('visible'), idx * 120);
+        observer.unobserve(el);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('[data-anim]').forEach((el) => observer.observe(el));
+</script>
+</body>
+</html>

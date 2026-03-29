@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KustodyFi — 3-Phase 사업 전략</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --navy: #1A2547;
+  --royal: #2B4A8E;
+  --gold: #B8930F;
+  --gold-bg: rgba(184,147,15,0.06);
+  --gold-border: rgba(184,147,15,0.2);
+  --green: #059669;
+  --green-bg: rgba(5,150,105,0.06);
+  --green-border: rgba(5,150,105,0.18);
+  --green-light: #ECFDF5;
+  --blue: #2563EB;
+  --blue-bg: rgba(37,99,235,0.05);
+  --blue-border: rgba(37,99,235,0.15);
+  --pink: #DB2777;
+  --pink-bg: rgba(219,39,119,0.05);
+  --pink-border: rgba(219,39,119,0.15);
+  --purple: #7C3AED;
+  --purple-bg: rgba(124,58,237,0.05);
+  --purple-border: rgba(124,58,237,0.12);
+  --yellow: #B45309;
+  --yellow-bg: rgba(180,83,9,0.05);
+  --yellow-border: rgba(180,83,9,0.15);
+  --bg: #FFFFFF;
+  --bg-warm: #FAFAF8;
+  --bg-subtle: #F5F5F3;
+  --text: #1E293B;
+  --text-sec: #475569;
+  --text-muted: #94A3B8;
+  --border: #E2E8F0;
+  --border-light: #F1F5F9;
+  --sh-sm: 0 1px 3px rgba(0,0,0,0.04);
+  --sh-md: 0 4px 12px rgba(0,0,0,0.06);
+  --sh-lg: 0 12px 40px rgba(0,0,0,0.08);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+.slide{min-height:100vh;padding:60px 80px;position:relative;display:flex;flex-direction:column;justify-content:center;overflow:hidden;background:var(--bg)}
+.slide.warm{background:var(--bg-warm)}
+.slide+.slide{border-top:1px solid var(--border-light)}
+.slide-num{position:absolute;bottom:30px;right:60px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);letter-spacing:2px}
+.slide-footer{position:absolute;bottom:30px;left:60px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#CBD5E1;letter-spacing:1px;text-transform:uppercase}
+
+.display-xl{font-family:'Playfair Display',Georgia,serif;font-size:56px;font-weight:800;line-height:1.1;letter-spacing:-1px;color:var(--navy)}
+.display-lg{font-family:'Playfair Display',Georgia,serif;font-size:42px;font-weight:700;line-height:1.15;letter-spacing:-0.5px;color:var(--navy)}
+.subtitle{font-size:18px;font-weight:400;color:var(--text-sec);line-height:1.6;max-width:640px}
+.mono{font-family:'JetBrains Mono',monospace}
+.gold{color:var(--gold)}.green{color:var(--green)}.blue{color:var(--blue)}.pink{color:var(--pink)}.purple{color:var(--purple)}.yellow{color:var(--yellow)}.dim{color:var(--text-sec)}.muted{color:var(--text-muted)}
+
+.badge{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;padding:5px 14px;border-radius:6px;letter-spacing:1px;text-transform:uppercase}
+.badge-gold{background:var(--gold-bg);border:1px solid var(--gold-border);color:var(--gold)}
+.badge-green{background:var(--green-bg);border:1px solid var(--green-border);color:var(--green)}
+.badge-blue{background:var(--blue-bg);border:1px solid var(--blue-border);color:var(--blue)}
+.badge-pink{background:var(--pink-bg);border:1px solid var(--pink-border);color:var(--pink)}
+.badge-yellow{background:var(--yellow-bg);border:1px solid var(--yellow-border);color:var(--yellow)}
+
+.phase-card{border-radius:16px;padding:36px 32px;position:relative;box-shadow:var(--sh-sm)}
+.phase-card.p1{background:var(--green-light);border:1px solid var(--green-border)}
+.phase-card.p2{background:#FDF2F8;border:1px solid var(--pink-border)}
+.phase-card.p3{background:#FFFBEB;border:1px solid var(--yellow-border)}
+
+.metric-box{padding:24px;border-radius:12px;background:var(--bg-warm);border:1px solid var(--border);box-shadow:var(--sh-sm)}
+.metric-label{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+
+.data-table{width:100%;border-collapse:separate;border-spacing:0;border-radius:12px;overflow:hidden;border:1px solid var(--border);box-shadow:var(--sh-sm)}
+.data-table thead th{background:var(--bg-subtle);padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);text-align:left;border-bottom:1px solid var(--border);font-weight:500}
+.data-table thead th:not(:first-child){text-align:right}
+.data-table tbody td{padding:14px 18px;font-size:13px;border-bottom:1px solid var(--border-light);background:var(--bg)}
+.data-table tbody td:not(:first-child){text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px}
+.data-table tbody tr:last-child td{border-bottom:none}
+.data-table .row-total td{font-weight:700;background:var(--gold-bg);border-top:2px solid var(--gold-border)}
+
+.flow-row{display:flex;align-items:center;gap:0}
+.flow-box{padding:20px 24px;border-radius:12px;text-align:center;flex:1;min-width:180px}
+.flow-arrow{width:60px;text-align:center;font-size:20px;color:var(--text-muted);flex-shrink:0}
+
+.tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.tag{font-size:10px;padding:4px 10px;border-radius:20px;background:var(--bg-subtle);color:var(--text-sec);border:1px solid var(--border)}
+
+.summary-strip{display:flex;gap:0;border-radius:14px;overflow:hidden;border:1px solid var(--border);box-shadow:var(--sh-sm);background:var(--bg)}
+.strip-item{flex:1;padding:24px 20px;text-align:center;border-right:1px solid var(--border-light)}
+.strip-item:last-child{border-right:none}
+.strip-label{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px}
+.strip-value{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700}
+.strip-sub{font-size:11px;color:var(--text-muted);margin-top:4px}
+
+.entity-row{display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:10px;background:var(--bg);border:1px solid var(--border);box-shadow:var(--sh-sm)}
+.entity-flag{font-size:22px;flex-shrink:0}
+.entity-info h5{font-size:13px;font-weight:600;color:var(--text)}
+.entity-info p{font-size:11px;color:var(--text-sec)}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px}
+.g-wide{display:grid;grid-template-columns:1.2fr 1fr;gap:40px;align-items:start}
+.gap-8{gap:8px}.gap-16{gap:16px}.gap-24{gap:24px}.gap-32{gap:32px}.gap-48{gap:48px}
+.mt-8{margin-top:8px}.mt-16{margin-top:16px}.mt-24{margin-top:24px}.mt-32{margin-top:32px}.mt-48{margin-top:48px}
+.mb-16{margin-bottom:16px}.mb-24{margin-bottom:24px}.mb-32{margin-bottom:32px}
+.section-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}
+
+.nav-dots{position:fixed;right:24px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:100}
+.nav-dot{width:8px;height:8px;border-radius:50%;background:#E2E8F0;border:1px solid #CBD5E1;cursor:pointer;transition:all 0.3s}
+.nav-dot:hover,.nav-dot.active{background:var(--royal);border-color:var(--royal);box-shadow:0 0 8px rgba(43,74,142,0.25);transform:scale(1.3)}
+
+.timeline{position:relative;padding-left:40px}
+.timeline::before{content:'';position:absolute;left:14px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--green),var(--pink),var(--yellow))}
+.tl-item{position:relative;padding-bottom:32px}
+.tl-item:last-child{padding-bottom:0}
+.tl-dot{position:absolute;left:-33px;top:4px;width:12px;height:12px;border-radius:50%;border:3px solid}
+.tl-item.p1 .tl-dot{border-color:var(--green);background:var(--green);box-shadow:0 0 8px rgba(5,150,105,0.3)}
+.tl-item.p2 .tl-dot{border-color:var(--pink);background:var(--pink);box-shadow:0 0 8px rgba(219,39,119,0.3)}
+.tl-item.p3 .tl-dot{border-color:var(--yellow);background:transparent}
+.tl-time{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);margin-bottom:4px}
+.tl-title{font-size:15px;font-weight:700;margin-bottom:4px;color:var(--text)}
+.tl-desc{font-size:12px;color:var(--text-sec);line-height:1.5}
+
+@media(max-width:1024px){.slide{padding:40px 32px}.display-xl{font-size:40px}.display-lg{font-size:32px}.g2,.g3{grid-template-columns:1fr}.g-wide{grid-template-columns:1fr}}
+@media print{.slide{page-break-after:always;min-height:auto;padding:40px}.nav-dots{display:none}}
+</style>
+</head>
+<body>
+<div class="nav-dots" id="navDots"></div>
+
+<!-- SLIDE 1: COVER -->
+<div class="slide" id="s1" style="justify-content:flex-end;padding-bottom:100px;background:linear-gradient(160deg,#FFFFFF 0%,#F0F4FF 40%,#FEF9EF 100%)">
+  <div style="margin-bottom:40px">
+    <div class="section-label" style="margin-bottom:20px">Confidential · Strategy Deck · 2026</div>
+    <div class="display-xl" style="max-width:800px"><span style="color:var(--royal)">KustodyFi</span><br>3-Phase<br><span style="color:var(--gold)">Growth Strategy</span></div>
+    <p class="subtitle mt-24" style="max-width:560px">TMS 기반 B2B 고객 확보 → 거래소 Mark Price 확보 → ReverseFX 글로벌 결제 네트워크</p>
+  </div>
+  <div class="flow-row mt-32" style="max-width:900px">
+    <div class="flow-box" style="background:var(--green-light);border:1px solid var(--green-border);box-shadow:var(--sh-sm)"><div class="mono" style="font-size:11px;color:var(--green);letter-spacing:1px;margin-bottom:6px">PHASE 1</div><div style="font-size:14px;font-weight:700;color:var(--green)">TMS</div><div style="font-size:11px;color:var(--text-sec);margin-top:4px">B2B 고객 확보</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="background:#FDF2F8;border:1px solid var(--pink-border);box-shadow:var(--sh-sm)"><div class="mono" style="font-size:11px;color:var(--pink);letter-spacing:1px;margin-bottom:6px">PHASE 2</div><div style="font-size:14px;font-weight:700;color:var(--pink)">거래소</div><div style="font-size:11px;color:var(--text-sec);margin-top:4px">Mark Price 확보</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="background:#FFFBEB;border:1px solid var(--yellow-border);box-shadow:var(--sh-sm)"><div class="mono" style="font-size:11px;color:var(--yellow);letter-spacing:1px;margin-bottom:6px">PHASE 3</div><div style="font-size:14px;font-weight:700;color:var(--yellow)">ReverseFX</div><div style="font-size:11px;color:var(--text-sec);margin-top:4px">가맹점 네트워크</div></div>
+  </div>
+  <div class="slide-footer">KustodyFi Co., Ltd. · Confidential</div><div class="slide-num">01 / 10</div>
+</div>
+
+<!-- SLIDE 2: EXEC SUMMARY -->
+<div class="slide warm" id="s2">
+  <div class="section-label">Executive Summary</div>
+  <div class="display-lg mb-32"><span class="gold">하나의 인프라,</span><br>세 개의 성장 엔진</div>
+  <div class="g3 gap-24">
+    <div class="phase-card p1"><span class="badge badge-green" style="margin-bottom:16px">Phase 1 · 현재 ~ 2027</span><h3 style="font-size:20px;font-weight:700;color:var(--green);margin-bottom:12px">TMS<br>Treasury Management</h3><p style="font-size:13px;color:var(--text-sec);line-height:1.65">StableFX 이론가 계산기로 PLG 시작 → 유료 SaaS 전환. SEAL + Chat OMS로 기업 FX 리스크를 자동화. <strong style="color:var(--text)">B2B 고객 기반 확보</strong>가 핵심.</p><div class="tag-row"><span class="tag" style="color:var(--green);border-color:var(--green-border);background:white">StableFX</span><span class="tag" style="color:var(--green);border-color:var(--green-border);background:white">SEAL</span><span class="tag" style="color:var(--green);border-color:var(--green-border);background:white">Chat OMS</span><span class="tag" style="color:var(--green);border-color:var(--green-border);background:white">AI Agents</span></div></div>
+    <div class="phase-card p2"><span class="badge badge-pink" style="margin-bottom:16px">Phase 2 · 2027 ~ 2030</span><h3 style="font-size:20px;font-weight:700;color:var(--pink);margin-bottom:12px">Exchange<br>Stablecoin FX Futures</h3><p style="font-size:13px;color:var(--text-sec);line-height:1.65">Dated Futures 거래소 런칭 (SG MAS 라이선스). B2B 고객 주문이 거래소 유동성이 됨. <strong style="color:var(--text)">Mark Price = 업계 기준가격</strong> 확보.</p><div class="tag-row"><span class="tag" style="color:var(--pink);border-color:var(--pink-border);background:white">Dated Futures</span><span class="tag" style="color:var(--pink);border-color:var(--pink-border);background:white">MAS MPI+CMS</span><span class="tag" style="color:var(--pink);border-color:var(--pink-border);background:white">MM Co (HK)</span></div></div>
+    <div class="phase-card p3"><span class="badge badge-yellow" style="margin-bottom:16px">Phase 3 · 2030 ~</span><h3 style="font-size:20px;font-weight:700;color:var(--yellow);margin-bottom:12px">ReverseFX<br>결제 네트워크</h3><p style="font-size:13px;color:var(--text-sec);line-height:1.65">거래소 Mark Price로 24/7 FX 제공. Visa/MC 가맹점을 고객으로 전환. <strong style="color:var(--text)">글로벌 결제 인프라</strong>로 확장.</p><div class="tag-row"><span class="tag" style="color:var(--yellow);border-color:var(--yellow-border);background:white">B2C 결제</span><span class="tag" style="color:var(--yellow);border-color:var(--yellow-border);background:white">가맹사업</span><span class="tag" style="color:var(--yellow);border-color:var(--yellow-border);background:white">USD Stable</span></div></div>
+  </div>
+  <div class="summary-strip mt-32">
+    <div class="strip-item"><div class="strip-label">P1 매출 모델</div><div class="strip-value green">SaaS</div><div class="strip-sub">₩10만~600만/월</div></div>
+    <div class="strip-item"><div class="strip-label">P2 매출 모델</div><div class="strip-value pink">Tx Fee</div><div class="strip-sub">Maker 0.5bp / Taker 1bp</div></div>
+    <div class="strip-item"><div class="strip-label">P3 매출 모델</div><div class="strip-value yellow">Take Rate</div><div class="strip-sub">결제 0.3% + 환전 0.7% = 1%</div></div>
+    <div class="strip-item" style="background:var(--gold-bg)"><div class="strip-label">총 매출 TAM (P1~3)</div><div class="strip-value gold">₩10.3조</div><div class="strip-sub">점유율 40% 기준</div></div>
+  </div>
+  <div class="slide-footer">KustodyFi Co., Ltd. · Confidential</div><div class="slide-num">02 / 10</div>
+</div>
+
+<!-- SLIDE 3: PHASE 1 TMS -->
+<div class="slide" id="s3">
+  <span class="badge badge-green mb-24">Phase 1 · TMS</span>
+  <div class="display-lg mb-16"><span class="green">B2B 고객 확보</span> —<br>FX 정보비대칭을 해소하다</div>
+  <p class="subtitle mb-32">무료 StableFX 계산기로 진입 → SaaS 전환 → AI Agent 운용 대행. 기업의 FX 리스크 관리를 처음부터 끝까지.</p>
+  <div class="g-wide">
+    <div>
+      <h4 style="font-size:14px;font-weight:700;color:var(--green);margin-bottom:16px">PLG 전환 퍼널</h4>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:32px">
+        <div style="padding:14px 20px;border-radius:10px;background:var(--green-light);border-left:3px solid var(--green);box-shadow:var(--sh-sm)"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:13px;font-weight:600">StableFX 무료 계산기</div><div style="font-size:11px;color:var(--text-sec)">웹 접근 — 이론가 계산, 스왑포인트</div></div><span class="badge badge-green" style="font-size:9px;padding:3px 8px">FREE</span></div></div>
+        <div style="text-align:center;color:var(--text-muted);font-size:12px">↓ AML/KYC 가입</div>
+        <div style="padding:14px 20px;border-radius:10px;background:white;border-left:3px solid rgba(5,150,105,0.4);border:1px solid var(--border);box-shadow:var(--sh-sm)"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:13px;font-weight:600">TMS SaaS 구독</div><div style="font-size:11px;color:var(--text-sec)">복합 파생상품, 블로터, 리스크 관리</div></div><span class="mono" style="font-size:11px;color:var(--green)">₩10만~600만/월</span></div></div>
+        <div style="text-align:center;color:var(--text-muted);font-size:12px">↓ AI Agent 활성화</div>
+        <div style="padding:14px 20px;border-radius:10px;background:white;border-left:3px solid rgba(5,150,105,0.25);border:1px solid var(--border);box-shadow:var(--sh-sm)"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:13px;font-weight:600">Managed Notional Fee</div><div style="font-size:11px;color:var(--text-sec)">AI Agent 기반 헤지 운용 대행</div></div><span class="mono" style="font-size:11px;color:var(--green)">FY29~</span></div></div>
+      </div>
+      <h4 style="font-size:14px;font-weight:700;color:var(--green);margin-bottom:16px">프로덕트 스택</h4>
+      <div class="g2 gap-8">
+        <div class="metric-box"><div class="metric-label">StableFX</div><div style="font-size:13px;line-height:1.5">FX 이론가 엔진<br><span class="dim" style="font-size:11px">고객 funding rate 반영</span></div></div>
+        <div class="metric-box"><div class="metric-label">SEAL</div><div style="font-size:13px;line-height:1.5">AI Agent 컨트롤 레이어<br><span class="dim" style="font-size:11px">Fail-closed 설계</span></div></div>
+        <div class="metric-box"><div class="metric-label">Chat OMS</div><div style="font-size:13px;line-height:1.5">주문 관리 인터페이스<br><span class="dim" style="font-size:11px">메신저 기반 체결</span></div></div>
+        <div class="metric-box"><div class="metric-label">AI Agents (25)</div><div style="font-size:13px;line-height:1.5">Pro 6개 핵심 포함<br><span class="dim" style="font-size:11px">Enterprise 전체 25개</span></div></div>
+      </div>
+    </div>
+    <div>
+      <h4 style="font-size:14px;font-weight:700;color:var(--green);margin-bottom:16px">SaaS 가격 구조</h4>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:32px">
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:8px;background:var(--green-light);border:1px solid var(--green-border)"><div style="width:60px" class="mono" style="font-size:12px;font-weight:600;color:var(--green)">ENT</div><div style="flex:1"><div style="font-size:12px;font-weight:600">Enterprise</div><div style="font-size:10px;color:var(--text-sec)">전체 25 AI Agents + Execution Bot</div></div><div class="mono" style="font-size:13px;font-weight:700;color:var(--green)">₩600만</div></div>
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:8px;background:white;border:1px solid var(--border)"><div style="width:60px;font-weight:600" class="mono">PRO</div><div style="flex:1"><div style="font-size:12px;font-weight:600">Pro</div><div style="font-size:10px;color:var(--text-sec)">핵심 6 AI Agents 포함</div></div><div class="mono" style="font-size:13px">₩200만</div></div>
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:8px;background:white;border:1px solid var(--border)"><div style="width:60px;color:var(--text-sec)" class="mono">GRW</div><div style="flex:1"><div style="font-size:12px;font-weight:600">Growth</div><div style="font-size:10px;color:var(--text-sec)">CLI --exec 거래실행 가능</div></div><div class="mono" style="font-size:13px;color:var(--text-sec)">₩100만</div></div>
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:8px;background:white;border:1px solid var(--border)"><div style="width:60px;color:var(--text-muted)" class="mono">STR</div><div style="flex:1"><div style="font-size:12px;font-weight:600">Starter</div><div style="font-size:10px;color:var(--text-sec)">기본 TMS 모듈</div></div><div class="mono" style="font-size:13px;color:var(--text-muted)">₩10만</div></div>
+      </div>
+      <div style="padding:24px;border-radius:14px;background:linear-gradient(135deg,#FFFBEB,#FEF9EF);border:1px solid var(--gold-border);box-shadow:var(--sh-sm)">
+        <h4 style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:12px">핵심 가치 제안</h4>
+        <p style="font-size:13px;color:var(--text);line-height:1.65;margin-bottom:12px">기업들이 자사의 <strong style="color:var(--gold)">실제 funding cost</strong> (KRW/USD MMDA 금리)를 입력하면, 업체별 접근 가능 금리 기반의 정확한 스왑포인트를 계산.</p>
+        <p style="font-size:12px;color:var(--text-sec);line-height:1.5">→ 은행의 정보비대칭 해소 → 은행과 더 나은 조건으로 딜 가능<br>→ "외환시장의 Figma" 포지셔닝</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">KustodyFi Co., Ltd. · Confidential</div><div class="slide-num">03 / 10</div>
+</div>
+
+<!-- SLIDE 4: P1→2 BRIDGE -->
+<div class="slide warm" id="s4">
+  <div class="section-label">Phase 1 → 2 Transition</div>
+  <div class="display-lg mb-16">B2B 고객의 헷지 주문이<br><span class="pink">거래소의 유동성</span>이 된다</div>
+  <p class="subtitle mb-32">TMS + AI Agent가 B2B 고객의 FX 헷지를 자동화 → 그 헷지 주문이 Execution Gateway를 통해 거래소로 라우팅 → Mark Price 형성.</p>
+  <div style="display:flex;align-items:stretch;gap:0;max-width:1000px">
+    <div style="flex:1;padding:28px;border-radius:14px 0 0 14px;background:var(--green-light);border:1px solid var(--green-border);border-right:none"><div class="mono" style="font-size:10px;color:var(--green);letter-spacing:1px;margin-bottom:12px">STEP 1</div><h4 style="font-size:16px;font-weight:700;color:var(--green);margin-bottom:10px">TMS 고객 확보</h4><p style="font-size:12px;color:var(--text-sec);line-height:1.6">무료 StableFX로 기업 유입<br>SaaS 전환 후 TMS로 FX 헷지 관리<br><strong style="color:var(--text)">AI Agent가 헷지 주문 자동 생성</strong></p></div>
+    <div style="width:60px;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,var(--green-light),#F5F3FF);border-top:1px solid var(--border);border-bottom:1px solid var(--border)"><span style="font-size:24px;color:var(--text-muted)">→</span></div>
+    <div style="flex:1;padding:28px;background:#F5F3FF;border:1px solid var(--purple-border);border-right:none;border-left:none"><div class="mono" style="font-size:10px;color:var(--purple);letter-spacing:1px;margin-bottom:12px">STEP 2</div><h4 style="font-size:16px;font-weight:700;color:var(--purple);margin-bottom:10px">거래소로 라우팅</h4><p style="font-size:12px;color:var(--text-sec);line-height:1.6">Execution Gateway Adapter가<br>헷지 주문을 거래소로 자동 전송<br><strong style="color:var(--text)">SEAL이 정책 집행 + 감사 추적</strong></p></div>
+    <div style="width:60px;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,#F5F3FF,#FDF2F8);border-top:1px solid var(--border);border-bottom:1px solid var(--border)"><span style="font-size:24px;color:var(--text-muted)">→</span></div>
+    <div style="flex:1;padding:28px;border-radius:0 14px 14px 0;background:#FDF2F8;border:1px solid var(--pink-border);border-left:none"><div class="mono" style="font-size:10px;color:var(--pink);letter-spacing:1px;margin-bottom:12px">STEP 3</div><h4 style="font-size:16px;font-weight:700;color:var(--pink);margin-bottom:10px">Mark Price 형성</h4><p style="font-size:12px;color:var(--text-sec);line-height:1.6">실거래 기반 가격 발견<br>MM Co (HK) + 외부 LP 유동성 공급<br><strong style="color:var(--text)">업계 기준가격으로 자리잡기</strong></p></div>
+  </div>
+  <!-- OpCo 역할 -->
+  <div style="margin-top:32px;padding:24px 28px;border-radius:14px;background:linear-gradient(135deg,#FFFBEB,#FEF9EF);border:1px solid var(--gold-border);box-shadow:var(--sh-sm)">
+    <div style="display:flex;align-items:flex-start;gap:20px">
+      <div style="flex-shrink:0;width:48px;height:48px;border-radius:12px;background:var(--gold-bg);border:1px solid var(--gold-border);display:flex;align-items:center;justify-content:center"><span class="mono" style="font-size:11px;font-weight:700;color:var(--gold)">OpCo</span></div>
+      <div style="flex:1">
+        <h4 style="font-size:15px;font-weight:700;color:var(--gold);margin-bottom:8px">각국 OpCo의 Phase 1 역할: TMS + AI Agent 배포 → 헷지 수요를 거래소로 집중</h4>
+        <p style="font-size:13px;color:var(--text);line-height:1.65;margin-bottom:12px">각 국가의 OpCo가 TMS + AI Agent를 현지 시장에 배포하면, 그 고객들의 <strong style="color:var(--gold)">헷지 주문이 모두 KustodyFi 거래소로 라우팅</strong>되는 구조. OpCo가 많아질수록 거래소 유동성이 기하급수적으로 증가한다.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <div style="padding:6px 12px;border-radius:8px;background:var(--green-light);border:1px solid var(--green-border);font-size:11px"><span style="color:var(--green);font-weight:600">🇰🇷 Korea</span> <span class="dim">→ KRW 기업</span></div>
+          <div style="padding:6px 12px;border-radius:8px;background:var(--green-light);border:1px solid var(--green-border);font-size:11px"><span style="color:var(--green);font-weight:600">🇸🇬 SG</span> <span class="dim">→ APAC</span></div>
+          <div style="padding:6px 12px;border-radius:8px;background:var(--blue-bg);border:1px solid var(--blue-border);font-size:11px"><span style="color:var(--blue);font-weight:600">🇱🇹 EU</span> <span class="dim">→ 27개국</span></div>
+          <div style="padding:6px 12px;border-radius:8px;background:var(--blue-bg);border:1px solid var(--blue-border);font-size:11px"><span style="color:var(--blue);font-weight:600">🇯🇵 Japan</span> <span class="dim">→ JPY</span></div>
+          <div style="padding:6px 12px;border-radius:8px;background:var(--blue-bg);border:1px solid var(--blue-border);font-size:11px"><span style="color:var(--blue);font-weight:600">🇦🇺 AU</span> <span class="dim">→ AUD</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="g3 mt-24 gap-24">
+    <div class="metric-box" style="text-align:center"><div class="metric-label">TMS 3-Layer</div><div style="font-size:13px;margin-top:8px;line-height:1.8"><span style="color:var(--green)">① TMS Internal OS</span><br><span class="muted">↓</span><br><span style="color:var(--purple)">② Execution Gateway</span><br><span class="muted">↓</span><br><span style="color:var(--pink)">③ Venue (거래소)</span></div></div>
+    <div class="metric-box" style="text-align:center"><div class="metric-label">고객 데이터 보호</div><div style="font-size:12px;margin-top:8px;line-height:1.7;color:var(--text-sec)">r_KRW, r_USD 등 고객 funding rate는<br>TMS 내부에서만 사용<br><strong style="color:var(--text)">limit_price / max_slippage만</strong><br>거래소로 전송</div></div>
+    <div class="metric-box" style="text-align:center"><div class="metric-label">SEAL 역할</div><div style="font-size:12px;margin-top:8px;line-height:1.7;color:var(--text-sec)">모든 체결의 관문<br><strong style="color:var(--text)">Fail-closed 설계</strong><br>SEAL 미접근 시 전체 체결 중단<br>정책코드화 · 불변 감사 추적</div></div>
+  </div>
+  <div class="slide-footer">KustodyFi Co., Ltd. · Confidential</div><div class="slide-num">04 / 10</div>
+</div>
+
+<!-- SLIDE 5: PHASE 2 EXCHANGE -->
+<div class="slide" id="s5">
+  <span class="badge badge-pink mb-24">Phase 2 · 거래소</span>
+  <div class="display-lg mb-16"><span class="pink">Stablecoin FX Futures</span><br>거래소 — Mark Price의 확립</div>
+  <p class="subtitle mb-32">Dated Futures 기반 거래소로 기존 Perp/Spot 중심 크립토 거래소와 근본적 차별화.</p>
+  <div class="g2 gap-32">
+    <div>
+      <div class="g2 gap-16 mb-32">
+        <div style="padding:24px;border-radius:14px;background:#FDF2F8;border:1px solid var(--pink-border);box-shadow:var(--sh-sm)"><div class="mono" style="font-size:11px;color:var(--pink);margin-bottom:8px">KUSTODYFI</div><h4 style="font-size:18px;font-weight:700;color:var(--pink);margin-bottom:10px">Dated Futures</h4><p style="font-size:12px;color:var(--text-sec);line-height:1.6">만기가 있는 선물 계약 기반 · 기업 환헤지 · FX Forward</p><div class="tag-row mt-8"><span class="tag" style="color:var(--pink);border-color:var(--pink-border);background:white">FX Forward</span><span class="tag" style="color:var(--pink);border-color:var(--pink-border);background:white">CCS</span><span class="tag" style="color:var(--pink);border-color:var(--pink-border);background:white">Calendar Spread</span><span class="tag" style="color:var(--pink);border-color:var(--pink-border);background:white">NDF</span></div></div>
+        <div style="padding:24px;border-radius:14px;background:var(--bg-subtle);border:1px solid var(--border)"><div class="mono" style="font-size:11px;color:var(--text-muted);margin-bottom:8px">기존 거래소</div><h4 style="font-size:18px;font-weight:700;color:var(--text-muted);margin-bottom:10px">Spot / Perp</h4><p style="font-size:12px;color:var(--text-muted);line-height:1.6">만기 없는 무기한 선물 · 리테일 투기 중심 · B2B 헤지 불가</p><div class="tag-row mt-8"><span class="tag">현물 거래</span><span class="tag">무기한 선물</span><span class="tag">레버리지</span></div></div>
+      </div>
+      <div style="padding:24px;border-radius:14px;background:#FDF2F8;border:1px solid var(--pink-border);box-shadow:var(--sh-sm)"><h4 style="font-size:14px;font-weight:700;color:var(--pink);margin-bottom:16px">수수료 구조</h4><div style="display:flex;gap:24px"><div style="flex:1;text-align:center"><div class="mono" style="font-size:28px;font-weight:700;color:var(--pink)">0.5bp</div><div style="font-size:12px;color:var(--text-sec);margin-top:4px">Maker Fee</div></div><div style="width:1px;background:var(--pink-border)"></div><div style="flex:1;text-align:center"><div class="mono" style="font-size:28px;font-weight:700;color:var(--pink)">1.0bp</div><div style="font-size:12px;color:var(--text-sec);margin-top:4px">Taker Fee</div></div></div></div>
+    </div>
+    <div>
+      <h4 style="font-size:14px;font-weight:700;color:var(--pink);margin-bottom:16px">MM 호가 조성 효과</h4>
+      <div class="g2 gap-8 mb-24">
+        <div class="metric-box" style="text-align:center;background:#FEF2F2;border-color:#FECACA"><div class="metric-label" style="color:#DC2626">MM 부재 시</div><div class="mono" style="font-size:20px;font-weight:700;color:#DC2626;margin-top:8px">0.10%</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">스프레드 1.50원</div></div>
+        <div class="metric-box" style="text-align:center;background:var(--green-light);border-color:var(--green-border)"><div class="metric-label" style="color:var(--green)">MM 참여 시</div><div class="mono" style="font-size:20px;font-weight:700;color:var(--green);margin-top:8px">0.02%</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">스프레드 0.30원</div></div>
+      </div>
+      <div class="g3 gap-8 mb-24">
+        <div style="text-align:center;padding:16px;border-radius:10px;background:var(--green-light);border:1px solid var(--green-border)"><div style="font-size:11px;color:var(--text-sec)">스프레드</div><div class="mono" style="font-size:16px;font-weight:700;color:var(--green);margin-top:4px">-80%</div></div>
+        <div style="text-align:center;padding:16px;border-radius:10px;background:var(--green-light);border:1px solid var(--green-border)"><div style="font-size:11px;color:var(--text-sec)">호가 깊이</div><div class="mono" style="font-size:16px;font-weight:700;color:var(--green);margin-top:4px">43x</div></div>
+        <div style="text-align:center;padding:16px;border-radius:10px;background:var(--green-light);border:1px solid var(--green-border)"><div style="font-size:11px;color:var(--text-sec)">슬리피지</div><div class="mono" style="font-size:16px;font-weight:700;color:var(--green);margin-top:4px">-96%</div></div>
+      </div>
+      <h4 style="font-size:14px;font-weight:700;color:var(--pink);margin-bottom:12px">관련 법인</h4>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="entity-row"><div class="entity-flag">🇸🇬</div><div class="entity-info"><h5>SG 거래소 자회사</h5><p>MAS MPI + CMS · 에이전시 전용</p></div></div>
+        <div class="entity-row"><div class="entity-flag">🇭🇰</div><div class="entity-info"><h5>MM Co (마켓 메이킹)</h5><p>SFC Type 9 · 독립 LP · 법인세 16.5%</p></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">KustodyFi Co., Ltd. · Confidential</div><div class="slide-num">05 / 10</div>
+</div>
+
+<!-- SLIDE 6: P2→3 BRIDGE -->
+<div class="slide warm" id="s6">
+  <div class="section-label">Phase 2 → 3 Transition</div>
+  <div class="display-lg mb-16">Mark Price가 <span class="yellow">결제 인프라</span>가 된다</div>
+  <p class="subtitle mb-48">거래소에서 확립된 24/7 FX 기준가격(Mark Price)이 곧 ReverseFX 결제 네트워크의 환율 엔진.</p>
+  <div style="max-width:900px;margin:0 auto">
+    <div class="g2 gap-24 mb-24">
+      <div style="padding:28px;border-radius:14px;background:#FEF2F2;border:1px solid #FECACA;box-shadow:var(--sh-sm)"><div class="mono" style="font-size:11px;color:#DC2626;letter-spacing:1px;margin-bottom:12px">기존 해외 카드 결제</div><div style="font-size:13px;color:var(--text-sec);line-height:1.7">❌ 환전 스프레드 <span class="mono" style="color:#DC2626">0.5~1%</span><br>❌ 국제브랜드 수수료 <span class="mono" style="color:#DC2626">1.1~1.4%</span><br>❌ 크레딧/혜택 국가 종속<br>❌ 정산 T+2~3일<br>❌ 포인트 생태계 분산</div></div>
+      <div style="padding:28px;border-radius:14px;background:var(--green-light);border:1px solid var(--green-border);box-shadow:var(--sh-sm)"><div class="mono" style="font-size:11px;color:var(--green);letter-spacing:1px;margin-bottom:12px">REVERSEFX 결제</div><div style="font-size:13px;color:var(--text-sec);line-height:1.7">✓ 거래소 Mark Price 기반 <span class="mono" style="color:var(--green)">투명 환전</span><br>✓ Take Rate <span class="mono" style="color:var(--green)">1% 올인</span><br>✓ 국가 비종속적 혜택 구조<br>✓ 24/7 · <span class="mono" style="color:var(--green)">T+0</span> 실시간 정산<br>✓ USD Stable 기반 글로벌 통합</div></div>
+    </div>
+    <div style="padding:24px;border-radius:14px;background:linear-gradient(135deg,#FFFBEB,#FEF9EF);border:1px solid var(--gold-border);box-shadow:var(--sh-sm);margin-bottom:24px"><h4 style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:12px">B2B2C 전략</h4><p style="font-size:13px;color:var(--text);line-height:1.7"><strong>Phase A:</strong> Visa / Mastercard / Amex를 <strong style="color:var(--gold)">고객</strong>으로 — 24/7 FX 헤지 서비스 제공<br><strong>Phase B:</strong> 동시에 자체 결제 네트워크로 해당 시장에 <strong style="color:var(--gold)">직접 진출</strong></p></div>
+    <!-- OpCo Phase 3 역할 -->
+    <div style="padding:24px;border-radius:14px;background:#FFFBEB;border:1px solid var(--yellow-border);box-shadow:var(--sh-sm)">
+      <div style="display:flex;align-items:flex-start;gap:20px">
+        <div style="flex-shrink:0;width:48px;height:48px;border-radius:12px;background:var(--yellow-bg);border:1px solid var(--yellow-border);display:flex;align-items:center;justify-content:center"><span class="mono" style="font-size:11px;font-weight:700;color:var(--yellow)">OpCo</span></div>
+        <div style="flex:1">
+          <h4 style="font-size:15px;font-weight:700;color:var(--yellow);margin-bottom:8px">각국 OpCo의 Phase 3 역할: 집금 + 거래소 헤지</h4>
+          <p style="font-size:13px;color:var(--text);line-height:1.65;margin-bottom:12px">Phase 1에서 TMS 배포 채널이었던 OpCo가, Phase 3에서는 <strong style="color:var(--yellow)">가맹점 결제대금을 수집하고 순 FX 익스포저를 거래소로 헤지</strong>하는 정산 에이전트로 진화한다.</p>
+          <div style="display:flex;align-items:center;gap:0;max-width:600px">
+            <div style="flex:1;padding:10px;border-radius:8px 0 0 8px;background:#FFFBEB;border:1px solid var(--yellow-border);text-align:center;font-size:11px"><div style="font-weight:600;color:var(--yellow)">가맹점</div><div class="dim" style="font-size:10px">현지 결제대금</div></div>
+            <div style="padding:4px 8px;color:var(--text-muted);font-size:14px">→</div>
+            <div style="flex:1.2;padding:10px;background:#FEF3C7;border:1px solid var(--yellow-border);text-align:center;font-size:11px"><div style="font-weight:700;color:var(--yellow)">OpCo (정산 에이전트)</div><div class="dim" style="font-size:10px">자금 수집 + 순 익스포저</div></div>
+            <div style="padding:4px 8px;color:var(--text-muted);font-size:14px">→</div>
+            <div style="flex:1;padding:10px;border-radius:0 8px 8px 0;background:#FDF2F8;border:1px solid var(--pink-border);text-align:center;font-size:11px"><div style="font-weight:600;color:var(--pink)">SG 거래소</div><div class="dim" style="font-size:10px">헤지 체결 + 정산</div></div>
+          </div>
+          <p style="font-size:11px;color:var(--text-sec);margin-top:10px;line-height:1.5">→ 가맹점 거래량 ↑ → 거래소 볼륨 ↑ → Mark Price 신뢰도 ↑ — <strong style="color:var(--gold)">자기강화 플라이휠</strong></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">KustodyFi Co., Ltd. · Confidential</div><div class="slide-num">06 / 10</div>
+</div>
+
+<!-- SLIDE 7: PHASE 3 REVERSEFX -->
+<div class="slide" id="s7">
+  <span class="badge badge-yellow mb-24">Phase 3 · ReverseFX</span>
+  <div class="display-lg mb-16"><span class="yellow">글로벌 결제 네트워크</span><br>신용카드사 — 가맹점 고객 확보</div>
+  <p class="subtitle mb-32">외국인이 USD Stable로 현지 가맹점에서 결제 → 현지통화로 즉시 정산.</p>
+  <div class="g2 gap-32">
+    <div>
+      <h4 style="font-size:14px;font-weight:700;color:var(--yellow);margin-bottom:16px">수익 모델</h4>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:24px">
+        <div style="padding:16px 20px;border-radius:10px;background:#FFFBEB;border:1px solid var(--yellow-border);box-shadow:var(--sh-sm)"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:600">결제수수료</span><span class="mono" style="font-size:16px;font-weight:700;color:var(--yellow)">0.3%</span></div><div style="font-size:11px;color:var(--text-sec);margin-top:4px">USD Stable → 현지통화 정산, POS/QR 연동</div></div>
+        <div style="padding:16px 20px;border-radius:10px;background:#FFFBEB;border:1px solid var(--yellow-border);box-shadow:var(--sh-sm)"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:600">환전수수료</span><span class="mono" style="font-size:16px;font-weight:700;color:var(--yellow)">0.7%</span></div><div style="font-size:11px;color:var(--text-sec);margin-top:4px">USD → KRW/JPY/EUR/SGD 자동 FX</div></div>
+        <div style="padding:16px 20px;border-radius:10px;background:#FEF3C7;border:1px solid rgba(180,83,9,0.3);box-shadow:var(--sh-sm)"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px;font-weight:700;color:var(--yellow)">합계 Take Rate</span><span class="mono" style="font-size:22px;font-weight:700;color:var(--yellow)">1.0%</span></div></div>
+      </div>
+      <div class="metric-box"><div class="metric-label">레퍼럴 인센티브</div><p style="font-size:12px;color:var(--text-sec);line-height:1.6;margin-top:8px">가맹점 소개 시 3~6개월 환전수수료 30% 포인트백<br>실질 결제수수료 <strong class="mono" style="color:var(--green)">0.09%</strong>까지 절감</p></div>
+    </div>
+    <div>
+      <h4 style="font-size:14px;font-weight:700;color:var(--yellow);margin-bottom:16px">가맹사업 타겟 시장</h4>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:24px">
+        <div class="entity-row" style="border-color:var(--yellow-border)"><div class="entity-flag">🇹🇭</div><div class="entity-info" style="flex:1"><h5>태국 <span class="badge badge-blue" style="font-size:8px;padding:2px 6px">P2</span></h5><p>ASEAN 가맹사업 TAM 1위 · 연 3,550만 방문객</p></div><div class="mono" style="font-size:14px;font-weight:700;color:var(--yellow)">₩2,800억</div></div>
+        <div class="entity-row" style="border-color:var(--yellow-border)"><div class="entity-flag">🇰🇷</div><div class="entity-info" style="flex:1"><h5>한국 <span class="badge badge-green" style="font-size:8px;padding:2px 6px">P1</span></h5><p>인바운드 관광 급성장</p></div><div class="mono" style="font-size:14px;font-weight:700;color:var(--yellow)">₩372억</div></div>
+        <div class="entity-row" style="border-color:var(--yellow-border)"><div class="entity-flag">🇪🇺</div><div class="entity-info" style="flex:1"><h5>EU <span class="badge badge-blue" style="font-size:8px;padding:2px 6px">P2</span></h5><p>MiCA 패스포팅 · 27개국</p></div><div class="mono" style="font-size:14px;font-weight:700;color:var(--yellow)">₩4.7조</div></div>
+        <div class="entity-row" style="border-color:var(--yellow-border)"><div class="entity-flag">🇺🇸</div><div class="entity-info" style="flex:1"><h5>미국 <span class="badge badge-pink" style="font-size:8px;padding:2px 6px">P3</span></h5><p>세계 최대 경제권 · 7,239만 방문객</p></div><div class="mono" style="font-size:14px;font-weight:700;color:var(--yellow)">₩1.47조</div></div>
+      </div>
+      <h4 style="font-size:14px;font-weight:700;color:var(--yellow);margin-bottom:12px">결제 인프라 연동</h4>
+      <div class="tag-row"><span class="tag">Visa</span><span class="tag">Mastercard</span><span class="tag">JCB</span><span class="tag">AMEX</span><span class="tag">Stripe</span><span class="tag">Adyen</span><span class="tag">토스페이먼츠</span><span class="tag">카카오페이</span><span class="tag">GrabPay</span><span class="tag">LINE Pay</span></div>
+    </div>
+  </div>
+  <div class="slide-footer">KustodyFi Co., Ltd. · Confidential</div><div class="slide-num">07 / 10</div>
+</div>
+
+<!-- SLIDE 8: GLOBAL STRUCTURE -->
+<div class="slide warm" id="s8">
+  <div class="section-label">글로벌 법인 & 비용 구조</div>
+  <div class="display-lg mb-32"><span class="gold">US HoldCo</span> 중심 글로벌 구조</div>
+  <div class="g2 gap-32">
+    <div>
+      <table class="data-table" style="margin-bottom:24px"><thead><tr><th>법인</th><th>라이선스</th><th>자본금</th><th>연 운영비</th></tr></thead><tbody>
+        <tr><td><strong>🇺🇸 US HoldCo</strong><br><span style="font-size:10px;color:var(--text-muted)">Delaware C-Corp</span></td><td style="font-size:11px">SEAL IP · 지배구조</td><td>—</td><td>~₩8억</td></tr>
+        <tr style="background:var(--green-light)"><td><strong>🇰🇷 OpCo Korea</strong><br><span style="font-size:10px;color:var(--green)">Phase 1</span></td><td style="font-size:11px">VASP · PG · 전금법</td><td>~₩33억</td><td>~₩23.5억</td></tr>
+        <tr style="background:#FDF2F8"><td><strong>🇸🇬 SG 거래소</strong><br><span style="font-size:10px;color:var(--pink)">Phase 1~2</span></td><td style="font-size:11px">MAS MPI+CMS</td><td>~₩11억</td><td>~₩14억</td></tr>
+        <tr><td><strong>🇭🇰 MM Co</strong><br><span style="font-size:10px;color:var(--blue)">Phase 2</span></td><td style="font-size:11px">SFC Type 9</td><td>~₩0.2억</td><td>~₩4.5억</td></tr>
+        <tr><td><strong>🇱🇹 OpCo EU</strong><br><span style="font-size:10px;color:var(--blue)">Phase 2</span></td><td style="font-size:11px">MiCA CASP</td><td>~₩2.3억</td><td>~₩5억</td></tr>
+        <tr><td><strong>🇯🇵 OpCo Japan</strong><br><span style="font-size:10px;color:var(--blue)">Phase 2</span></td><td style="font-size:11px">JFSA VASP</td><td>~₩5억</td><td>~₩8.5억</td></tr>
+        <tr><td><strong>🇦🇺 OpCo AU</strong><br><span style="font-size:10px;color:var(--blue)">Phase 2</span></td><td style="font-size:11px">AFSL+AUSTRAC</td><td>~₩0.5억</td><td>~₩8.5억</td></tr>
+        <tr><td><strong>🇹🇭 OpCo Thailand</strong><br><span style="font-size:10px;color:var(--blue)">Phase 2</span></td><td style="font-size:11px">BOT+SEC</td><td>~₩20억</td><td>~₩4억</td></tr>
+        <tr class="row-total"><td colspan="2"><strong>Phase 1~2 합계</strong></td><td>~₩72억</td><td>~₩68억/yr</td></tr>
+      </tbody></table>
+    </div>
+    <div>
+      <div class="g3 gap-16 mb-24">
+        <div style="text-align:center;padding:20px;border-radius:12px;background:var(--green-light);border:1px solid var(--green-border);box-shadow:var(--sh-sm)"><div class="mono" style="font-size:10px;color:var(--text-muted);margin-bottom:6px">PHASE 1</div><div class="mono" style="font-size:22px;font-weight:700;color:var(--green)">~₩44억</div><div style="font-size:10px;color:var(--text-muted);margin-top:4px">자본금 소계</div></div>
+        <div style="text-align:center;padding:20px;border-radius:12px;background:var(--blue-bg);border:1px solid var(--blue-border);box-shadow:var(--sh-sm)"><div class="mono" style="font-size:10px;color:var(--text-muted);margin-bottom:6px">PHASE 2</div><div class="mono" style="font-size:22px;font-weight:700;color:var(--blue)">~₩28억</div><div style="font-size:10px;color:var(--text-muted);margin-top:4px">자본금 소계</div></div>
+        <div style="text-align:center;padding:20px;border-radius:12px;background:var(--purple-bg);border:1px solid var(--purple-border);box-shadow:var(--sh-sm)"><div class="mono" style="font-size:10px;color:var(--text-muted);margin-bottom:6px">PHASE 3</div><div class="mono" style="font-size:22px;font-weight:700;color:var(--purple)">~₩46억</div><div style="font-size:10px;color:var(--text-muted);margin-top:4px">자본금 소계</div></div>
+      </div>
+      <!-- OpCo 이중 역할 -->
+      <div style="padding:24px;border-radius:14px;background:linear-gradient(135deg,#FFFBEB,#FEF9EF);border:1px solid var(--gold-border);box-shadow:var(--sh-sm);margin-bottom:24px">
+        <h4 style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:14px">각국 자회사(OpCo)의 이중 역할</h4>
+        <div style="display:flex;gap:12px;margin-bottom:12px">
+          <div style="flex:1;padding:14px;border-radius:10px;background:var(--green-light);border:1px solid var(--green-border)"><div class="mono" style="font-size:10px;color:var(--green);letter-spacing:0.5px;margin-bottom:6px">ROLE A · PHASE 1~2</div><div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:4px">TMS + AI Agent 배포</div><div style="font-size:11px;color:var(--text-sec);line-height:1.5">B2B 고객 확보 → 헷지 주문을 거래소로 라우팅</div></div>
+          <div style="flex:1;padding:14px;border-radius:10px;background:#FFFBEB;border:1px solid var(--yellow-border)"><div class="mono" style="font-size:10px;color:var(--yellow);letter-spacing:0.5px;margin-bottom:6px">ROLE B · PHASE 3</div><div style="font-size:13px;font-weight:700;color:var(--yellow);margin-bottom:4px">집금 + 거래소 헤지</div><div style="font-size:11px;color:var(--text-sec);line-height:1.5">가맹점 결제대금 수집 → FX 익스포저 거래소 헤지</div></div>
+        </div>
+        <p style="font-size:11px;color:var(--text-sec);line-height:1.5">→ Phase 1 인프라(TMS+SEAL)를 재활용하므로 <strong style="color:var(--gold)">추가 한계비용 ≈ 0</strong></p>
+      </div>
+      <div style="padding:24px;border-radius:14px;background:white;border:1px solid var(--border);box-shadow:var(--sh-sm)"><h4 style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:12px">이전가격(TP) 전략</h4><div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:12px;line-height:1.6"><strong style="color:var(--gold)">SEAL 라이선스 수수료</strong><br><span class="dim">US HoldCo → 전 법인</span></div><div style="font-size:12px;line-height:1.6"><strong style="color:var(--gold)">TMS/AI Agent 라이선스</strong><br><span class="dim">OpCo Korea → 전 OpCo</span></div><div style="font-size:12px;line-height:1.6"><strong style="color:var(--gold)">Management Fee</strong><br><span class="dim">US HoldCo → OpCo · PwC 벤치마크</span></div></div></div>
+    </div>
+  </div>
+  <div class="slide-footer">KustodyFi Co., Ltd. · Confidential</div><div class="slide-num">08 / 10</div>
+</div>
+
+<!-- SLIDE 9: TAM -->
+<div class="slide" id="s9">
+  <div class="section-label">Revenue TAM</div>
+  <div class="display-lg mb-32">매출 TAM —<br><span class="gold">Phase 1~3 합산 ₩10.3조</span></div>
+  <div class="g2 gap-32">
+    <div>
+      <table class="data-table"><thead><tr><th>세그먼트</th><th>Phase 1+2</th><th>Phase 3 추가</th><th>합계</th></tr></thead><tbody>
+        <tr><td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--pink);margin-right:6px"></span><strong>거래소</strong></td><td>₩1.04조</td><td>₩0.75조</td><td style="color:var(--pink);font-weight:700">₩1.79조</td></tr>
+        <tr><td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--blue);margin-right:6px"></span><strong>Agent</strong></td><td>₩6,830억</td><td>₩5,718억</td><td style="color:var(--blue);font-weight:700">₩1.25조</td></tr>
+        <tr><td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--yellow);margin-right:6px"></span><strong>가맹사업</strong></td><td>₩5.63조</td><td>₩1.61조</td><td style="color:var(--yellow);font-weight:700">₩7.24조</td></tr>
+        <tr class="row-total"><td><strong>합계</strong></td><td>₩7.4조</td><td>₩2.9조</td><td style="color:var(--gold);font-weight:700;font-size:14px">₩10.3조</td></tr>
+      </tbody></table>
+      <div style="font-size:10px;color:var(--text-muted);margin-top:12px;line-height:1.6">* 거래소 1.5bp · Agent B2B 1bp · B2C MSP 4bp · 가맹사업 1%<br>* 목표 시장점유율 40% 기준 · Phase 4 미포함</div>
+    </div>
+    <div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:32px">
+        <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px"><span class="dim">가맹사업</span><span class="mono yellow" style="font-size:12px">₩7.24조 (70%)</span></div><div style="height:10px;border-radius:5px;background:var(--bg-subtle)"><div style="width:70%;height:100%;border-radius:5px;background:linear-gradient(90deg,#F59E0B,#FBBF24)"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px"><span class="dim">거래소</span><span class="mono pink" style="font-size:12px">₩1.79조 (17%)</span></div><div style="height:10px;border-radius:5px;background:var(--bg-subtle)"><div style="width:17%;height:100%;border-radius:5px;background:linear-gradient(90deg,#EC4899,#F472B6)"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px"><span class="dim">Agent</span><span class="mono blue" style="font-size:12px">₩1.25조 (12%)</span></div><div style="height:10px;border-radius:5px;background:var(--bg-subtle)"><div style="width:12%;height:100%;border-radius:5px;background:linear-gradient(90deg,#3B82F6,#60A5FA)"></div></div></div>
+      </div>
+      <h4 style="font-size:14px;font-weight:700;margin-bottom:16px">Phase별 주요 시장 TAM</h4>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:8px;background:var(--green-light);border:1px solid var(--green-border)"><span class="mono" style="font-size:10px;color:var(--green);width:24px">P1</span><span style="font-size:12px;flex:1">한국 + 싱가포르</span><span class="mono" style="font-size:12px;color:var(--green)">~₩3,395조</span></div>
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:8px;background:var(--blue-bg);border:1px solid var(--blue-border)"><span class="mono" style="font-size:10px;color:var(--blue);width:24px">P2</span><span style="font-size:12px;flex:1">EU + 일본 + 호주 + 태국 + 홍콩</span><span class="mono" style="font-size:12px;color:var(--blue)">~₩1.4경</span></div>
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:8px;background:var(--purple-bg);border:1px solid var(--purple-border)"><span class="mono" style="font-size:10px;color:var(--purple);width:24px">P3</span><span style="font-size:12px;flex:1">미국 + 말레이시아</span><span class="mono" style="font-size:12px;color:var(--purple)">~₩1.3경</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">KustodyFi Co., Ltd. · Confidential</div><div class="slide-num">09 / 10</div>
+</div>
+
+<!-- SLIDE 10: ROADMAP -->
+<div class="slide" id="s10" style="background:linear-gradient(160deg,#FFFFFF 0%,#F0F4FF 40%,#FEF9EF 100%)">
+  <div class="section-label">Global Roadmap</div>
+  <div class="display-lg mb-48"><span class="gold">하나의 플라이휠,</span><br>세 개의 성장 곡선</div>
+  <div class="g2 gap-48">
+    <div>
+      <div class="timeline">
+        <div class="tl-item p1"><div class="tl-dot"></div><div class="tl-time">현재 ~ 2027</div><div class="tl-title" style="color:var(--green)">Phase 1: TMS — B2B 고객 확보</div><div class="tl-desc">🇰🇷 한국법인 (VASP, PG) · 🇸🇬 싱가포르 거래소 설립<br>StableFX PLG → SaaS 전환 · SEAL + Chat OMS MVP<br><strong>핵심 인프라 구축 + B2B 고객 기반 확보</strong></div></div>
+        <div class="tl-item p2"><div class="tl-dot"></div><div class="tl-time">2027 ~ 2030</div><div class="tl-title" style="color:var(--pink)">Phase 2: 거래소 — Mark Price 확보</div><div class="tl-desc">🇱🇹 EU (MiCA) · 🇯🇵 일본 (JFSA) · 🇦🇺 호주 (AFSL)<br>🇹🇭 태국 (가맹사업) · 🇭🇰 홍콩 MM (SFC Type 9)<br><strong>3대 경제권 + ASEAN 가맹사업 + 독립 MM</strong></div></div>
+        <div class="tl-item p3"><div class="tl-dot"></div><div class="tl-time">2030 ~</div><div class="tl-title" style="color:var(--yellow)">Phase 3: ReverseFX — 결제 네트워크</div><div class="tl-desc">🇺🇸 미국 (FinCEN+MTL) · 🇲🇾 말레이시아 (BNM)<br>글로벌 가맹점 네트워크 · 신용카드사 FX 서비스<br><strong>고ROI 시장 집중 · ReverseFX 글로벌 확장</strong></div></div>
+      </div>
+    </div>
+    <div>
+      <div style="padding:32px;border-radius:18px;background:white;border:1px solid var(--border);box-shadow:var(--sh-lg);text-align:center">
+        <h3 style="font-family:'Playfair Display',serif;font-size:22px;color:var(--navy);margin-bottom:24px">The Flywheel</h3>
+        <div style="display:flex;flex-direction:column;gap:0;align-items:center">
+          <div style="padding:16px 28px;border-radius:10px;background:var(--green-light);border:1px solid var(--green-border);width:280px"><div class="mono" style="font-size:10px;color:var(--green);margin-bottom:4px">PHASE 1</div><div style="font-size:14px;font-weight:700;color:var(--green)">TMS B2B 고객</div></div>
+          <div style="font-size:18px;color:var(--text-muted);padding:4px">↓</div>
+          <div style="font-size:11px;color:var(--text-sec);font-style:italic;padding:2px">고객 헷지 주문 → 거래소 유동성</div>
+          <div style="font-size:18px;color:var(--text-muted);padding:4px">↓</div>
+          <div style="padding:16px 28px;border-radius:10px;background:#FDF2F8;border:1px solid var(--pink-border);width:280px"><div class="mono" style="font-size:10px;color:var(--pink);margin-bottom:4px">PHASE 2</div><div style="font-size:14px;font-weight:700;color:var(--pink)">거래소 Mark Price</div></div>
+          <div style="font-size:18px;color:var(--text-muted);padding:4px">↓</div>
+          <div style="font-size:11px;color:var(--text-sec);font-style:italic;padding:2px">24/7 FX 가격 → 결제 환율</div>
+          <div style="font-size:18px;color:var(--text-muted);padding:4px">↓</div>
+          <div style="padding:16px 28px;border-radius:10px;background:#FFFBEB;border:1px solid var(--yellow-border);width:280px"><div class="mono" style="font-size:10px;color:var(--yellow);margin-bottom:4px">PHASE 3</div><div style="font-size:14px;font-weight:700;color:var(--yellow)">ReverseFX 결제</div></div>
+          <div style="font-size:18px;color:var(--text-muted);padding:4px">↓</div>
+          <div style="font-size:11px;color:var(--text-sec);font-style:italic;padding:2px">가맹점 거래량 → 거래소 볼륨 ↑</div>
+          <div style="font-size:18px;color:var(--royal);padding:4px">↻</div>
+        </div>
+      </div>
+      <div class="summary-strip mt-24" style="border-radius:12px">
+        <div class="strip-item" style="background:var(--gold-bg)"><div class="strip-label">총 매출 TAM</div><div class="strip-value gold">₩10.3조</div><div class="strip-sub">Phase 1~3 · 40% 점유</div></div>
+        <div class="strip-item"><div class="strip-label">총 자본금</div><div class="strip-value" style="color:var(--navy)">~₩107억</div><div class="strip-sub">Phase 1~3</div></div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:48px;padding:24px 32px;border-radius:14px;background:linear-gradient(135deg,#FFFBEB,white);border-left:3px solid var(--gold);box-shadow:var(--sh-sm)">
+    <p style="font-size:15px;color:var(--text);line-height:1.7;font-style:italic">"TMS로 B2B 고객을 확보하고, 그 고객의 헷지 주문으로 거래소의 Mark Price를 확립하며, 그 가격으로 글로벌 결제 네트워크를 구축한다 — 각 Phase가 다음 Phase의 기반이 되는 <strong style="color:var(--gold)">자기강화 플라이휠</strong>."</p>
+  </div>
+  <div class="slide-footer">KustodyFi Co., Ltd. · Confidential</div><div class="slide-num">10 / 10</div>
+</div>
+
+<script>
+const slides=document.querySelectorAll('.slide');const navDots=document.getElementById('navDots');
+slides.forEach((s,i)=>{const d=document.createElement('div');d.className='nav-dot';d.title=`Slide ${i+1}`;d.addEventListener('click',()=>s.scrollIntoView({behavior:'smooth'}));navDots.appendChild(d)});
+const obs=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting){const idx=Array.from(slides).indexOf(en.target);document.querySelectorAll('.nav-dot').forEach((d,i)=>d.classList.toggle('active',i===idx))}})},{threshold:0.5});
+slides.forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>

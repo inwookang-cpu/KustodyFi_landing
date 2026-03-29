@@ -208,7 +208,7 @@
   <div class="slide-content">
     <div class="cover-logo">KUSTODYFI</div>
     <h1 class="cover-title">환율 정보는 넘쳐나는데,<br><span class="hl">그래서 뭘 해야 하죠?</span></h1>
-    <p class="cover-sub">KustodyFi가 알려드립니다. 은행 비교, 타이밍 판단, 묶음 처리까지 시스템이 준비.<br>담당자님은 알림을 받고 <strong style="color:#6ee7b7">승인 클릭 한 번</strong>이면 끝입니다.</p>
+    <p class="cover-sub">KustodyFi가 알려드립니다. 은행 비교, 공정가치 분석, 소액 건 취합(Pooling)까지 시스템이 준비.<br>담당자님은 알림을 받고 <strong style="color:#6ee7b7">승인 클릭 한 번</strong>이면 끝입니다.</p>
     <div style="display:flex;gap:10px;flex-wrap:wrap;opacity:0;animation:fadeUp .8s .9s forwards">
       <div class="badge badge-cyan" style="font-size:11px;padding:4px 10px">연 수출 &#8361;500억 (~$35M)</div>
       <div class="badge badge-yellow" style="font-size:11px;padding:4px 10px">월 20~25건 외환 거래</div>
@@ -375,7 +375,7 @@
     <div class="scene-title">"뭘 해야 할지" <span class="hl">시스템이 알려드립니다</span></div>
     <div class="scene-desc">
       외환 전담자를 채용하거나, 김과장에게 FX 교육을 시킬 필요 없습니다.<br><br>
-      <strong style="color:#6ee7b7">시스템이 모든 것을 준비합니다</strong>: 입금 감지, 은행 비교, 묶음 처리 판단<br>
+      <strong style="color:#6ee7b7">시스템이 모든 것을 준비합니다</strong>: 계좌별 잔고 인식, 은행 비교, 소액 건 취합(Pooling) 판단<br>
       <strong style="color:#67e8f9">담당자님은 알림을 받고 승인 버튼만 누르면 됩니다</strong><br><br>
       <strong style="color:var(--white)">"복잡한 판단은 시스템이, 결정은 사람이. 본업에 집중하세요."</strong>
     </div>
@@ -447,8 +447,8 @@
       <div class="cause-flow" style="margin-bottom:24px">
         <div class="cause-step" style="background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.2);border-radius:10px">
           <div class="cause-num">STEP 1</div>
-          <div class="cause-label" style="color:#93c5fd">입금 감지</div>
-          <div class="cause-detail">Open Banking API<br>실시간 모니터링</div>
+          <div class="cause-label" style="color:#93c5fd">자금 인식</div>
+          <div class="cause-detail">Open Banking API<br>계좌별 잔고 인식</div>
         </div>
         <div class="cause-arrow">&rarr;</div>
         <div class="cause-step" style="background:rgba(8,145,178,.08);border:1px solid rgba(8,145,178,.2);border-radius:10px">
@@ -477,10 +477,10 @@
       </div>
 
       <div class="panel combined" style="padding:20px;margin-bottom:16px;text-align:center">
-        <div style="font-size:13px;color:#6ee7b7;font-weight:700;margin-bottom:12px">AI Agent가 제안 &rarr; CFO님이 승인 &rarr; 자동 체결 + 기록</div>
+        <div style="font-size:13px;color:#6ee7b7;font-weight:700;margin-bottom:12px">AI Agent가 데이터 제시 &rarr; CFO님이 승인 &rarr; 자동 체결 + 기록</div>
         <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap">
           <div style="padding:10px 16px;background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.2);border-radius:10px;font-size:12px;color:#6ee7b7">
-            <strong>카카오톡/이메일 알림</strong><br>"$350K 배치 준비 완료. 최적 환율 1,434.80 (H은행). 승인하시겠습니까?"
+            <strong>카카오톡/이메일 알림</strong><br>"$350K 소액 건 취합(Pooling) 완료. 최적 환율 1,434.80 (H은행). 승인하시겠습니까?"
           </div>
           <div class="approve-btn">승인</div>
         </div>
@@ -509,7 +509,7 @@
       <div class="panel fx" style="padding:24px;margin-bottom:16px">
         <div class="panel-title" style="color:#67e8f9"><span class="badge badge-cyan">CASH SCHEDULE</span> 자금 일정 엔진</div>
         <div style="font-size:12px;color:var(--gray-300);line-height:1.6;margin-bottom:12px">
-          과거 입금 패턴(계약 이행 내역)을 분석하여 <strong style="color:#67e8f9">외화 입금 예정일</strong>을 예측하고,<br>
+          과거 입금 패턴(계약 이행 내역)을 분석하여 <strong style="color:#67e8f9">외화 입금 예정일</strong>을 파악하고,<br>
           원화 지출 일정(급여, 원자재, 세금)과 대조하여 <strong style="color:#fcd34d">환전이 필요한 구간</strong>을 사전에 설계합니다.
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
@@ -523,7 +523,7 @@
                 <span style="color:#67e8f9">3/28 (금)</span><span style="color:var(--gray-300)">$220K</span><span style="font-size:9px;color:var(--gray-500)">B사 수출대금</span>
               </div>
               <div style="display:flex;justify-content:space-between;padding:3px 0">
-                <span style="color:#67e8f9">4/02 (수)</span><span style="color:var(--gray-300)">$150K</span><span style="font-size:9px;color:var(--gray-500)">C사 (패턴 예측)</span>
+                <span style="color:#67e8f9">4/02 (수)</span><span style="color:var(--gray-300)">$150K</span><span style="font-size:9px;color:var(--gray-500)">C사 (패턴 분석)</span>
               </div>
             </div>
           </div>
@@ -760,15 +760,15 @@
       <!-- TO-BE AI Agent Tab -->
       <div class="phase-content" id="tobe-ai-tab">
         <div style="margin-bottom:20px;padding:16px;background:rgba(5,150,105,.04);border:1px solid rgba(5,150,105,.12);border-radius:12px">
-          <div style="font-size:11px;font-weight:700;color:#6ee7b7;margin-bottom:12px;letter-spacing:1px">AI Agent &mdash; AI가 자동 제안 &rarr; CFO/담당자 승인만 (인적 시간 0분, 승인 클릭만)</div>
+          <div style="font-size:11px;font-weight:700;color:#6ee7b7;margin-bottom:12px;letter-spacing:1px">AI Agent &mdash; AI가 공정가치 분석 + 데이터 제시 &rarr; CFO/담당자 승인만 (인적 시간 0분, 승인 클릭만)</div>
           <div style="position:relative;height:100px">
             <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--gray-500);margin-bottom:6px;font-family:'Inter',monospace">
-              <span>AI 처리</span><span>입금감지</span><span>유불리분석</span><span>RFQ</span><span>Best선택</span><span>체결</span><span>기록</span>
+              <span>AI 처리</span><span>자금인식</span><span>유불리분석</span><span>RFQ</span><span>Best선택</span><span>체결</span><span>기록</span>
             </div>
             <div style="display:flex;align-items:center;margin-bottom:6px">
               <div style="width:70px;font-size:10px;color:#6ee7b7;font-weight:600;flex-shrink:0">AI Agent</div>
               <div style="flex:1;height:26px;position:relative;background:rgba(255,255,255,.03);border-radius:4px">
-                <div style="position:absolute;left:0;width:15%;height:100%;background:rgba(5,150,105,.2);border:1px solid rgba(5,150,105,.4);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:8px;color:#6ee7b7;font-weight:600">입금 감지</div>
+                <div style="position:absolute;left:0;width:15%;height:100%;background:rgba(5,150,105,.2);border:1px solid rgba(5,150,105,.4);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:8px;color:#6ee7b7;font-weight:600">자금 인식</div>
                 <div style="position:absolute;left:16%;width:15%;height:100%;background:rgba(5,150,105,.25);border:1px solid rgba(5,150,105,.4);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:8px;color:#6ee7b7;font-weight:600">유불리</div>
                 <div style="position:absolute;left:32%;width:30%;height:100%;background:rgba(5,150,105,.3);border:1px solid rgba(5,150,105,.5);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#6ee7b7;font-weight:700">Multi-RFQ &rarr; Best 선택</div>
                 <div style="position:absolute;left:63%;width:20%;height:100%;background:rgba(5,150,105,.35);border:1px solid rgba(5,150,105,.5);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fff;font-weight:700">자동 체결</div>
@@ -793,7 +793,7 @@
         </div>
 
         <div class="benefit-point green" data-delay="0"><span>&#10003;</span> 인적 시간 <strong>0분</strong> &mdash; CFO는 승인 클릭만 (~10초)</div>
-        <div class="benefit-point green" data-delay="100"><span>&#10003;</span> 입금 감지 &rarr; 유불리 분석 &rarr; RFQ &rarr; 체결 <strong>전부 AI 자동</strong></div>
+        <div class="benefit-point green" data-delay="100"><span>&#10003;</span> 자금 인식 &rarr; 공정가치 분석 &rarr; RFQ &rarr; 체결 <strong>전부 AI 자동</strong></div>
         <div class="benefit-point green" data-delay="200"><span>&#10003;</span> 외환 전담자 없이도 <strong>기관급 FX 실행</strong> 달성</div>
         <div class="benefit-point green" data-delay="300"><span>&#10003;</span> CFO가 <strong>승인권을 유지</strong>하면서 AI의 전문성 활용 (Human-in-the-Loop)</div>
       </div>
@@ -912,14 +912,14 @@
         </div>
 
         <div class="panel" style="padding:20px;border-color:rgba(251,191,36,.2);background:rgba(251,191,36,.04)">
-          <div class="panel-title" style="color:#fcd34d"><span class="badge badge-yellow">SPOT</span> 현물환 분할매도</div>
+          <div class="panel-title" style="color:#fcd34d"><span class="badge badge-yellow">HEDGE</span> 두 가지 헷지 모드</div>
           <div style="font-size:12px;color:var(--gray-300);line-height:1.8">
-            Cash Schedule 기반 <strong style="color:#fcd34d">현물환 분할매도가 기본</strong><br>
-            선물환은 결제일 확정 건에 한해 선택적 제안<br>
+            <strong style="color:#6ee7b7">Full Hedge Mode (환노출도 해소형)</strong> &mdash; Cash Balance + Cash Schedule + DF로 Spot Delta 산출, 열린 포지션만큼 분할 집행하여 환노출도를 0으로 수렴<br>
+            <strong style="color:#fcd34d">Alpha Mode (초과수익 추구형)</strong> &mdash; 공정가치 대비 유리한 구간에서 집중 집행, 시장 평균 대비 초과수익 추구
           </div>
           <div style="margin-top:10px;padding:10px;background:rgba(251,191,36,.08);border-radius:8px;font-size:11px;color:var(--gray-300);line-height:1.5">
-            원화 필요 시점에 맞춰 분할 매도<br>
-            <strong style="color:#fcd34d">복잡한 파생상품 없이 리스크 분산</strong>
+            현물환 분할매도 + 선물환 헷지 <strong style="color:#fcd34d">병행 가능</strong><br>
+            의사결정은 CFO/담당자가 직접 (Human-in-the-Loop)
           </div>
         </div>
       </div>
@@ -1087,7 +1087,7 @@
       <div class="two-col">
         <div class="panel" style="padding:18px;border-color:rgba(5,150,105,.2);background:rgba(5,150,105,.04)">
           <div style="font-size:12px;color:#6ee7b7;font-weight:700;margin-bottom:10px">KustodyFi AI Agent가 해드리는 것</div>
-          <div class="benefit-point green" data-delay="0" style="margin-bottom:4px"><span>&#10003;</span> 수출 일정에 맞춰 <strong>헷지 시점</strong> 제안</div>
+          <div class="benefit-point green" data-delay="0" style="margin-bottom:4px"><span>&#10003;</span> 수출 일정에 맞춰 <strong>헷지 시점</strong> 구간 안내</div>
           <div class="benefit-point green" data-delay="100" style="margin-bottom:4px"><span>&#10003;</span> 여러 기관의 <strong>선물환 조건 비교</strong></div>
           <div class="benefit-point cyan" data-delay="200" style="margin-bottom:4px"><span>&#10003;</span> <strong>증거금 규모</strong>와 만기 자동 계산</div>
           <div class="benefit-point cyan" data-delay="300" style="margin-bottom:0"><span>&#10003;</span> CFO 승인 한 번 &rarr; <strong>계약 자동 체결</strong></div>
@@ -1269,11 +1269,11 @@
       <div><div class="stat-num">자동기록</div><div class="stat-label">엑셀 수기 작성 불필요</div></div>
     </div>
     <div style="margin-top:40px;padding:18px 28px;background:rgba(8,145,178,.06);border:1px solid rgba(8,145,178,.15);border-radius:14px;display:inline-block;opacity:0;animation:fadeUp .8s .9s forwards">
-      <div style="font-size:14px;color:#67e8f9;font-weight:700;margin-bottom:8px">KustodyFi &mdash; Two Modes, One Platform</div>
+      <div style="font-size:14px;color:#67e8f9;font-weight:700;margin-bottom:8px">KustodyFi &mdash; Two Hedge Modes, One Platform</div>
       <div style="font-size:12px;color:var(--gray-300);line-height:1.8">
-        <strong style="color:#67e8f9">Expert Manual Mode</strong> &mdash; 전문가의 판단 + 플랫폼의 실행력 (5분)<br>
-        <strong style="color:#6ee7b7">AI Agent Auto Mode</strong> &mdash; AI가 제안, CFO가 승인. 인적 시간 0분.<br>
-        <strong style="color:#fcd34d">"외환 전담자 없이도, 기관급 FX 실행을"</strong>
+        <strong style="color:#6ee7b7">Full Hedge Mode (환노출도 해소형)</strong> &mdash; Cash Balance + Cash Schedule + DF로 Spot Delta 산출, 열린 포지션만큼 분할 집행하여 환노출도를 0으로 수렴<br>
+        <strong style="color:#fcd34d">Alpha Mode (초과수익 추구형)</strong> &mdash; 공정가치 대비 유리한 구간에서 집중 집행, 시장 평균 대비 초과수익 추구<br>
+        <strong style="color:var(--gray-300);font-size:11px">의사결정은 CFO/담당자가 직접 (Human-in-the-Loop) &nbsp;|&nbsp; 증거금에는 RP 수준 금리 적용</strong>
       </div>
     </div>
     <div style="margin-top:32px;font-size:14px;color:var(--gray-500);opacity:0;animation:fadeUp .8s 1.1s forwards">

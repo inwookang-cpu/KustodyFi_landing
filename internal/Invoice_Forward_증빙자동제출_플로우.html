@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoice → Forward → 증빙 자동제출 플로우</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #ffffff; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #333; padding: 40px; }
+.container { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 4px; }
+.subtitle { font-size: 14px; color: #888; text-align: center; margin-bottom: 32px; }
+.flow { display: flex; gap: 32px; }
+.steps { flex: 1; display: flex; flex-direction: column; gap: 0; }
+.step { position: relative; padding: 0 0 24px 0; }
+.step:last-child { padding-bottom: 0; }
+.step::after {
+  content: '';
+  position: absolute;
+  left: 24px;
+  top: 52px;
+  bottom: 0;
+  width: 2px;
+  background: #ddd;
+}
+.step:last-child::after { display: none; }
+.step-box {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.step-num {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+.step-content {
+  flex: 1;
+  background: #fafafa;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+.step-title { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+.step-desc { font-size: 13px; color: #777; }
+
+.c1 { background: #1D9E75; }
+.c2 { background: #7F77DD; }
+.c3 { background: #BA7517; }
+.c4 { background: #D85A30; }
+.c5 { background: #1D9E75; }
+.c6 { background: #7F77DD; }
+.c7 { background: #888780; }
+
+.side-panels { flex: 0 0 280px; display: flex; flex-direction: column; gap: 20px; padding-top: 0; }
+.side-panel {
+  background: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+}
+.side-panel h3 { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #333; }
+.side-panel ul { list-style: none; padding: 0; }
+.side-panel li { font-size: 13px; color: #555; padding: 3px 0; padding-left: 12px; position: relative; }
+.side-panel li::before { content: '·'; position: absolute; left: 0; color: #aaa; font-weight: 700; }
+
+.connector {
+  font-size: 11px;
+  color: #aaa;
+  text-align: center;
+  margin: -8px 0;
+  position: relative;
+  z-index: 2;
+}
+.connector span {
+  background: #fff;
+  padding: 0 6px;
+}
+
+.arrow-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #aaa;
+  margin-bottom: 4px;
+}
+.arrow-label .line { flex: 1; height: 1px; border-top: 1px dashed #ccc; }
+
+.footer {
+  margin-top: 32px;
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+}
+.footer-item {
+  font-size: 13px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.footer-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.fd1 { background: #1D9E75; }
+.fd2 { background: #7F77DD; }
+.fd3 { background: #888; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Invoice → Forward → 증빙 자동제출 플로우</h1>
+  <p class="subtitle">KustodyFi TMS 내 실수요 증빙 자동화 아키텍처</p>
+
+  <div class="flow">
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-box">
+          <div class="step-num c1">1</div>
+          <div class="step-content">
+            <div class="step-title">Invoice 업로드</div>
+            <div class="step-desc">PDF/이미지 → OCR 자동 파싱</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-box">
+          <div class="step-num c2">2</div>
+          <div class="step-content">
+            <div class="step-title">AI Agent 자동 추출</div>
+            <div class="step-desc">금액, 통화, 결제일, 거래처, PO번호</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-box">
+          <div class="step-num c3">3</div>
+          <div class="step-content">
+            <div class="step-title">헷지 추천 생성</div>
+            <div class="step-desc">StableFX 이론가 기반 · 결제예정일 만기매칭</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-box">
+          <div class="step-num c4">4</div>
+          <div class="step-content">
+            <div class="step-title">SEAL 승인</div>
+            <div class="step-desc">한도 · 정책 · 승인 워크플로우 확인 → 실행 허가</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-box">
+          <div class="step-num c5">5</div>
+          <div class="step-content">
+            <div class="step-title">선물환 체결</div>
+            <div class="step-desc">Multi-RFQ → 은행/증권사 최적 호가 선택</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-box">
+          <div class="step-num c6">6</div>
+          <div class="step-content">
+            <div class="step-title">증빙 자동 제출</div>
+            <div class="step-desc">Invoice + 매핑표 + 실수요확인서 → 은행 API/이메일</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-box">
+          <div class="step-num c7">7</div>
+          <div class="step-content">
+            <div class="step-title">Audit Trail 기록</div>
+            <div class="step-desc">Invoice ↔ 선물환거래 연결 · 불변 로그 보관</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="side-panels">
+
+      <div class="side-panel">
+        <h3>추출 데이터 (Step 2)</h3>
+        <ul>
+          <li>거래처명</li>
+          <li>통화 (USD / EUR / JPY 등)</li>
+          <li>결제금액</li>
+          <li>결제예정일</li>
+          <li>PO번호 · 계약번호</li>
+        </ul>
+      </div>
+
+      <div class="side-panel">
+        <h3>헷지 패키지 (Step 3)</h3>
+        <ul>
+          <li>선물환 방향: Sell USD</li>
+          <li>금액: Invoice 금액 100%</li>
+          <li>만기: 결제예정일 매칭</li>
+          <li>이론가: StableFX 산출</li>
+        </ul>
+      </div>
+
+      <div class="side-panel">
+        <h3>은행 제출 패키지 (Step 6)</h3>
+        <ul>
+          <li>Invoice 원본 (PDF)</li>
+          <li>거래-Invoice 매핑표</li>
+          <li>실수요 확인서 (자동생성)</li>
+          <li>SEAL 승인 기록</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-item"><div class="footer-dot fd1"></div>거래처: 업로드만 하면 끝</div>
+    <div class="footer-item"><div class="footer-dot fd2"></div>TMS: 파싱 → 매칭 → 제출 자동</div>
+    <div class="footer-item"><div class="footer-dot fd3"></div>은행: API로 증빙 수신</div>
+  </div>
+
+</div>
+</body>
+</html>
