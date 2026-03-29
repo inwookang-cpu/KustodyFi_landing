@@ -143,7 +143,7 @@
     margin-bottom: 24px; opacity: 0; animation: fadeUp .8s .2s forwards;
   }
   .hero-title {
-    font-size: 48px; font-weight: 900; line-height: 1.25;
+    font-size: 42px; font-weight: 900; line-height: 1.25;
     color: var(--dark); margin-bottom: 24px; letter-spacing: -1px;
     opacity: 0; animation: fadeUp .8s .3s forwards;
   }
@@ -260,7 +260,7 @@
   .solution-card.hedge .solution-icon { background: rgba(37,99,235,.1); }
   .solution-card h3 { font-size: 18px; font-weight: 800; color: var(--dark); margin-bottom: 10px; line-height: 1.4; }
   .solution-card p { font-size: 14px; color: var(--gray-500); line-height: 1.7; margin-bottom: 16px; }
-  .solution-features { list-style: none; font-size: 13px; color: var(--gray-600); margin-top: auto; }
+  .solution-features { list-style: none; font-size: 13px; color: var(--gray-600); }
   .solution-features li { padding: 6px 0; display: flex; align-items: flex-start; gap: 8px; }
   .solution-features li::before {
     content: ''; width: 6px; height: 6px; border-radius: 50%; margin-top: 7px; flex-shrink: 0;
@@ -1126,9 +1126,8 @@
       </div>
     </div>
     <div class="hero-visual">
-      <div class="hero-float hero-float-1">&#9878; 공정가치 산출 중</div>
+      <div class="hero-float hero-float-1">&#9889; AI Agent 실행 중</div>
       <div class="hero-float hero-float-2">&#10003; Best Rate 자동 비교</div>
-      <div class="hero-float hero-float-3">&#9889; AI Agent 실행 중</div>
       <div class="hero-card">
         <div class="hero-card-label">MULTI-RFQ &mdash; SELL USD $350K</div>
         <div class="hero-card-row">
@@ -1265,6 +1264,7 @@
       <button class="sfx-tab active" id="sfxTabMarket" role="tab" aria-selected="true" aria-controls="sfxMarket" tabindex="0" onclick="switchSfxTab('market')">환율 + 선물환</button>
       <button class="sfx-tab" id="sfxTabSwap" role="tab" aria-selected="false" aria-controls="sfxSwap" tabindex="-1" onclick="switchSfxTab('swap')">FX Swap</button>
       <button class="sfx-tab" id="sfxTabCli" role="tab" aria-selected="false" aria-controls="sfxCli" tabindex="-1" onclick="switchSfxTab('cli')">CLI Demo</button>
+      <button class="sfx-tab" id="sfxTabAgent" role="tab" aria-selected="false" aria-controls="sfxAgent" tabindex="-1" onclick="switchSfxTab('agent')">AI Agent</button>
     </div>
 
     <!-- Market Panel -->
@@ -1343,6 +1343,23 @@
           <span class="cli-prompt">stablefx&gt;</span>
           <span style="color:#5c6a7a;font-size:12px" id="cliInputHint">Demo running...</span>
           <button class="cli-quick-btn" id="cliReplayBtn" onclick="cliStartScenario()" style="margin-left:auto;display:none">Replay</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Agent Panel -->
+    <div class="sfx-panel" id="sfxAgent" role="tabpanel" aria-labelledby="sfxTabAgent" hidden>
+      <div class="cli-terminal" style="background:#0c1222">
+        <div class="cli-topbar">
+          <div class="cli-brand">KUSTODYFI <span>AI AGENT</span></div>
+          <div class="cli-status">
+            <span class="cli-pair-badge active">RUNNING</span>
+            <span class="cli-live-dot"></span>
+          </div>
+        </div>
+        <div style="padding:20px;font-family:'SF Mono','Fira Code',monospace;font-size:12px;line-height:2;color:#94a3b8;max-height:420px;overflow-y:auto" id="agentOutput"></div>
+        <div style="padding:8px 20px 12px;border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:flex-end">
+          <button id="agentReplayBtn" onclick="agentStartScenario()" style="display:none;padding:6px 14px;border-radius:6px;background:rgba(8,145,178,.15);border:1px solid rgba(8,145,178,.3);color:#67e8f9;font-size:11px;font-weight:600;cursor:pointer;font-family:'SF Mono','Fira Code',monospace">Replay</button>
         </div>
       </div>
     </div>
@@ -1602,13 +1619,13 @@
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px">
         <div style="padding:18px 20px;border-radius:14px;background:rgba(8,145,178,.04);border:1px solid rgba(8,145,178,.12)">
-          <div style="font-size:11px;font-weight:700;color:var(--primary);letter-spacing:1px;margin-bottom:10px">SPOT 경쟁 입찰 (3bp)</div>
+          <div style="font-size:11px;font-weight:700;color:var(--primary);letter-spacing:1px;margin-bottom:10px">SPOT 경쟁 입찰 (0.7bp)</div>
           <div style="font-size:12px;color:var(--gray-600);line-height:1.7;margin-bottom:10px">
             <span id="calcSpotVol" style="font-weight:700;color:var(--dark)">$2.5M</span>/월 &times; 12개월<br>
-            &times; <span id="calcSpotImprove" style="font-weight:700;color:var(--primary-dark)">0.44원/$</span>
-            <span style="color:var(--gray-400);font-size:11px">(1,450 &times; 0.03%)</span>
+            &times; <span id="calcSpotImprove" style="font-weight:700;color:var(--primary-dark)">0.10원/$</span>
+            <span style="color:var(--gray-400);font-size:11px">(1,450 &times; 0.007%)</span>
           </div>
-          <div style="font-size:20px;font-weight:900;font-family:'Inter',sans-serif;color:var(--primary-dark)" id="savingsSpot">&#8361;13,050,000</div>
+          <div style="font-size:20px;font-weight:900;font-family:'Inter',sans-serif;color:var(--primary-dark)" id="savingsSpot">&#8361;3,045,000</div>
           <div style="font-size:11px;color:var(--gray-500)">/ year</div>
         </div>
         <div style="padding:18px 20px;border-radius:14px;background:rgba(37,99,235,.04);border:1px solid rgba(37,99,235,.12)">
@@ -1625,8 +1642,8 @@
 
       <div class="savings-total">
         <div class="savings-total-left">
-          <div class="savings-total-label">연간 총 절감 예상</div>
-          <div class="savings-total-amount" id="savingsTotal">&#8361;100,050,000</div>
+          <div class="savings-total-label">연간 최대 절감 예상</div>
+          <div class="savings-total-amount" id="savingsTotal">&#8361;90,045,000</div>
           <div class="savings-total-sub" id="savingsSub">월 $5,000,000 | Spot 50% + Forward 50%</div>
         </div>
         <a href="#cta" class="savings-total-cta">데모 신청하기 &#8594;</a>
@@ -1635,7 +1652,7 @@
       <div style="margin-top:20px;padding:14px 18px;border-radius:12px;background:var(--gray-50);border:1px solid var(--gray-200);font-size:12px;color:var(--gray-500);line-height:1.7">
         <strong style="color:var(--gray-600)">산출 근거:</strong>
         Hau et al.(<em>Management Science</em>, 2021)에 따르면 멀티딜러 RFQ 플랫폼에서 기업 규모에 따른 <strong style="color:var(--gray-700)">가격 차별(10.9 pips)이 사실상 제거</strong>됩니다.
-        Spot 3bp는 경쟁 입찰 효과, Forward 20bp는 선물환 접근권 확보 + 경쟁 입찰의 복합 효과로, 논문 수치 대비 보수적 추정치입니다.
+        Spot 0.7bp는 경쟁 입찰 효과, Forward 20bp는 선물환 접근권 확보 + 경쟁 입찰의 복합 효과로, 논문 수치 대비 보수적 추정치입니다.
         EUR/USD에서도 이 수준의 차별이 관찰되며, 유동성이 낮은 USD/KRW에서는 격차가 더 클 수 있습니다
         <span style="color:var(--gray-400)">(Rime &amp; Schrimpf, BIS, 2013; Butz &amp; Oomen, QF, 2019; Stenfors, JIMFIM, 2018)</span>.
         <strong style="color:var(--gray-700)">선물환 비중이 높을수록 절감 효과가 커집니다.</strong> 실제 절감액은 거래 조건에 따라 달라질 수 있습니다.
@@ -1677,7 +1694,7 @@
       </div>
       <div class="how-arrow">&rarr;</div>
       <div class="how-step" data-anim>
-        <div class="how-step-num">4</div>
+        <div class="how-step-num" style="background:rgba(5,150,105,.1);color:var(--success)">4</div>
         <div class="how-step-content">
           <div class="how-step-title">Multi-RFQ</div>
           <div class="how-step-desc">5곳 은행에 동시 견적, Best Rate 자동 선택</div>
@@ -1685,7 +1702,7 @@
       </div>
       <div class="how-arrow">&rarr;</div>
       <div class="how-step" data-anim>
-        <div class="how-step-num">5</div>
+        <div class="how-step-num" style="background:rgba(124,58,237,.1);color:#7c3aed">5</div>
         <div class="how-step-content">
           <div class="how-step-title">CFO 승인</div>
           <div class="how-step-desc">알림 수신 &rarr; 승인 클릭, 자동 체결 + 기록</div>
@@ -2006,6 +2023,14 @@
       panel.classList.add('active');
       panel.hidden = false;
       if (!window._cliInitialized) { window._cliInitialized = true; cliStartScenario(); }
+    } else if (tab === 'agent') {
+      tabs[3].classList.add('active');
+      tabs[3].setAttribute('aria-selected', 'true');
+      tabs[3].setAttribute('tabindex', '0');
+      const panel = document.getElementById('sfxAgent');
+      panel.classList.add('active');
+      panel.hidden = false;
+      if (!window._agentInitialized) { window._agentInitialized = true; agentStartScenario(); }
     }
   }
 
@@ -2085,10 +2110,10 @@
 
   Strategy         Volume/mo   Improvement   Annual Savings
   ══════════════  ==========  ============  ═══════════════
-  RFQ 경쟁입찰      $2,500K    3bp (0.45₩)    ₩13,365,000
+  RFQ 경쟁입찰      $2,500K  0.7bp (0.10₩)     ₩3,118,500
   선물환 헷지        $2,500K   20bp (2.97₩)    ₩89,100,000
   ──────────────  ──────────  ────────────  ───────────────
-  TOTAL             $5,000K                  ₩102,465,000/yr
+  TOTAL             $5,000K                   ₩92,218,500/yr
 
   * 근거: BIS(2013), Multi-dealer 경쟁입찰 15-25bp 절감
   → 데모 신청: sales@kustodyfi.com`
@@ -2193,6 +2218,254 @@
     setTimeout(typeChar, 200);
   }
 
+  // ===== AI AGENT SCENARIO =====
+  let _agentSeqId = 0;
+
+  const AGENT_STEPS = [
+    { type: 'system', text: '--- Invoice Upload Detected ---', delay: 600 },
+    { type: 'user',   text: '📎 Invoice_DemoCo_20260629.pdf 업로드', delay: 800 },
+    { type: 'agent',  text: 'Invoice를 분석했습니다.', delay: 500 },
+    { type: 'detail', lines: [
+      '거래처    KustodyFi Demo Company',
+      '금  액    USD 850,000',
+      '결제일    2026-06-29 (D-92, 3M)',
+      '분  류    Cash Schedule → 매입채무'
+    ], delay: 400 },
+    { type: 'agent',  text: 'Spot Delta가 변동되었습니다.', delay: 700 },
+    { type: 'detail', lines: [
+      '기존 Spot Delta    +USD 2,100,000 (Long)',
+      '신규 반영          +USD   850,000',
+      '변경 Spot Delta    +USD 2,950,000 (Long)',
+      '→ 추가 매도 헷지 필요'
+    ], delay: 400 },
+    { type: 'agent',  text: '선물환 USD 850,000 추가 매도를 권장합니다.', delay: 700 },
+    { type: 'detail', lines: [
+      '만기       2026-06-29 (3M)',
+      '공정가치   1,443.50 (CIP 기준)',
+      '예상 범위  1,443.00 ~ 1,443.70',
+      '',
+      'Multi-RFQ 진행할까요? [승인/거부]'
+    ], delay: 600 },
+    { type: 'user',   text: '승인', delay: 1000 },
+    { type: 'agent',  text: '✓ RFQ 3개 기관 발송 중...', delay: 1200 },
+    { type: 'box', title: 'Multi-RFQ 결과', rows: [
+      { label: 'H증권', value: '1,443.70', tag: 'BEST' },
+      { label: 'N증권', value: '1,443.45', tag: '' },
+      { label: 'S증권', value: '1,443.20', tag: '' }
+    ], delay: 500 },
+    { type: 'box', title: '체결 완료', rows: [
+      { label: '선정 기관', value: 'H증권 (자동 선정)', tag: '' },
+      { label: '매도 금액', value: 'USD 850,000', tag: '' },
+      { label: '체결 환율', value: '1,443.70', tag: '' }
+    ], delay: 500 },
+    { type: 'highlight', title: '이번 거래를 통한 절감액', rows: [
+      { label: 'K은행 (주거래)', value: '1,442.80' },
+      { label: 'H증권 (체결)', value: '1,443.70' },
+      { label: '차이', value: '+0.90원/$' },
+      { label: '절감액', value: '₩765,000', emphasis: true }
+    ], note: 'USD 850,000 × 0.90 = ₩765,000', delay: 0 }
+  ];
+
+  function agentStartScenario() {
+    _agentSeqId++;
+    const myId = _agentSeqId;
+    const out = document.getElementById('agentOutput');
+    out.innerHTML = '';
+    document.getElementById('agentReplayBtn').style.display = 'none';
+
+    let idx = 0;
+
+    function nextStep() {
+      if (myId !== _agentSeqId) return;
+      if (idx >= AGENT_STEPS.length) {
+        document.getElementById('agentReplayBtn').style.display = '';
+        return;
+      }
+
+      const step = AGENT_STEPS[idx];
+      idx++;
+
+      if (step.type === 'system') {
+        const div = document.createElement('div');
+        div.style.cssText = 'color:#67e8f9;font-weight:700;margin:8px 0';
+        div.textContent = step.text;
+        out.appendChild(div);
+        out.scrollTop = out.scrollHeight;
+        setTimeout(nextStep, step.delay);
+      }
+      else if (step.type === 'user') {
+        const div = document.createElement('div');
+        div.style.cssText = 'margin:6px 0';
+        const tag = document.createElement('span');
+        tag.style.cssText = 'color:#fbbf24;font-weight:700';
+        tag.textContent = '[User] ';
+        div.appendChild(tag);
+        const txt = document.createElement('span');
+        txt.style.cssText = 'color:#e2e8f0';
+        out.appendChild(div);
+        out.scrollTop = out.scrollHeight;
+        // type out the text
+        let ci = 0;
+        function typeIt() {
+          if (myId !== _agentSeqId) return;
+          if (ci >= step.text.length) {
+            setTimeout(nextStep, step.delay);
+            return;
+          }
+          txt.textContent = step.text.substring(0, ci + 1);
+          ci++;
+          out.scrollTop = out.scrollHeight;
+          setTimeout(typeIt, 30 + Math.random() * 20);
+        }
+        div.appendChild(txt);
+        setTimeout(typeIt, 200);
+      }
+      else if (step.type === 'agent') {
+        const div = document.createElement('div');
+        div.style.cssText = 'margin:10px 0 2px';
+        const tag = document.createElement('span');
+        tag.style.cssText = 'color:#34d399;font-weight:700';
+        tag.textContent = '[Agent] ';
+        div.appendChild(tag);
+        const txt = document.createElement('span');
+        txt.style.cssText = 'color:#e2e8f0';
+        div.appendChild(txt);
+        out.appendChild(div);
+        out.scrollTop = out.scrollHeight;
+        let ci = 0;
+        function typeAgent() {
+          if (myId !== _agentSeqId) return;
+          if (ci >= step.text.length) {
+            setTimeout(nextStep, step.delay);
+            return;
+          }
+          txt.textContent = step.text.substring(0, ci + 1);
+          ci++;
+          out.scrollTop = out.scrollHeight;
+          setTimeout(typeAgent, 25 + Math.random() * 15);
+        }
+        setTimeout(typeAgent, 300);
+      }
+      else if (step.type === 'detail') {
+        let li = 0;
+        function printDetail() {
+          if (myId !== _agentSeqId) return;
+          if (li >= step.lines.length) {
+            setTimeout(nextStep, step.delay);
+            return;
+          }
+          const div = document.createElement('div');
+          div.style.cssText = 'color:#94a3b8;padding-left:16px;font-size:11px;line-height:1.8';
+          const line = step.lines[li];
+          if (line.includes('→')) {
+            div.style.color = '#67e8f9';
+            div.style.fontWeight = '600';
+          }
+          div.textContent = line;
+          out.appendChild(div);
+          out.scrollTop = out.scrollHeight;
+          li++;
+          setTimeout(printDetail, 120);
+        }
+        setTimeout(printDetail, 150);
+      }
+      else if (step.type === 'box') {
+        const box = document.createElement('div');
+        box.style.cssText = 'margin:10px 0;padding:12px 16px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)';
+        const title = document.createElement('div');
+        title.style.cssText = 'color:#67e8f9;font-weight:700;font-size:11px;margin-bottom:8px;letter-spacing:0.5px';
+        title.textContent = step.title;
+        box.appendChild(title);
+        out.appendChild(box);
+        out.scrollTop = out.scrollHeight;
+
+        let ri = 0;
+        function printRow() {
+          if (myId !== _agentSeqId) return;
+          if (ri >= step.rows.length) {
+            setTimeout(nextStep, step.delay);
+            return;
+          }
+          const row = step.rows[ri];
+          const div = document.createElement('div');
+          div.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:3px 0;font-size:12px';
+          const lbl = document.createElement('span');
+          lbl.style.color = '#cbd5e1';
+          lbl.textContent = row.label;
+          const val = document.createElement('span');
+          val.style.cssText = 'color:#e2e8f0;font-weight:600';
+          val.textContent = row.value;
+          if (row.tag === 'BEST') {
+            val.style.color = '#34d399';
+            const badge = document.createElement('span');
+            badge.style.cssText = 'margin-left:8px;padding:1px 6px;border-radius:4px;background:rgba(52,211,153,.15);color:#34d399;font-size:10px;font-weight:700';
+            badge.textContent = 'BEST';
+            val.appendChild(document.createTextNode(' '));
+            val.appendChild(badge);
+          }
+          div.appendChild(lbl);
+          div.appendChild(val);
+          box.appendChild(div);
+          out.scrollTop = out.scrollHeight;
+          ri++;
+          setTimeout(printRow, 300);
+        }
+        setTimeout(printRow, 200);
+      }
+      else if (step.type === 'highlight') {
+        const box = document.createElement('div');
+        box.style.cssText = 'margin:12px 0;padding:14px 16px;border-radius:8px;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.25)';
+        const title = document.createElement('div');
+        title.style.cssText = 'color:#34d399;font-weight:700;font-size:11px;margin-bottom:8px;letter-spacing:0.5px';
+        title.textContent = '💰 ' + step.title;
+        box.appendChild(title);
+        out.appendChild(box);
+        out.scrollTop = out.scrollHeight;
+
+        let ri = 0;
+        function printHighRow() {
+          if (myId !== _agentSeqId) return;
+          if (ri >= step.rows.length) {
+            if (step.note) {
+              setTimeout(() => {
+                const note = document.createElement('div');
+                note.style.cssText = 'margin-top:6px;font-size:10px;color:#6ee7b7;opacity:.7';
+                note.textContent = step.note;
+                box.appendChild(note);
+                out.scrollTop = out.scrollHeight;
+                setTimeout(nextStep, 400);
+              }, 200);
+            } else {
+              setTimeout(nextStep, step.delay);
+            }
+            return;
+          }
+          const row = step.rows[ri];
+          const div = document.createElement('div');
+          div.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:3px 0;font-size:12px';
+          const lbl = document.createElement('span');
+          lbl.style.color = '#cbd5e1';
+          lbl.textContent = row.label;
+          const val = document.createElement('span');
+          val.style.cssText = 'color:#e2e8f0;font-weight:600';
+          val.textContent = row.value;
+          if (row.emphasis) {
+            val.style.cssText = 'color:#34d399;font-weight:900;font-size:16px';
+          }
+          div.appendChild(lbl);
+          div.appendChild(val);
+          box.appendChild(div);
+          out.scrollTop = out.scrollHeight;
+          ri++;
+          setTimeout(printHighRow, 350);
+        }
+        setTimeout(printHighRow, 200);
+      }
+    }
+
+    nextStep();
+  }
+
   // CLI clock
   function updateCliClock() {
     const el = document.getElementById('cliClock');
@@ -2237,13 +2510,13 @@
   // Savings Calculator
   (function() {
     const SPOT_RATE = 1450.0;
-    const SPOT_BP = 3;      // Spot: 3bp improvement
+    const SPOT_BP = 0.7;    // Spot: 0.7bp improvement
     const FWD_BP = 20;      // Forward: max 20bp improvement
 
     const volSlider = document.getElementById('savingsSlider');
     const fwdSlider = document.getElementById('savingsFwdSlider');
 
-    const spotImprove = SPOT_RATE * (SPOT_BP / 10000);   // 0.44원/$
+    const spotImprove = SPOT_RATE * (SPOT_BP / 10000);   // 0.1015원/$
     const fwdImprove = SPOT_RATE * (FWD_BP / 10000);     // 2.90원/$
 
     function fmt(n) {
