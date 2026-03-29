@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="KustodyFi는 중소기업이 선물환 헷지에 접근할 수 있게 하는 AI 기반 FX 관리 플랫폼입니다. 증거금 기반 Credit Line, Multi-RFQ 경쟁 입찰, 자동 헷지 제안을 제공합니다.">
-<meta property="og:title" content="KustodyFi — 중소기업 환율 헷지 플랫폼">
-<meta property="og:description" content="은행 한도 없이도 선물환 헷지가 가능합니다. 증거금 기반 Credit Line + Multi-RFQ 경쟁 입찰로 환율 리스크를 관리하세요.">
+<meta name="description" content="KustodyFi는 기업 Treasury 시스템 위에 AI 플랫폼을 구축하여 Multi-RFQ 경쟁 입찰까지 제공하는 외환 관리 솔루션입니다. 증거금 기반 Credit Line, 자동 헷지 제안을 제공합니다.">
+<meta property="og:title" content="KustodyFi — AI 기업 Treasury 플랫폼">
+<meta property="og:description" content="증거금 기반 Credit Line으로 선물환 헷지 접근성을 높입니다. Multi-RFQ 경쟁 입찰로 환율 리스크를 관리하세요.">
 <meta property="og:type" content="website">
-<title>KustodyFi — AI-Powered FX Management</title>
+<title>KustodyFi — AI 기업 Treasury 플랫폼</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
@@ -1106,7 +1106,7 @@
 <section class="hero" id="hero">
   <div class="hero-inner">
     <div>
-      <div class="hero-badge">AI-Powered FX Hedging Platform</div>
+      <div class="hero-badge">AI-Powered Corporate Treasury Platform</div>
       <h1 class="hero-title">
         달러 보내야 하는데,<br>
         <span class="hl">어디서 바꿔야 덜 손해볼까?</span>
@@ -1628,10 +1628,13 @@
 
       <div style="margin-top:20px;padding:14px 18px;border-radius:12px;background:var(--gray-50);border:1px solid var(--gray-200);font-size:12px;color:var(--gray-500);line-height:1.7">
         <strong style="color:var(--gray-600)">산출 근거:</strong>
-        Spot 7bp, Forward 최대 20bp 개선폭은 다자간 경쟁 입찰(Multi-RFQ) 도입 시 확인된 스프레드 절감 효과에 기반합니다.
-        FX 시장 구조 연구에 따르면, 경쟁 입찰 방식은 단일 딜러 대비 평균 15~25bp의 실행 비용 절감을 달성합니다
-        <span style="color:var(--gray-400)">(Rime &amp; Schrimpf, BIS Quarterly Review, 2013; Butz &amp; Oomen, Quantitative Finance, 2019)</span>.
-        본 시뮬레이션은 보수적 추정치를 적용한 참고용 수치이며, 실제 절감액은 거래 조건에 따라 달라질 수 있습니다.
+        Hau et al.(<em>Management Science</em>, 2021)에 따르면 FX 파생상품의 single-dealer bilateral 거래에서 고객의 신용도(credit tier)에 따라 effective spread가 크게 달라집니다.
+        <strong style="color:var(--gray-700)">상위 10% 고객은 약 0.02%, 하위 25% 고객은 0.5%의 거래 비용</strong>을 부담하며, 고객 성격에 따라 최대 48bp 이상 차이가 발생합니다.
+        KustodyFi는 <strong style="color:var(--gray-700)">증거금 담보로 credit tier를 상향</strong>하고, <strong style="color:var(--gray-700)">Multi-RFQ 경쟁 입찰로 이러한 가격 차별 구조를 제거</strong>합니다.
+        Forward 20bp는 이 두 효과(credit tier 상향 + 경쟁 입찰)의 복합 효과로, 논문 수치(48bp) 대비 보수적 추정치입니다.
+        Spot 0.7bp는 경쟁 입찰 단독 효과입니다
+        <span style="color:var(--gray-400)">(Stenfors, JIMFIM, 2018; Rime &amp; Schrimpf, BIS, 2013; Butz &amp; Oomen, QF, 2019)</span>.
+        <strong style="color:var(--gray-700)">선물환 비중이 높을수록 절감 효과가 커집니다.</strong> 실제 절감액은 거래 조건에 따라 달라질 수 있습니다.
       </div>
     </div>
   </div>
@@ -1838,7 +1841,7 @@
   <div class="footer-inner">
     <div>
       <div class="footer-logo">Kustody<span>Fi</span></div>
-      <div style="font-size:12px;color:var(--gray-500);margin-top:8px">AI-Powered FX Management Platform</div>
+      <div style="font-size:12px;color:var(--gray-500);margin-top:8px">AI-Powered Corporate Treasury Platform</div>
     </div>
     <div class="footer-info">
       주식회사 커스터디파이 | 대표 강인우<br>
