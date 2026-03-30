@@ -248,7 +248,7 @@
   <div class="entities">
     <div class="entity"><div class="entity-dot dot-client"></div>고객 (수출기업)</div>
     <div class="entity"><div class="entity-dot dot-broker"></div>KustodyFi / 증권사</div>
-    <div class="entity"><div class="entity-dot dot-bank"></div>지정외국환은행</div>
+    <div class="entity"><div class="entity-dot dot-bank"></div>외국환은행 (거래은행)</div>
   </div>
 
   <!-- ===== SEQUENCE ===== -->
@@ -362,7 +362,7 @@
           <div class="step-tag">SETTLEMENT DATE</div>
           <div class="step-title">만기 도래 &mdash; 수출대금 입금</div>
           <div class="step-desc">
-            만기일에 해외 바이어로부터 수출대금(USD)이 <strong>지정외국환은행</strong>에 입금됩니다.
+            만기일에 해외 바이어로부터 수출대금(USD)이 <strong>외국환은행(거래은행)</strong>에 입금됩니다.
           </div>
           <div class="flow-diagram">
             <div class="flow-box">
@@ -371,7 +371,7 @@
             </div>
             <div class="flow-arrow">&rarr;</div>
             <div class="flow-box" style="border-color:rgba(217,119,6,.4);border-width:2px">
-              <strong>지정외국환은행</strong>
+              <strong>외국환은행</strong>
               USD 입금 확인
             </div>
           </div>
@@ -390,12 +390,12 @@
           <div class="step-tag">FX SETTLEMENT</div>
           <div class="step-title">USD 이체 &rarr; 약정환율로 원화 환전</div>
           <div class="step-desc">
-            지정외국환은행에서 받은 달러를 증권사 계좌로 이체하고,<br>
+            외국환은행에서 받은 달러를 증권사 계좌로 이체하고,<br>
             선물환 계약에서 약정한 환율(&#8361;1,430/$)로 <strong>원화 환전</strong>이 이루어집니다.
           </div>
           <div class="flow-diagram">
             <div class="flow-box" style="background:rgba(217,119,6,.05);border-color:rgba(217,119,6,.15)">
-              <strong>지정외국환은행</strong>
+              <strong>외국환은행</strong>
               $500K
             </div>
             <div class="flow-arrow" style="color:var(--success)">&rarr;</div>
@@ -474,6 +474,21 @@
   <div class="note">
     <strong>KustodyFi AI Agent</strong>가 수출 일정과 자금 스케줄을 기반으로 선물환 공정가치를 평가하고, 여러 기관의 호가를 비교하여 가장 유리한 조건을 안내합니다.
     보증금 규모, 만기 등 자동 계산되며 CFO가 판단 후 승인하면 완료됩니다.
+  </div>
+
+  <div class="note" style="margin-top:16px;background:rgba(217,119,6,.04);border-color:rgba(217,119,6,.15)">
+    <strong style="color:var(--warning)">규제 변경 사항 (2026.01~)</strong><br>
+    <span style="font-size:12px;line-height:2">
+      &bull; <strong>지정거래외국환은행 제도 부분 폐지</strong> &mdash;
+      무증빙 소액 해외송금(연 10만 달러)은 복수 금융기관 자유 선택 가능. ORIS(해외송금통합관리시스템) 가동으로 업권 통합 관리.
+      <span style="color:var(--gray-400)">(기획재정부 2025.12.09 발표)</span><br>
+      &bull; <strong>자본거래(해외직접투자 등)는 지정거래외국환은행 유지</strong> &mdash;
+      사후관리가 필요한 거래는 기존 체계 유지.<br>
+      &bull; <strong>수출입대금 신고 축소</strong> &mdash;
+      건당 10만 달러 초과 &amp; 선적 후 1년 초과 지급/수령만 신고 대상.
+      <span style="color:var(--gray-400)">(외국환거래규정 제2025-4호, 2025.02.10 시행)</span><br>
+      &bull; 본 플로우의 수출대금 수령은 외국환업무취급기관(은행/증권사)이면 가능하며, 특정 1개 은행을 지정할 의무는 완화됨.
+    </span>
   </div>
 </div>
 
