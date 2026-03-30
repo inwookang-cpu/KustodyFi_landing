@@ -1305,6 +1305,7 @@
       <button class="sfx-tab" id="sfxTabSwap" role="tab" aria-selected="false" aria-controls="sfxSwap" tabindex="-1" onclick="switchSfxTab('swap')">FX Swap</button>
       <button class="sfx-tab" id="sfxTabCli" role="tab" aria-selected="false" aria-controls="sfxCli" tabindex="-1" onclick="switchSfxTab('cli')">CLI Demo</button>
       <button class="sfx-tab" id="sfxTabAgent" role="tab" aria-selected="false" aria-controls="sfxAgent" tabindex="-1" onclick="switchSfxTab('agent')">AI Agent</button>
+      <button class="sfx-tab" id="sfxTabSeal" role="tab" aria-selected="false" aria-controls="sfxSeal" tabindex="-1" onclick="switchSfxTab('seal')" style="border:1px solid rgba(245,158,11,.3);color:#f59e0b;">SEAL</button>
     </div>
 
     <!-- Market Panel -->
@@ -1400,6 +1401,24 @@
         <div style="padding:20px;font-family:'SF Mono','Fira Code',monospace;font-size:12px;line-height:2;color:#94a3b8;max-height:420px;overflow-y:auto" id="agentOutput"></div>
         <div style="padding:8px 20px 12px;border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:flex-end">
           <button id="agentReplayBtn" onclick="agentStartScenario()" style="display:none;padding:6px 14px;border-radius:6px;background:rgba(8,145,178,.15);border:1px solid rgba(8,145,178,.3);color:#67e8f9;font-size:11px;font-weight:600;cursor:pointer;font-family:'SF Mono','Fira Code',monospace">Replay</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEAL Panel -->
+    <div class="sfx-panel" id="sfxSeal" role="tabpanel" aria-labelledby="sfxTabSeal" hidden>
+      <div class="cli-terminal" style="background:#0d0f14;border-color:#2a1f0a">
+        <div class="cli-topbar" style="background:#0a0c10;border-color:#2a1f0a">
+          <div class="cli-brand" style="color:#f59e0b">SEAL <span>Secure Execution & Audit Layer</span></div>
+          <div class="cli-status">
+            <span class="cli-pair-badge active" style="background:rgba(245,158,11,.1);color:#f59e0b;border-color:rgba(245,158,11,.3)">6 HOOKS ACTIVE</span>
+            <span class="cli-live-dot" style="background:#f59e0b"></span>
+          </div>
+        </div>
+        <div style="padding:20px;font-family:'SF Mono','JetBrains Mono','Fira Code',monospace;font-size:12px;line-height:1.8;color:#94a3b8;max-height:420px;overflow-y:auto" id="sealOutput"></div>
+        <div style="padding:8px 20px 12px;border-top:1px solid #2a1f0a;display:flex;align-items:center;justify-content:space-between">
+          <span style="color:#5c6a7a;font-size:11px;font-family:'SF Mono',monospace" id="sealInputHint">Demo running...</span>
+          <button id="sealReplayBtn" onclick="sealStartScenario()" style="display:none;padding:6px 14px;border-radius:6px;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);color:#f59e0b;font-size:11px;font-weight:600;cursor:pointer;font-family:'SF Mono','Fira Code',monospace">Replay</button>
         </div>
       </div>
     </div>
@@ -1830,7 +1849,41 @@
     <div class="section-title">공정가치 산출 <span class="hl">그 이상</span></div>
     <div class="section-desc">기본 서비스부터 차별화 기능, 회계 감사 지원까지. KustodyFi가 제공하는 전체 서비스 라인업입니다.</div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:40px">
+    <!-- Featured: Cash Optimizer -->
+    <a href="fx_demo_cash_optimizer.html" data-anim style="display:flex;align-items:center;gap:24px;padding:28px 32px;border-radius:16px;background:linear-gradient(135deg,rgba(8,145,178,.06) 0%,rgba(37,99,235,.06) 100%);border:1px solid rgba(8,145,178,.15);text-decoration:none;transition:all .3s;margin-top:40px;margin-bottom:16px" onmouseover="this.style.borderColor='rgba(8,145,178,.3)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(8,145,178,.15)';this.style.transform='none'">
+      <div style="flex-shrink:0;width:64px;height:64px;border-radius:14px;background:var(--gradient-main);display:flex;align-items:center;justify-content:center;font-size:28px">&#128197;</div>
+      <div style="flex:1">
+        <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--primary);margin-bottom:4px">NEW</div>
+        <div style="font-size:19px;font-weight:900;color:var(--dark);margin-bottom:6px">Cash Schedule 기반 최적 헤지 전략</div>
+        <div style="font-size:13px;color:var(--gray-500);line-height:1.7">캘린더 뷰로 Inflow/Outflow를 한눈에 파악하고, AI가 자연 넷팅 + 묶음 헤지로 최소 거래 수를 제안합니다. 월 6건 거래를 2건으로 줄이고 연간 $40,000+ 절감.</div>
+      </div>
+      <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+        <div style="display:flex;gap:6px">
+          <span style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;background:rgba(5,150,105,.08);color:var(--success)">자연 넷팅</span>
+          <span style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;background:rgba(37,99,235,.08);color:var(--accent)">묶음 헤지</span>
+        </div>
+        <div style="font-size:14px;font-weight:700;color:var(--primary)">자세히 보기 &#8594;</div>
+      </div>
+    </a>
+
+    <!-- Featured: SEAL Demo -->
+    <a href="seal_demo.html" data-anim style="display:flex;align-items:center;gap:24px;padding:28px 32px;border-radius:16px;background:linear-gradient(135deg,rgba(245,158,11,.06) 0%,rgba(239,68,68,.04) 100%);border:1px solid rgba(245,158,11,.15);text-decoration:none;transition:all .3s;margin-bottom:16px" onmouseover="this.style.borderColor='rgba(245,158,11,.3)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(245,158,11,.15)';this.style.transform='none'">
+      <div style="flex-shrink:0;width:64px;height:64px;border-radius:14px;background:linear-gradient(135deg,#f59e0b 0%,#ef4444 100%);display:flex;align-items:center;justify-content:center;font-size:28px">&#128274;</div>
+      <div style="flex:1">
+        <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#f59e0b;margin-bottom:4px">SEAL</div>
+        <div style="font-size:19px;font-weight:900;color:var(--dark);margin-bottom:6px">Secure Execution & Audit Layer</div>
+        <div style="font-size:13px;color:var(--gray-500);line-height:1.7">AI Agent의 모든 실행을 6개 Hook으로 검증합니다. 일일 한도 초과, 권한 없는 승인 시도, 사전 조건 누락 — SEAL이 실시간 탐지하고 차단합니다.</div>
+      </div>
+      <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+        <div style="display:flex;gap:6px">
+          <span style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;background:rgba(245,158,11,.08);color:#d97706">Fail-Closed</span>
+          <span style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;background:rgba(239,68,68,.08);color:#dc2626">Hash-Chain</span>
+        </div>
+        <div style="font-size:14px;font-weight:700;color:#f59e0b">자세히 보기 &#8594;</div>
+      </div>
+    </a>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
       <a href="fx_dashboard.html" data-anim style="display:flex;flex-direction:column;gap:12px;padding:28px 24px;border-radius:16px;background:var(--white);border:1px solid var(--gray-200);text-decoration:none;transition:all .3s">
         <div style="font-size:28px">&#128202;</div>
         <div style="font-size:17px;font-weight:900;color:var(--dark)">서비스 대시보드</div>
@@ -2093,6 +2146,14 @@
       panel.classList.add('active');
       panel.hidden = false;
       if (!window._agentInitialized) { window._agentInitialized = true; agentStartScenario(); }
+    } else if (tab === 'seal') {
+      tabs[4].classList.add('active');
+      tabs[4].setAttribute('aria-selected', 'true');
+      tabs[4].setAttribute('tabindex', '0');
+      const panel = document.getElementById('sfxSeal');
+      panel.classList.add('active');
+      panel.hidden = false;
+      if (!window._sealInitialized) { window._sealInitialized = true; sealStartScenario(); }
     }
   }
 
@@ -2325,7 +2386,60 @@
       { label: 'H증권 (체결)', value: '1,443.70' },
       { label: '차이', value: '+0.90원/$' },
       { label: '절감액', value: '₩765,000', emphasis: true }
-    ], note: 'USD 850,000 × 0.90 = ₩765,000', delay: 0 }
+    ], note: 'USD 850,000 × 0.90 = ₩765,000', delay: 1200 },
+
+    // --- Scenario 2: Hedge Ratio Alert ---
+    { type: 'system', text: '--- Hedge Ratio Alert ---', delay: 600 },
+    { type: 'agent',  text: '헤지 비율이 정책 하한에 접근했습니다.', delay: 500 },
+    { type: 'detail', lines: [
+      '현재 헤지 비율    62% (목표: 80%)',
+      'Net Spot Delta    +USD 2,340,000 (Long)',
+      'Forward Hedge     -USD 1,500,000',
+      '→ 추가 매도 USD 936,000 필요 (80% 달성 기준)'
+    ], delay: 400 },
+    { type: 'agent',  text: '넷팅 최적화를 적용하면 2건으로 처리 가능합니다.', delay: 700 },
+    { type: 'box', title: '넷팅 결과', rows: [
+      { label: 'Gross 거래', value: '6건 / $10.5M', tag: '' },
+      { label: '넷팅 후', value: '2건 / $1.0M', tag: 'BEST' },
+      { label: 'Gross 대비', value: '9.5%만 실거래', tag: '' }
+    ], delay: 500 },
+    { type: 'agent',  text: '헤지 비율이 82%로 상승합니다. 승인하시겠습니까?', delay: 800 },
+    { type: 'user',   text: '승인', delay: 1200 },
+
+    // --- Scenario 3: Idle Cash (Planned) ---
+    { type: 'system', text: '--- Idle Cash Detection [Planned] ---', delay: 600 },
+    { type: 'agent',  text: '유휴 자금이 감지되었습니다.', delay: 500 },
+    { type: 'detail', lines: [
+      '4/10 수출대금 입금 후 ~ 4/17 결제일까지',
+      '유휴 USD    $2,000,000 (7일간)',
+      '',
+      '→ RP 7일물 연 3.8% 적용 시 $1,460 수익 가능'
+    ], delay: 400 },
+    { type: 'box', title: '수익화 안내', rows: [
+      { label: 'RP 7일물', value: '연 3.8% → $1,460', tag: 'BEST' },
+      { label: 'MMF 익일환매', value: '연 3.5% → $1,342', tag: '' },
+      { label: '보통예금 (현재)', value: '연 0.1% → $38', tag: '' }
+    ], delay: 500 },
+    { type: 'agent',  text: '고객님의 OO증권 계좌에서 직접 매수 가능합니다. 만기일 자동 알림을 설정할까요?', delay: 800 },
+    { type: 'user',   text: '알림 설정', delay: 1200 },
+    { type: 'agent',  text: '✓ 4/17 RP 환매일 알림 설정 완료.', delay: 800 },
+
+    // --- Scenario 4: Maturity D-3 ---
+    { type: 'system', text: '--- FWD Maturity D-3 Alert ---', delay: 600 },
+    { type: 'agent',  text: '선물환 만기 D-3 알림입니다.', delay: 500 },
+    { type: 'detail', lines: [
+      '만기일      2026-04-17 (D-3)',
+      '계약       FWD SELL USD 1,500,000 @1,443.50',
+      '거래기관    OO증권',
+      '결제 원화   ₩2,165,250,000'
+    ], delay: 400 },
+    { type: 'agent',  text: '결제 준비 상태를 확인했습니다.', delay: 700 },
+    { type: 'box', title: 'Settlement 체크리스트', rows: [
+      { label: 'USD 잔고', value: '$1,820,000 (충분)', tag: 'BEST' },
+      { label: 'KRW 수취 계좌', value: 'K은행 ****-1234', tag: '' },
+      { label: 'Settlement Instruction', value: '초안 자동 생성 완료', tag: '' }
+    ], delay: 500 },
+    { type: 'agent',  text: 'D-1에 Settlement Instruction 발송 예정. 승인 후 자동 처리됩니다.', delay: 0 }
   ];
 
   function agentStartScenario() {
@@ -2675,6 +2789,220 @@
   document.getElementById('instGate').addEventListener('click', function(e) {
     if (e.target === this) closeInstGate();
   });
+
+  // ===== SEAL DEMO SCENARIO =====
+  let _sealSeqId = 0;
+
+  const SEAL_STEPS = [
+    { type:'system', text:'[ SEAL ] Secure Execution & Audit Layer v1.0', delay:600 },
+    { type:'system', text:'[ SEAL ] 6 Hooks Active: Policy | Secret | Outbound | Evidence | Deny | Budget', delay:800 },
+    { type:'divider', delay:300 },
+
+    // Scenario 1: Invoice-based normal hedge
+    { type:'header', text:'━━━ SCENARIO 1: 인보이스 기반 선물환 매수 ━━━', color:'#f59e0b', delay:500 },
+    { type:'request', agent:'Invoice Agent', action:'hedge_prepare', detail:'INV-047 파싱 완료 → USDKRW $1.2M 선물환 매수 제안 (4/3 수입대금 지급)', delay:800 },
+
+    { type:'hook', num:1, name:'Policy Check', status:'ALLOW', color:'#3b82f6', detail:'Invoice Agent → hedge_prepare 허용 · 금액 $1.2M ≤ 건당 한도 $5M ✓', delay:600 },
+    { type:'hook', num:2, name:'Secret Release', status:'RELEASED', color:'#8b5cf6', detail:'OO증권 RFQ API credential → scope: quote_request, ttl: 60s', delay:500 },
+    { type:'hook', num:3, name:'Outbound Mediation', status:'PROXIED', color:'#06b6d4', detail:'target: rfq.oo-securities.co.kr → domain ∈ allowlist ✓', delay:500 },
+    { type:'hook', num:4, name:'Evidence Sink', status:'RECORDED', color:'#f59e0b', detail:'_seq: 1847 → _hash: a3f2c91b ← prev: 7d0e4f8a (chain valid)', delay:500 },
+    { type:'hook', num:5, name:'Kill-Switch', status:'PASS', color:'#ef4444', detail:'월간 손익: +₩12.3M → kill threshold: -₩50M → status: ACTIVE', delay:500 },
+    { type:'hook', num:6, name:'Budget Check', status:'WITHIN BUDGET', color:'#10b981', detail:'일일 거래: $1.2M / $10M cap → 잔여 한도: $8.8M', delay:500 },
+
+    { type:'verdict', status:'APPROVED', detail:'6/6 hooks passed · 280ms · OO증권 RFQ 발송 → CFO 승인 대기', color:'#34d399', delay:600 },
+    { type:'evidence', text:'requires_approval: true → 재무팀장 승인 대기 중... (INV-047, $1.2M USDKRW)', delay:800 },
+    { type:'divider', delay:600 },
+
+    // Scenario 2: Over-limit denied
+    { type:'header', text:'━━━ SCENARIO 2: 일일 한도 초과 차단 ━━━', color:'#ef4444', delay:500 },
+    { type:'request', agent:'Hedge Agent', action:'hedge_prepare', detail:'USDKRW $12M 선물환 매수 — 분기말 대량 결제 대비 일괄 헤지 시도', delay:800 },
+
+    { type:'hook', num:1, name:'Policy Check', status:'DENIED', color:'#ef4444', detail:'$12M > 일일 한도 $10M — max_daily_notional 초과', delay:700 },
+    { type:'hook_skip', text:'Hook 2~6: SKIPPED — Fail-Closed: 한도 초과 시 후속 Hook 미실행', delay:500 },
+
+    { type:'verdict', status:'DENIED', detail:'Hook 1 차단 · 15ms · reason: daily_limit_exceeded ($12M > $10M)', color:'#ef4444', delay:600 },
+    { type:'evidence', text:'에스컬레이션 → CFO에게 한도 상향 승인 요청 알림 발송', delay:600 },
+    { type:'divider', delay:600 },
+
+    // Scenario 3: Missing risk assessment
+    { type:'header', text:'━━━ SCENARIO 3: Risk 평가 누락 차단 ━━━', color:'#ef4444', delay:500 },
+    { type:'request', agent:'Hedge Agent', action:'trade_submit', detail:'USDKRW $3M 선물환 제출 — Risk Agent 평가 없이 바로 제출 시도', delay:800 },
+
+    { type:'hook', num:1, name:'Policy Check', status:'DENIED', color:'#ef4444', detail:'rule: trade_requires_risk → requires: [risk_assessment_completed] 미충족', delay:700 },
+    { type:'hook_skip', text:'Hook 2~6: SKIPPED — 사전 조건 미충족: Risk 평가 후 재시도 필요', delay:500 },
+
+    { type:'verdict', status:'DENIED', detail:'Hook 1 차단 · 8ms · reason: prerequisite_missing', color:'#ef4444', delay:600 },
+    { type:'evidence', text:'Risk Agent에 $3M USDKRW 평가 요청 자동 디스패치', delay:800 },
+    { type:'divider', delay:600 },
+
+    // Scenario 4: Unauthorized user
+    { type:'header', text:'━━━ SCENARIO 4: 권한 없는 사용자 차단 ━━━', color:'#ef4444', delay:500 },
+    { type:'request', agent:'user: 김주임 (재무팀 사원)', action:'trade_approve', detail:'TRD-2026-2043 승인 시도 — $1.2M USDKRW 선물환 (CFO/팀장 전결 사항)', delay:800 },
+
+    { type:'hook', num:1, name:'Policy Check', status:'DENIED', color:'#ef4444', detail:'RBAC: role=staff → trade_approve requires role ∈ [cfo, treasury_head]', delay:700 },
+    { type:'hook_skip', text:'Hook 2~6: SKIPPED — 권한 부족: 재무팀장 또는 CFO만 승인 가능', delay:500 },
+
+    { type:'verdict', status:'DENIED', detail:'Hook 1 차단 · 5ms · reason: insufficient_role (staff ≠ cfo|treasury_head)', color:'#ef4444', delay:600 },
+    { type:'evidence', text:'unauthorized access attempt logged · 재무팀장에게 승인 요청 자동 전달', delay:800 },
+    { type:'divider', delay:600 },
+
+    // Evidence chain verification
+    { type:'header', text:'━━━ EVIDENCE CHAIN VERIFICATION ━━━', color:'#f59e0b', delay:500 },
+    { type:'chain', entries:[
+      { seq:2041, type:'invoice.parsed', detail:'INV-047 $1.2M USDKRW 4/3 만기', hash:'5c8a2d1f' },
+      { seq:2042, type:'risk.assessed', detail:'USDKRW exposure $1.2M ≤ limit $50M OK', hash:'9f3b7e42' },
+      { seq:2043, type:'policy.allow', detail:'hedge_prepare $1.2M → OO증권 RFQ', hash:'a3f2c91b' },
+      { seq:2044, type:'policy.deny', detail:'hedge_prepare $12M → daily_limit_exceeded', hash:'e7b1d4f9' },
+      { seq:2045, type:'policy.deny', detail:'trade_submit $3M → prerequisite_missing', hash:'3a7c5e81' },
+      { seq:2046, type:'access.deny', detail:'김주임(staff) trade_approve → insufficient_role', hash:'c9d2e7a4' },
+    ], delay:300 },
+    { type:'verify', text:'Chain Integrity: 2045/2045 entries verified · SHA-256 · No tampering detected ✓', delay:800 },
+
+    { type:'divider', delay:300 },
+    { type:'footer', text:'SEAL: Agent는 제안만, 실행은 정책 검증 + 사람 승인 후. 모든 기록은 변조 불가능.', delay:0 }
+  ];
+
+  function sealStartScenario() {
+    _sealSeqId++;
+    const myId = _sealSeqId;
+    const out = document.getElementById('sealOutput');
+    out.innerHTML = '';
+    document.getElementById('sealReplayBtn').style.display = 'none';
+    document.getElementById('sealInputHint').textContent = 'Demo running...';
+
+    let idx = 0;
+
+    function nextStep() {
+      if (myId !== _sealSeqId) return;
+      if (idx >= SEAL_STEPS.length) {
+        document.getElementById('sealReplayBtn').style.display = '';
+        document.getElementById('sealInputHint').textContent = '';
+        return;
+      }
+      const step = SEAL_STEPS[idx];
+      idx++;
+
+      if (step.type === 'system') {
+        const d = document.createElement('div');
+        d.style.cssText = 'color:#f59e0b;font-weight:700;margin:4px 0';
+        d.textContent = step.text;
+        out.appendChild(d);
+        out.scrollTop = out.scrollHeight;
+        setTimeout(nextStep, step.delay);
+      }
+      else if (step.type === 'divider') {
+        const d = document.createElement('div');
+        d.style.cssText = 'border-bottom:1px solid #1e2a3a;margin:8px 0';
+        out.appendChild(d);
+        setTimeout(nextStep, step.delay);
+      }
+      else if (step.type === 'header') {
+        const d = document.createElement('div');
+        d.style.cssText = 'color:' + step.color + ';font-weight:800;margin:12px 0 6px;letter-spacing:1px';
+        d.textContent = step.text;
+        out.appendChild(d);
+        out.scrollTop = out.scrollHeight;
+        setTimeout(nextStep, step.delay);
+      }
+      else if (step.type === 'request') {
+        const box = document.createElement('div');
+        box.style.cssText = 'margin:6px 0;padding:10px 14px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)';
+        box.innerHTML =
+          '<span style="color:#5c6a7a">agent:</span> <span style="color:#93c5fd">' + step.agent + '</span> ' +
+          '<span style="color:#5c6a7a">action:</span> <span style="color:#fcd34d">' + step.action + '</span><br>' +
+          '<span style="color:#94a3b8">' + step.detail + '</span>';
+        out.appendChild(box);
+        out.scrollTop = out.scrollHeight;
+        setTimeout(nextStep, step.delay);
+      }
+      else if (step.type === 'hook') {
+        const d = document.createElement('div');
+        d.style.cssText = 'margin:3px 0;padding:6px 12px;display:flex;align-items:center;gap:10px';
+        const statusColor = step.status === 'DENIED' ? '#fca5a5' : (step.status.includes('ALLOW') || step.status.includes('PASS') || step.status.includes('WITHIN') ? '#6ee7b7' : step.color);
+        d.innerHTML =
+          '<span style="color:' + step.color + ';font-weight:700;min-width:24px">H' + step.num + '</span>' +
+          '<span style="color:#cbd5e1;min-width:140px">' + step.name + '</span>' +
+          '<span style="padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;background:rgba(255,255,255,.06);color:' + statusColor + '">' + step.status + '</span>' +
+          '<span style="color:#5c6a7a;font-size:11px">' + step.detail + '</span>';
+        out.appendChild(d);
+        out.scrollTop = out.scrollHeight;
+        setTimeout(nextStep, step.delay);
+      }
+      else if (step.type === 'hook_skip') {
+        const d = document.createElement('div');
+        d.style.cssText = 'margin:3px 0;padding:6px 12px;color:#5c6a7a;font-style:italic';
+        d.textContent = step.text;
+        out.appendChild(d);
+        out.scrollTop = out.scrollHeight;
+        setTimeout(nextStep, step.delay);
+      }
+      else if (step.type === 'verdict') {
+        const d = document.createElement('div');
+        const bg = step.status === 'APPROVED' ? 'rgba(52,211,153,.08)' : 'rgba(239,68,68,.08)';
+        const border = step.status === 'APPROVED' ? 'rgba(52,211,153,.25)' : 'rgba(239,68,68,.25)';
+        d.style.cssText = 'margin:8px 0;padding:12px 16px;border-radius:8px;background:' + bg + ';border:1px solid ' + border + ';display:flex;align-items:center;gap:12px';
+        d.innerHTML =
+          '<span style="font-size:20px;font-weight:900;color:' + step.color + '">' + step.status + '</span>' +
+          '<span style="color:#94a3b8;font-size:11px">' + step.detail + '</span>';
+        out.appendChild(d);
+        out.scrollTop = out.scrollHeight;
+        setTimeout(nextStep, step.delay);
+      }
+      else if (step.type === 'evidence') {
+        const d = document.createElement('div');
+        d.style.cssText = 'margin:4px 0;padding:4px 12px;color:#f59e0b;font-size:11px';
+        d.textContent = '📋 ' + step.text;
+        out.appendChild(d);
+        out.scrollTop = out.scrollHeight;
+        setTimeout(nextStep, step.delay);
+      }
+      else if (step.type === 'chain') {
+        let ei = 0;
+        function printEntry() {
+          if (myId !== _sealSeqId) return;
+          if (ei >= step.entries.length) {
+            setTimeout(nextStep, step.delay);
+            return;
+          }
+          const e = step.entries[ei];
+          const d = document.createElement('div');
+          d.style.cssText = 'margin:1px 0;padding:3px 12px;font-size:11px';
+          const typeColor = e.type.includes('deny') ? '#fca5a5' : (e.type.includes('allow') || e.type.includes('prepared') ? '#6ee7b7' : '#93c5fd');
+          d.innerHTML =
+            '<span style="color:#5c6a7a;min-width:44px;display:inline-block">#' + e.seq + '</span>' +
+            '<span style="color:' + typeColor + ';font-weight:600;min-width:120px;display:inline-block">' + e.type + '</span>' +
+            '<span style="color:#94a3b8">' + e.detail + '</span>' +
+            '<span style="color:#5c6a7a;font-size:10px;margin-left:8px">[' + e.hash + ']</span>';
+          out.appendChild(d);
+          out.scrollTop = out.scrollHeight;
+          ei++;
+          setTimeout(printEntry, 250);
+        }
+        setTimeout(printEntry, 200);
+      }
+      else if (step.type === 'verify') {
+        const d = document.createElement('div');
+        d.style.cssText = 'margin:8px 0;padding:10px 14px;border-radius:8px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);color:#fcd34d;font-weight:600';
+        d.textContent = '🔒 ' + step.text;
+        out.appendChild(d);
+        out.scrollTop = out.scrollHeight;
+        setTimeout(nextStep, step.delay);
+      }
+      else if (step.type === 'footer') {
+        const d = document.createElement('div');
+        d.style.cssText = 'margin:12px 0;padding:12px 16px;border-radius:8px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);color:#f59e0b;font-weight:700;text-align:center';
+        d.textContent = step.text;
+        out.appendChild(d);
+        out.scrollTop = out.scrollHeight;
+        setTimeout(nextStep, step.delay);
+      }
+      else {
+        setTimeout(nextStep, 100);
+      }
+    }
+
+    setTimeout(nextStep, 500);
+  }
 </script>
 </body>
 </html>
