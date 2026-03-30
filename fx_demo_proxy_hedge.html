@@ -181,8 +181,9 @@
 </style>
 </head>
 <body>
+<div style="position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(15,23,42,.95);backdrop-filter:blur(8px);text-align:center;padding:6px 16px;font-size:11px;color:#94a3b8;border-bottom:1px solid rgba(255,255,255,.06)">현재 <strong style="color:#67e8f9">USD/KRW</strong> 서비스 중 &nbsp;|&nbsp; 본 데모의 EUR·JPY·SGD 등 다른 통화쌍은 예시이며, 추후 서비스 예정입니다.</div>
 
-<div class="progress-bar" id="progressBar"></div>
+<div class="progress-bar" id="progressBar" style="top:29px"></div>
 <div class="slides-container" id="slidesContainer">
 
 <!-- ====== SLIDE 0: COVER ====== -->
@@ -194,7 +195,7 @@
     <div style="display:flex;gap:10px;flex-wrap:wrap;opacity:0;animation:fadeUp .8s .9s forwards">
       <div class="badge badge-cyan" style="font-size:11px;padding:4px 10px">10개+ 통화 보유 기업</div>
       <div class="badge badge-blue" style="font-size:11px;padding:4px 10px">ETF-like 바스켓 헤지</div>
-      <div class="badge badge-green" style="font-size:11px;padding:4px 10px">AI 자동 리밸런싱</div>
+      <div class="badge badge-green" style="font-size:11px;padding:4px 10px">AI 리밸런싱 분석</div>
     </div>
     <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;opacity:0;animation:fadeUp .8s 1.0s forwards">
       <div class="hbox" style="background:rgba(252,211,77,.08);border:1px solid rgba(252,211,77,.2);color:#fcd34d"><strong>Company</strong> GlobalTech (가칭) &mdash; 글로벌 SaaS, 다국가 매출 정산</div>
@@ -366,8 +367,8 @@
         <div class="cause-arrow">&rarr;</div>
         <div class="cause-step" style="background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:10px">
           <div class="cause-num">STEP 5</div>
-          <div class="cause-label" style="color:#c4b5fd">자동 리밸런싱</div>
-          <div class="cause-detail">주 1회<br>AI 최적화</div>
+          <div class="cause-label" style="color:#c4b5fd">리밸런싱 제시</div>
+          <div class="cause-detail">주 1회<br>AI 분석 → 승인</div>
         </div>
       </div>
 
@@ -684,8 +685,8 @@
 <div class="slide" data-slide="9">
   <div class="slide-content">
     <div class="section-label">REBALANCING</div>
-    <div class="section-title">자동 리밸런싱 &mdash; 항상 최적 상태 유지</div>
-    <div class="section-desc">상관관계는 변합니다. AI Agent가 주기적으로 바스켓을 재최적화합니다.</div>
+    <div class="section-title">리밸런싱 &mdash; 시스템이 분석·제시, 담당자가 승인</div>
+    <div class="section-desc">상관관계는 변합니다. AI Agent가 주기적으로 바스켓을 재분석하고, 담당자가 승인하면 실행됩니다.</div>
 
     <div class="scroll-area">
       <div class="panel" style="padding:20px;margin-bottom:20px">
@@ -701,7 +702,7 @@
           <tr>
             <td style="color:#fbbf24;font-weight:700">임계치</td>
             <td style="color:var(--gray-300)">Tracking Error > 50bp</td>
-            <td style="color:var(--gray-300)">즉시 리밸런싱</td>
+            <td style="color:var(--gray-300)">즉시 리밸런싱 제시 → 담당자 승인</td>
           </tr>
           <tr>
             <td style="color:#fca5a5;font-weight:700">이벤트</td>
@@ -746,9 +747,9 @@
         </div>
       </div>
 
-      <div class="benefit-point green" data-delay="0"><span>&#10003;</span> 주 1회 자동 리밸런싱 &mdash; 사람 개입 없이 AI가 최적 비중 조정</div>
-      <div class="benefit-point cyan" data-delay="100"><span>&#10003;</span> 임계치 기반 즉시 대응 &mdash; Tracking Error 50bp 초과 시 자동 트리거</div>
-      <div class="benefit-point green" data-delay="200"><span>&#10003;</span> 만기 관리 자동화 &mdash; T-2일 전 롤오버/청산 판단</div>
+      <div class="benefit-point green" data-delay="0"><span>&#10003;</span> 주 1회 리밸런싱 분석 &mdash; AI가 최적 비중을 제시, 담당자가 1클릭 승인</div>
+      <div class="benefit-point cyan" data-delay="100"><span>&#10003;</span> 임계치 기반 즉시 알림 &mdash; Tracking Error 50bp 초과 시 담당자에게 알림 + 조정안 제시</div>
+      <div class="benefit-point green" data-delay="200"><span>&#10003;</span> 만기 관리 알림 &mdash; T-2일 전 롤오버/청산 판단 제시</div>
     </div>
   </div>
 </div>
@@ -795,10 +796,10 @@
               <div class="tl-text">고객이 <strong style="color:#6ee7b7">리스크 허용치만 설정</strong></div>
             </div>
             <div class="tl-item" data-delay="400">
-              <div class="tl-text">AI가 <strong style="color:#6ee7b7">자동 바스켓 구성</strong></div>
+              <div class="tl-text">AI가 <strong style="color:#6ee7b7">최적 바스켓 제시</strong></div>
             </div>
             <div class="tl-item" data-delay="500">
-              <div class="tl-text"><strong style="color:#6ee7b7">자동 실행 + 자동 리밸런싱</strong></div>
+              <div class="tl-text"><strong style="color:#6ee7b7">담당자 승인 → 자동 실행 + 리밸런싱</strong></div>
             </div>
           </div>
           <div style="margin-top:16px;padding:12px;background:rgba(5,150,105,.06);border-radius:8px;font-size:12px;color:var(--gray-300);line-height:1.7">
@@ -847,12 +848,12 @@
           <tr>
             <td style="font-weight:600;color:var(--gray-300)">리밸런싱</td>
             <td style="color:#fca5a5">월 1~2회 (수동)</td>
-            <td style="color:#6ee7b7">주 1회 (자동) + 임계치 기반</td>
+            <td style="color:#6ee7b7">주 1회 (AI 분석·제시) + 임계치 알림</td>
           </tr>
           <tr>
             <td style="font-weight:600;color:var(--gray-300)">Circuit Breaker</td>
             <td style="color:#fca5a5">없음 (사람 판단)</td>
-            <td style="color:#6ee7b7">자동 전환</td>
+            <td style="color:#6ee7b7">자동 감지 → 담당자 승인</td>
           </tr>
           <tr>
             <td style="font-weight:600;color:var(--gray-300)">실행 채널</td>
@@ -975,8 +976,8 @@
     <div style="margin-top:40px;padding:18px 28px;background:rgba(8,145,178,.06);border:1px solid rgba(8,145,178,.15);border-radius:14px;display:inline-block;opacity:0;animation:fadeUp .8s .9s forwards">
       <div style="font-size:14px;color:#67e8f9;font-weight:700;margin-bottom:8px">KustodyFi Proxy Hedge</div>
       <div style="font-size:12px;color:var(--gray-300);line-height:1.8">
-        <strong style="color:#67e8f9">Phase 1: Advisory</strong> &mdash; 안내만, 직접 실행<br>
-        <strong style="color:#6ee7b7">Phase 2: Managed</strong> &mdash; 완전 자동, 자동 리밸런싱<br>
+        <strong style="color:#67e8f9">Phase 1: Advisory</strong> &mdash; AI 분석·제시, 담당자 판단·승인<br>
+        <strong style="color:#6ee7b7">Phase 2: Managed</strong> &mdash; 사전 승인 규칙 기반 자동 실행<br>
         <strong style="color:#fcd34d">"ETF가 개별 종목보다 효율적인 이유, FX 헤지에서도 같습니다"</strong>
       </div>
     </div>

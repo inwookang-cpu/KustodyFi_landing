@@ -1399,8 +1399,14 @@
           </div>
         </div>
         <div style="padding:20px;font-family:'SF Mono','Fira Code',monospace;font-size:12px;line-height:2;color:#94a3b8;max-height:420px;overflow-y:auto" id="agentOutput"></div>
-        <div style="padding:8px 20px 12px;border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:flex-end">
-          <button id="agentReplayBtn" onclick="agentStartScenario()" style="display:none;padding:6px 14px;border-radius:6px;background:rgba(8,145,178,.15);border:1px solid rgba(8,145,178,.3);color:#67e8f9;font-size:11px;font-weight:600;cursor:pointer;font-family:'SF Mono','Fira Code',monospace">Replay</button>
+        <div style="padding:8px 20px 12px;border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between">
+          <span style="color:#5c6a7a;font-size:11px;font-family:'SF Mono',monospace" id="agentInputHint"></span>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span style="color:#5c6a7a;font-size:10px;font-family:'SF Mono',monospace" id="agentScenarioLabel"></span>
+            <button id="agentSealBtn" onclick="agentGoToSeal()" style="display:none;padding:6px 14px;border-radius:6px;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);color:#f59e0b;font-size:11px;font-weight:600;cursor:pointer;font-family:'SF Mono','Fira Code',monospace;transition:all .2s;">SEAL 검증 보기 &rarr;</button>
+            <button id="agentNextBtn" onclick="agentNextScenario()" style="display:none;padding:6px 14px;border-radius:6px;background:rgba(8,145,178,.15);border:1px solid rgba(8,145,178,.3);color:#67e8f9;font-size:11px;font-weight:600;cursor:pointer;font-family:'SF Mono','Fira Code',monospace;transition:all .2s;">다음 시나리오 &rarr;</button>
+            <button id="agentReplayBtn" onclick="agentStartScenario()" style="display:none;padding:6px 14px;border-radius:6px;background:rgba(8,145,178,.15);border:1px solid rgba(8,145,178,.3);color:#67e8f9;font-size:11px;font-weight:600;cursor:pointer;font-family:'SF Mono','Fira Code',monospace">Replay</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1417,8 +1423,12 @@
         </div>
         <div style="padding:20px;font-family:'SF Mono','JetBrains Mono','Fira Code',monospace;font-size:12px;line-height:1.8;color:#94a3b8;max-height:420px;overflow-y:auto" id="sealOutput"></div>
         <div style="padding:8px 20px 12px;border-top:1px solid #2a1f0a;display:flex;align-items:center;justify-content:space-between">
-          <span style="color:#5c6a7a;font-size:11px;font-family:'SF Mono',monospace" id="sealInputHint">Demo running...</span>
-          <button id="sealReplayBtn" onclick="sealStartScenario()" style="display:none;padding:6px 14px;border-radius:6px;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);color:#f59e0b;font-size:11px;font-weight:600;cursor:pointer;font-family:'SF Mono','Fira Code',monospace">Replay</button>
+          <span style="color:#5c6a7a;font-size:11px;font-family:'SF Mono',monospace" id="sealInputHint"></span>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span style="color:#5c6a7a;font-size:10px;font-family:'SF Mono',monospace" id="sealScenarioLabel"></span>
+            <button id="sealNextBtn" onclick="sealNextScenario()" style="display:none;padding:6px 14px;border-radius:6px;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);color:#f59e0b;font-size:11px;font-weight:600;cursor:pointer;font-family:'SF Mono','Fira Code',monospace;transition:all .2s;">다음 시나리오 &rarr;</button>
+            <button id="sealReplayBtn" onclick="sealStartScenario()" style="display:none;padding:6px 14px;border-radius:6px;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);color:#f59e0b;font-size:11px;font-weight:600;cursor:pointer;font-family:'SF Mono','Fira Code',monospace">Replay</button>
+          </div>
         </div>
       </div>
     </div>
@@ -2145,7 +2155,7 @@
       const panel = document.getElementById('sfxAgent');
       panel.classList.add('active');
       panel.hidden = false;
-      if (!window._agentInitialized) { window._agentInitialized = true; agentStartScenario(); }
+      if (!window._agentInitialized) { window._agentInitialized = true; _agentScenarioIdx = 0; _agentRunCurrentScenario(true); }
     } else if (tab === 'seal') {
       tabs[4].classList.add('active');
       tabs[4].setAttribute('aria-selected', 'true');
@@ -2344,121 +2354,170 @@
   // ===== AI AGENT SCENARIO =====
   let _agentSeqId = 0;
 
-  const AGENT_STEPS = [
-    { type: 'system', text: '--- Invoice Upload Detected ---', delay: 600 },
-    { type: 'user',   text: '📎 Invoice_DemoCo_20260629.pdf 업로드', delay: 800 },
-    { type: 'agent',  text: 'Invoice를 분석했습니다.', delay: 500 },
-    { type: 'detail', lines: [
-      '거래처    KustodyFi Demo Company',
-      '금  액    USD 850,000',
-      '결제일    2026-06-29 (D-92, 3M)',
-      '분  류    Cash Schedule → 매입채무'
-    ], delay: 400 },
-    { type: 'agent',  text: 'Spot Delta가 변동되었습니다.', delay: 700 },
-    { type: 'detail', lines: [
-      '기존 Spot Delta    +USD 2,100,000 (Long)',
-      '신규 반영          +USD   850,000',
-      '변경 Spot Delta    +USD 2,950,000 (Long)',
-      '→ 추가 매도 헷지 필요'
-    ], delay: 400 },
-    { type: 'agent',  text: '선물환 USD 850,000 추가 매도를 권장합니다.', delay: 700 },
-    { type: 'detail', lines: [
-      '만기       2026-06-29 (3M)',
-      '공정가치   1,443.50 (CIP 기준)',
-      '예상 범위  1,443.00 ~ 1,443.70',
-      '',
-      'Multi-RFQ 진행할까요? [승인/거부]'
-    ], delay: 600 },
-    { type: 'user',   text: '승인', delay: 1000 },
-    { type: 'agent',  text: '✓ RFQ 3개 기관 발송 중...', delay: 1200 },
-    { type: 'box', title: 'Multi-RFQ 결과', rows: [
-      { label: 'H증권', value: '1,443.70', tag: 'BEST' },
-      { label: 'N증권', value: '1,443.45', tag: '' },
-      { label: 'S증권', value: '1,443.20', tag: '' }
-    ], delay: 500 },
-    { type: 'box', title: '체결 완료', rows: [
-      { label: '선정 기관', value: 'H증권 (자동 선정)', tag: '' },
-      { label: '매도 금액', value: 'USD 850,000', tag: '' },
-      { label: '체결 환율', value: '1,443.70', tag: '' }
-    ], delay: 500 },
-    { type: 'highlight', title: '이번 거래를 통한 절감액', rows: [
-      { label: 'K은행 (주거래)', value: '1,442.80' },
-      { label: 'H증권 (체결)', value: '1,443.70' },
-      { label: '차이', value: '+0.90원/$' },
-      { label: '절감액', value: '₩765,000', emphasis: true }
-    ], note: 'USD 850,000 × 0.90 = ₩765,000', delay: 1200 },
-
-    // --- Scenario 2: Hedge Ratio Alert ---
-    { type: 'system', text: '--- Hedge Ratio Alert ---', delay: 600 },
-    { type: 'agent',  text: '헤지 비율이 정책 하한에 접근했습니다.', delay: 500 },
-    { type: 'detail', lines: [
-      '현재 헤지 비율    62% (목표: 80%)',
-      'Net Spot Delta    +USD 2,340,000 (Long)',
-      'Forward Hedge     -USD 1,500,000',
-      '→ 추가 매도 USD 936,000 필요 (80% 달성 기준)'
-    ], delay: 400 },
-    { type: 'agent',  text: '넷팅 최적화를 적용하면 2건으로 처리 가능합니다.', delay: 700 },
-    { type: 'box', title: '넷팅 결과', rows: [
-      { label: 'Gross 거래', value: '6건 / $10.5M', tag: '' },
-      { label: '넷팅 후', value: '2건 / $1.0M', tag: 'BEST' },
-      { label: 'Gross 대비', value: '9.5%만 실거래', tag: '' }
-    ], delay: 500 },
-    { type: 'agent',  text: '헤지 비율이 82%로 상승합니다. 승인하시겠습니까?', delay: 800 },
-    { type: 'user',   text: '승인', delay: 1200 },
-
-    // --- Scenario 3: Idle Cash (Planned) ---
-    { type: 'system', text: '--- Idle Cash Detection [Planned] ---', delay: 600 },
-    { type: 'agent',  text: '유휴 자금이 감지되었습니다.', delay: 500 },
-    { type: 'detail', lines: [
-      '4/10 수출대금 입금 후 ~ 4/17 결제일까지',
-      '유휴 USD    $2,000,000 (7일간)',
-      '',
-      '→ RP 7일물 연 3.8% 적용 시 $1,460 수익 가능'
-    ], delay: 400 },
-    { type: 'box', title: '수익화 안내', rows: [
-      { label: 'RP 7일물', value: '연 3.8% → $1,460', tag: 'BEST' },
-      { label: 'MMF 익일환매', value: '연 3.5% → $1,342', tag: '' },
-      { label: '보통예금 (현재)', value: '연 0.1% → $38', tag: '' }
-    ], delay: 500 },
-    { type: 'agent',  text: '고객님의 OO증권 계좌에서 직접 매수 가능합니다. 만기일 자동 알림을 설정할까요?', delay: 800 },
-    { type: 'user',   text: '알림 설정', delay: 1200 },
-    { type: 'agent',  text: '✓ 4/17 RP 환매일 알림 설정 완료.', delay: 800 },
-
-    // --- Scenario 4: Maturity D-3 ---
-    { type: 'system', text: '--- FWD Maturity D-3 Alert ---', delay: 600 },
-    { type: 'agent',  text: '선물환 만기 D-3 알림입니다.', delay: 500 },
-    { type: 'detail', lines: [
-      '만기일      2026-04-17 (D-3)',
-      '계약       FWD SELL USD 1,500,000 @1,443.50',
-      '거래기관    OO증권',
-      '결제 원화   ₩2,165,250,000'
-    ], delay: 400 },
-    { type: 'agent',  text: '결제 준비 상태를 확인했습니다.', delay: 700 },
-    { type: 'box', title: 'Settlement 체크리스트', rows: [
-      { label: 'USD 잔고', value: '$1,820,000 (충분)', tag: 'BEST' },
-      { label: 'KRW 수취 계좌', value: 'K은행 ****-1234', tag: '' },
-      { label: 'Settlement Instruction', value: '초안 자동 생성 완료', tag: '' }
-    ], delay: 500 },
-    { type: 'agent',  text: 'D-1에 Settlement Instruction 발송 예정. 승인 후 자동 처리됩니다.', delay: 0 }
+  const AGENT_SCENARIOS = [
+    { label: 'Scenario 1/4 — 인보이스 헷지', showSealLink: true, steps: [
+      { type: 'system', text: '--- Invoice Upload Detected ---', delay: 600 },
+      { type: 'user',   text: '📎 INV-047_수입대금_20260403.pdf 업로드', delay: 800 },
+      { type: 'agent',  text: 'Invoice를 분석했습니다.', delay: 500 },
+      { type: 'detail', lines: [
+        '인보이스    INV-047',
+        '거래처      수입 원자재 공급사',
+        '금  액      USD 1,200,000',
+        '결제일      2026-04-03 (D-30, 1M)',
+        '분  류      Cash Schedule → 매입채무'
+      ], delay: 400 },
+      { type: 'agent',  text: 'Spot Delta가 변동되었습니다.', delay: 700 },
+      { type: 'detail', lines: [
+        '기존 Spot Delta    +USD 2,100,000 (Long)',
+        '신규 반영          +USD 1,200,000',
+        '변경 Spot Delta    +USD 3,300,000 (Long)',
+        '→ 추가 매도 헷지 필요'
+      ], delay: 400 },
+      { type: 'agent',  text: '선물환 USD 1,200,000 추가 매도를 권장합니다.', delay: 700 },
+      { type: 'detail', lines: [
+        '만기       2026-04-03 (1M)',
+        '공정가치   1,443.50 (CIP 기준)',
+        '예상 범위  1,443.00 ~ 1,443.70',
+        '',
+        'Multi-RFQ 진행할까요? [승인/거부]'
+      ], delay: 600 },
+      { type: 'user',   text: '승인', delay: 1000 },
+      { type: 'agent',  text: '→ SEAL 정책 검증 중... 6 Hooks 통과 ✓', delay: 800 },
+      { type: 'agent',  text: '✓ RFQ 3개 기관 발송 중...', delay: 1200 },
+      { type: 'box', title: 'Multi-RFQ 결과', rows: [
+        { label: 'OO증권', value: '1,443.70', tag: 'BEST' },
+        { label: 'N증권', value: '1,443.45', tag: '' },
+        { label: 'S증권', value: '1,443.20', tag: '' }
+      ], delay: 500 },
+      { type: 'box', title: '체결 완료 (INV-047)', rows: [
+        { label: '선정 기관', value: 'OO증권 (자동 선정)', tag: '' },
+        { label: '매도 금액', value: 'USD 1,200,000', tag: '' },
+        { label: '체결 환율', value: '1,443.70', tag: '' }
+      ], delay: 500 },
+      { type: 'highlight', title: '이번 거래를 통한 절감액', rows: [
+        { label: 'K은행 (주거래)', value: '1,442.80' },
+        { label: 'OO증권 (체결)', value: '1,443.70' },
+        { label: '차이', value: '+0.90원/$' },
+        { label: '절감액', value: '₩1,080,000', emphasis: true }
+      ], note: 'USD 1,200,000 × 0.90 = ₩1,080,000', delay: 0 }
+    ]},
+    { label: 'Scenario 2/4 — 헤지 비율 경고', steps: [
+      { type: 'system', text: '--- Hedge Ratio Alert ---', delay: 600 },
+      { type: 'agent',  text: '헤지 비율이 정책 하한에 접근했습니다.', delay: 500 },
+      { type: 'detail', lines: [
+        '현재 헤지 비율    62% (목표: 80%)',
+        'Net Spot Delta    +USD 2,340,000 (Long)',
+        'Forward Hedge     -USD 1,500,000',
+        '→ 추가 매도 USD 936,000 필요 (80% 달성 기준)'
+      ], delay: 400 },
+      { type: 'agent',  text: '넷팅 최적화를 적용하면 2건으로 처리 가능합니다.', delay: 700 },
+      { type: 'box', title: '넷팅 결과', rows: [
+        { label: 'Gross 거래', value: '6건 / $10.5M', tag: '' },
+        { label: '넷팅 후', value: '2건 / $1.0M', tag: 'BEST' },
+        { label: 'Gross 대비', value: '9.5%만 실거래', tag: '' }
+      ], delay: 500 },
+      { type: 'agent',  text: '헤지 비율이 82%로 상승합니다. 승인하시겠습니까?', delay: 800 },
+      { type: 'user',   text: '승인', delay: 0 }
+    ]},
+    { label: 'Scenario 3/4 — 유휴 자금 감지 [Planned]', steps: [
+      { type: 'system', text: '--- Idle Cash Detection [Planned] ---', delay: 600 },
+      { type: 'agent',  text: '유휴 자금이 감지되었습니다.', delay: 500 },
+      { type: 'detail', lines: [
+        '4/10 수출대금 입금 후 ~ 4/17 결제일까지',
+        '유휴 USD    $2,000,000 (7일간)',
+        '',
+        '→ RP 7일물 연 3.8% 적용 시 $1,460 수익 가능'
+      ], delay: 400 },
+      { type: 'box', title: '수익화 안내', rows: [
+        { label: 'RP 7일물', value: '연 3.8% → $1,460', tag: 'BEST' },
+        { label: 'MMF 익일환매', value: '연 3.5% → $1,342', tag: '' },
+        { label: '보통예금 (현재)', value: '연 0.1% → $38', tag: '' }
+      ], delay: 500 },
+      { type: 'agent',  text: '고객님의 OO증권 계좌에서 직접 매수 가능합니다. 만기일 자동 알림을 설정할까요?', delay: 800 },
+      { type: 'user',   text: '알림 설정', delay: 1200 },
+      { type: 'agent',  text: '✓ 4/17 RP 환매일 알림 설정 완료.', delay: 0 }
+    ]},
+    { label: 'Scenario 4/4 — 만기 정산 D-3', steps: [
+      { type: 'system', text: '--- FWD Maturity D-3 Alert ---', delay: 600 },
+      { type: 'agent',  text: '선물환 만기 D-3 알림입니다.', delay: 500 },
+      { type: 'detail', lines: [
+        '만기일      2026-04-17 (D-3)',
+        '계약       FWD SELL USD 1,500,000 @1,443.50',
+        '거래기관    OO증권',
+        '정산 원화   ₩2,165,250,000'
+      ], delay: 400 },
+      { type: 'agent',  text: '정산 준비 상태를 확인했습니다.', delay: 700 },
+      { type: 'box', title: 'Settlement 체크리스트', rows: [
+        { label: 'USD 잔고', value: '$1,820,000 (충분)', tag: 'BEST' },
+        { label: 'KRW 수취 계좌', value: 'K은행 ****-1234', tag: '' },
+        { label: 'Settlement Instruction', value: '초안 자동 생성 완료', tag: '' }
+      ], delay: 500 },
+      { type: 'agent',  text: 'D-1에 Settlement Instruction 발송 예정. 승인 후 자동 처리됩니다.', delay: 0 }
+    ]}
   ];
 
+  let _agentScenarioIdx = 0;
+
+  function agentNextScenario() {
+    _agentScenarioIdx++;
+    if (_agentScenarioIdx < AGENT_SCENARIOS.length) {
+      _agentRunCurrentScenario(false);
+    }
+  }
+
+  function agentGoToSeal() {
+    // Switch to SEAL tab and start from scenario 1 (the matching INV-047 flow)
+    window._sealInitialized = true;
+    switchSfxTab('seal');
+    sealStartScenario();
+  }
+
   function agentStartScenario() {
+    _agentScenarioIdx = 0;
+    _agentRunCurrentScenario(true);
+  }
+
+  function _agentRunCurrentScenario(clearOutput) {
     _agentSeqId++;
     const myId = _agentSeqId;
     const out = document.getElementById('agentOutput');
-    out.innerHTML = '';
+    if (clearOutput) out.innerHTML = '';
     document.getElementById('agentReplayBtn').style.display = 'none';
+    document.getElementById('agentNextBtn').style.display = 'none';
+    document.getElementById('agentSealBtn').style.display = 'none';
+    document.getElementById('agentInputHint').textContent = '';
 
+    const scenario = AGENT_SCENARIOS[_agentScenarioIdx];
+    document.getElementById('agentScenarioLabel').textContent = scenario.label;
+
+    if (!clearOutput) {
+      const div = document.createElement('div');
+      div.style.cssText = 'border-bottom:1px solid #1e2a3a;margin:8px 0';
+      out.appendChild(div);
+    }
+
+    const steps = scenario.steps;
     let idx = 0;
 
     function nextStep() {
       if (myId !== _agentSeqId) return;
-      if (idx >= AGENT_STEPS.length) {
-        document.getElementById('agentReplayBtn').style.display = '';
+      if (idx >= steps.length) {
+        // Scenario finished
+        if (scenario.showSealLink) {
+          document.getElementById('agentSealBtn').style.display = '';
+          document.getElementById('agentInputHint').textContent = 'SEAL 탭에서 이 거래의 검증 과정을 확인하세요';
+        }
+        if (_agentScenarioIdx < AGENT_SCENARIOS.length - 1) {
+          document.getElementById('agentNextBtn').style.display = '';
+        } else if (!scenario.showSealLink) {
+          document.getElementById('agentReplayBtn').style.display = '';
+          document.getElementById('agentInputHint').textContent = '모든 시나리오 완료';
+          document.getElementById('agentScenarioLabel').textContent = '';
+        }
         return;
       }
 
-      const step = AGENT_STEPS[idx];
+      const step = steps[idx];
       idx++;
 
       if (step.type === 'system') {
@@ -2793,93 +2852,114 @@
   // ===== SEAL DEMO SCENARIO =====
   let _sealSeqId = 0;
 
-  const SEAL_STEPS = [
-    { type:'system', text:'[ SEAL ] Secure Execution & Audit Layer v1.0', delay:600 },
-    { type:'system', text:'[ SEAL ] 6 Hooks Active: Policy | Secret | Outbound | Evidence | Deny | Budget', delay:800 },
-    { type:'divider', delay:300 },
-
-    // Scenario 1: Invoice-based normal hedge
-    { type:'header', text:'━━━ SCENARIO 1: 인보이스 기반 선물환 매수 ━━━', color:'#f59e0b', delay:500 },
-    { type:'request', agent:'Invoice Agent', action:'hedge_prepare', detail:'INV-047 파싱 완료 → USDKRW $1.2M 선물환 매수 제안 (4/3 수입대금 지급)', delay:800 },
-
-    { type:'hook', num:1, name:'Policy Check', status:'ALLOW', color:'#3b82f6', detail:'Invoice Agent → hedge_prepare 허용 · 금액 $1.2M ≤ 건당 한도 $5M ✓', delay:600 },
-    { type:'hook', num:2, name:'Secret Release', status:'RELEASED', color:'#8b5cf6', detail:'OO증권 RFQ API credential → scope: quote_request, ttl: 60s', delay:500 },
-    { type:'hook', num:3, name:'Outbound Mediation', status:'PROXIED', color:'#06b6d4', detail:'target: rfq.oo-securities.co.kr → domain ∈ allowlist ✓', delay:500 },
-    { type:'hook', num:4, name:'Evidence Sink', status:'RECORDED', color:'#f59e0b', detail:'_seq: 1847 → _hash: a3f2c91b ← prev: 7d0e4f8a (chain valid)', delay:500 },
-    { type:'hook', num:5, name:'Kill-Switch', status:'PASS', color:'#ef4444', detail:'월간 손익: +₩12.3M → kill threshold: -₩50M → status: ACTIVE', delay:500 },
-    { type:'hook', num:6, name:'Budget Check', status:'WITHIN BUDGET', color:'#10b981', detail:'일일 거래: $1.2M / $10M cap → 잔여 한도: $8.8M', delay:500 },
-
-    { type:'verdict', status:'APPROVED', detail:'6/6 hooks passed · 280ms · OO증권 RFQ 발송 → CFO 승인 대기', color:'#34d399', delay:600 },
-    { type:'evidence', text:'requires_approval: true → 재무팀장 승인 대기 중... (INV-047, $1.2M USDKRW)', delay:800 },
-    { type:'divider', delay:600 },
-
-    // Scenario 2: Over-limit denied
-    { type:'header', text:'━━━ SCENARIO 2: 일일 한도 초과 차단 ━━━', color:'#ef4444', delay:500 },
-    { type:'request', agent:'Hedge Agent', action:'hedge_prepare', detail:'USDKRW $12M 선물환 매수 — 분기말 대량 결제 대비 일괄 헤지 시도', delay:800 },
-
-    { type:'hook', num:1, name:'Policy Check', status:'DENIED', color:'#ef4444', detail:'$12M > 일일 한도 $10M — max_daily_notional 초과', delay:700 },
-    { type:'hook_skip', text:'Hook 2~6: SKIPPED — Fail-Closed: 한도 초과 시 후속 Hook 미실행', delay:500 },
-
-    { type:'verdict', status:'DENIED', detail:'Hook 1 차단 · 15ms · reason: daily_limit_exceeded ($12M > $10M)', color:'#ef4444', delay:600 },
-    { type:'evidence', text:'에스컬레이션 → CFO에게 한도 상향 승인 요청 알림 발송', delay:600 },
-    { type:'divider', delay:600 },
-
-    // Scenario 3: Missing risk assessment
-    { type:'header', text:'━━━ SCENARIO 3: Risk 평가 누락 차단 ━━━', color:'#ef4444', delay:500 },
-    { type:'request', agent:'Hedge Agent', action:'trade_submit', detail:'USDKRW $3M 선물환 제출 — Risk Agent 평가 없이 바로 제출 시도', delay:800 },
-
-    { type:'hook', num:1, name:'Policy Check', status:'DENIED', color:'#ef4444', detail:'rule: trade_requires_risk → requires: [risk_assessment_completed] 미충족', delay:700 },
-    { type:'hook_skip', text:'Hook 2~6: SKIPPED — 사전 조건 미충족: Risk 평가 후 재시도 필요', delay:500 },
-
-    { type:'verdict', status:'DENIED', detail:'Hook 1 차단 · 8ms · reason: prerequisite_missing', color:'#ef4444', delay:600 },
-    { type:'evidence', text:'Risk Agent에 $3M USDKRW 평가 요청 자동 디스패치', delay:800 },
-    { type:'divider', delay:600 },
-
-    // Scenario 4: Unauthorized user
-    { type:'header', text:'━━━ SCENARIO 4: 권한 없는 사용자 차단 ━━━', color:'#ef4444', delay:500 },
-    { type:'request', agent:'user: 김주임 (재무팀 사원)', action:'trade_approve', detail:'TRD-2026-2043 승인 시도 — $1.2M USDKRW 선물환 (CFO/팀장 전결 사항)', delay:800 },
-
-    { type:'hook', num:1, name:'Policy Check', status:'DENIED', color:'#ef4444', detail:'RBAC: role=staff → trade_approve requires role ∈ [cfo, treasury_head]', delay:700 },
-    { type:'hook_skip', text:'Hook 2~6: SKIPPED — 권한 부족: 재무팀장 또는 CFO만 승인 가능', delay:500 },
-
-    { type:'verdict', status:'DENIED', detail:'Hook 1 차단 · 5ms · reason: insufficient_role (staff ≠ cfo|treasury_head)', color:'#ef4444', delay:600 },
-    { type:'evidence', text:'unauthorized access attempt logged · 재무팀장에게 승인 요청 자동 전달', delay:800 },
-    { type:'divider', delay:600 },
-
-    // Evidence chain verification
-    { type:'header', text:'━━━ EVIDENCE CHAIN VERIFICATION ━━━', color:'#f59e0b', delay:500 },
-    { type:'chain', entries:[
-      { seq:2041, type:'invoice.parsed', detail:'INV-047 $1.2M USDKRW 4/3 만기', hash:'5c8a2d1f' },
-      { seq:2042, type:'risk.assessed', detail:'USDKRW exposure $1.2M ≤ limit $50M OK', hash:'9f3b7e42' },
-      { seq:2043, type:'policy.allow', detail:'hedge_prepare $1.2M → OO증권 RFQ', hash:'a3f2c91b' },
-      { seq:2044, type:'policy.deny', detail:'hedge_prepare $12M → daily_limit_exceeded', hash:'e7b1d4f9' },
-      { seq:2045, type:'policy.deny', detail:'trade_submit $3M → prerequisite_missing', hash:'3a7c5e81' },
-      { seq:2046, type:'access.deny', detail:'김주임(staff) trade_approve → insufficient_role', hash:'c9d2e7a4' },
-    ], delay:300 },
-    { type:'verify', text:'Chain Integrity: 2045/2045 entries verified · SHA-256 · No tampering detected ✓', delay:800 },
-
-    { type:'divider', delay:300 },
-    { type:'footer', text:'SEAL: Agent는 제안만, 실행은 정책 검증 + 사람 승인 후. 모든 기록은 변조 불가능.', delay:0 }
+  // SEAL scenarios as separate arrays
+  const SEAL_SCENARIOS = [
+    { label: 'Scenario 1/5 — 정상 승인', steps: [
+      { type:'system', text:'[ SEAL ] Secure Execution & Audit Layer v1.0', delay:600 },
+      { type:'system', text:'[ SEAL ] 6 Hooks Active: Policy | Secret | Outbound | Evidence | Deny | Budget', delay:800 },
+      { type:'divider', delay:300 },
+      { type:'header', text:'━━━ SCENARIO 1: INV-047 선물환 매도 검증 ━━━', color:'#f59e0b', delay:500 },
+      { type:'request', agent:'Invoice Agent', action:'hedge_prepare', detail:'INV-047 → USDKRW $1.2M 선물환 매도 (4/3 수입대금 지급) · Multi-RFQ 전 정책 검증', delay:800 },
+      { type:'hook', num:1, name:'Policy Check', status:'ALLOW', color:'#3b82f6', detail:'Invoice Agent → hedge_prepare 허용 · 금액 $1.2M ≤ 건당 한도 $5M ✓', delay:600 },
+      { type:'hook', num:2, name:'Secret Release', status:'RELEASED', color:'#8b5cf6', detail:'OO증권 RFQ API credential → scope: quote_request, ttl: 60s', delay:500 },
+      { type:'hook', num:3, name:'Outbound Mediation', status:'PROXIED', color:'#06b6d4', detail:'target: rfq.oo-securities.co.kr → domain ∈ allowlist ✓', delay:500 },
+      { type:'hook', num:4, name:'Evidence Sink', status:'RECORDED', color:'#f59e0b', detail:'_seq: 1847 → _hash: a3f2c91b ← prev: 7d0e4f8a (chain valid)', delay:500 },
+      { type:'hook', num:5, name:'Kill-Switch', status:'PASS', color:'#ef4444', detail:'월간 손익: +₩12.3M → kill threshold: -₩50M → status: ACTIVE', delay:500 },
+      { type:'hook', num:6, name:'Budget Check', status:'WITHIN BUDGET', color:'#10b981', detail:'일일 거래: $1.2M / $10M cap → 잔여 한도: $8.8M', delay:500 },
+      { type:'verdict', status:'APPROVED', detail:'6/6 hooks passed · 280ms · OO증권 RFQ 발송 → CFO 승인 대기', color:'#34d399', delay:600 },
+      { type:'evidence', text:'requires_approval: true → 재무팀장(박재무팀장) 승인 대기 · INV-047, $1.2M USDKRW → OO증권 RFQ 발송 승인', delay:0 }
+    ]},
+    { label: 'Scenario 2/5 — 한도 초과 차단', steps: [
+      { type:'header', text:'━━━ SCENARIO 2: 일일 한도 초과 차단 ━━━', color:'#ef4444', delay:500 },
+      { type:'request', agent:'Hedge Agent', action:'hedge_prepare', detail:'USDKRW $12M 선물환 매수 — 분기말 대량 결제 대비 일괄 헤지 시도', delay:800 },
+      { type:'hook', num:1, name:'Policy Check', status:'DENIED', color:'#ef4444', detail:'$12M > 일일 한도 $10M — max_daily_notional 초과', delay:700 },
+      { type:'hook_skip', text:'Hook 2~6: SKIPPED — Fail-Closed: 한도 초과 시 후속 Hook 미실행', delay:500 },
+      { type:'verdict', status:'DENIED', detail:'Hook 1 차단 · 15ms · reason: daily_limit_exceeded ($12M > $10M)', color:'#ef4444', delay:600 },
+      { type:'evidence', text:'에스컬레이션 → CFO에게 한도 상향 승인 요청 알림 발송', delay:0 }
+    ]},
+    { label: 'Scenario 3/5 — Risk 평가 누락', steps: [
+      { type:'header', text:'━━━ SCENARIO 3: Risk 평가 누락 차단 ━━━', color:'#ef4444', delay:500 },
+      { type:'request', agent:'Hedge Agent', action:'trade_submit', detail:'USDKRW $3M 선물환 제출 — Risk Agent 평가 없이 바로 제출 시도', delay:800 },
+      { type:'hook', num:1, name:'Policy Check', status:'DENIED', color:'#ef4444', detail:'rule: trade_requires_risk → requires: [risk_assessment_completed] 미충족', delay:700 },
+      { type:'hook_skip', text:'Hook 2~6: SKIPPED — 사전 조건 미충족: Risk 평가 후 재시도 필요', delay:500 },
+      { type:'verdict', status:'DENIED', detail:'Hook 1 차단 · 8ms · reason: prerequisite_missing', color:'#ef4444', delay:600 },
+      { type:'evidence', text:'Risk Agent에 $3M USDKRW 평가 요청 자동 디스패치', delay:0 }
+    ]},
+    { label: 'Scenario 4/5 — RBAC 위반', steps: [
+      { type:'header', text:'━━━ SCENARIO 4: 권한 없는 사용자 차단 ━━━', color:'#ef4444', delay:500 },
+      { type:'request', agent:'user: 김주임 (재무팀 사원)', action:'trade_approve', detail:'TRD-2026-2043 승인 시도 — $1.2M USDKRW 선물환 (CFO/팀장 전결 사항)', delay:800 },
+      { type:'hook', num:1, name:'Policy Check', status:'DENIED', color:'#ef4444', detail:'RBAC: role=staff → trade_approve requires role ∈ [cfo, treasury_head]', delay:700 },
+      { type:'hook_skip', text:'Hook 2~6: SKIPPED — 권한 부족: 재무팀장 또는 CFO만 승인 가능', delay:500 },
+      { type:'verdict', status:'DENIED', detail:'Hook 1 차단 · 5ms · reason: insufficient_role (staff ≠ cfo|treasury_head)', color:'#ef4444', delay:600 },
+      { type:'evidence', text:'unauthorized access attempt logged · 재무팀장에게 승인 요청 자동 전달', delay:0 }
+    ]},
+    { label: 'Scenario 5/5 — Evidence Chain', steps: [
+      { type:'header', text:'━━━ EVIDENCE CHAIN VERIFICATION ━━━', color:'#f59e0b', delay:500 },
+      { type:'chain', entries:[
+        { seq:2041, type:'invoice.parsed', detail:'INV-047 $1.2M USDKRW 4/3 만기', hash:'5c8a2d1f' },
+        { seq:2042, type:'risk.assessed', detail:'USDKRW exposure $1.2M ≤ limit $50M OK', hash:'9f3b7e42' },
+        { seq:2043, type:'policy.allow', detail:'hedge_prepare $1.2M → OO증권 RFQ', hash:'a3f2c91b' },
+        { seq:2044, type:'policy.deny', detail:'hedge_prepare $12M → daily_limit_exceeded', hash:'e7b1d4f9' },
+        { seq:2045, type:'policy.deny', detail:'trade_submit $3M → prerequisite_missing', hash:'3a7c5e81' },
+        { seq:2046, type:'access.deny', detail:'김주임(staff) trade_approve → insufficient_role', hash:'c9d2e7a4' },
+      ], delay:300 },
+      { type:'verify', text:'Chain Integrity: 2046/2046 entries verified · SHA-256 · No tampering detected ✓', delay:800 },
+      { type:'divider', delay:300 },
+      { type:'footer', text:'SEAL: Agent는 제안만, 실행은 정책 검증 + 사람 승인 후. 모든 기록은 변조 불가능.', delay:0 }
+    ]}
   ];
 
+  let _sealScenarioIdx = 0;
+
+  function sealNextScenario() {
+    _sealScenarioIdx++;
+    if (_sealScenarioIdx < SEAL_SCENARIOS.length) {
+      _sealRunCurrentScenario(false);
+    }
+  }
+
   function sealStartScenario() {
+    _sealScenarioIdx = 0;
+    _sealRunCurrentScenario(true);
+  }
+
+  function _sealRunCurrentScenario(clearOutput) {
     _sealSeqId++;
     const myId = _sealSeqId;
     const out = document.getElementById('sealOutput');
-    out.innerHTML = '';
+    if (clearOutput) out.innerHTML = '';
     document.getElementById('sealReplayBtn').style.display = 'none';
-    document.getElementById('sealInputHint').textContent = 'Demo running...';
+    document.getElementById('sealNextBtn').style.display = 'none';
+    document.getElementById('sealInputHint').textContent = '';
 
+    const scenario = SEAL_SCENARIOS[_sealScenarioIdx];
+    document.getElementById('sealScenarioLabel').textContent = scenario.label;
+
+    // Add divider if not first scenario
+    if (!clearOutput) {
+      const div = document.createElement('div');
+      div.style.cssText = 'border-bottom:1px solid #1e2a3a;margin:8px 0';
+      out.appendChild(div);
+    }
+
+    const steps = scenario.steps;
     let idx = 0;
 
     function nextStep() {
       if (myId !== _sealSeqId) return;
-      if (idx >= SEAL_STEPS.length) {
-        document.getElementById('sealReplayBtn').style.display = '';
-        document.getElementById('sealInputHint').textContent = '';
+      if (idx >= steps.length) {
+        // Scenario finished — show next or replay
+        if (_sealScenarioIdx < SEAL_SCENARIOS.length - 1) {
+          document.getElementById('sealNextBtn').style.display = '';
+          document.getElementById('sealInputHint').textContent = '클릭하여 다음 시나리오를 확인하세요';
+        } else {
+          document.getElementById('sealReplayBtn').style.display = '';
+          document.getElementById('sealInputHint').textContent = '모든 시나리오 완료';
+          document.getElementById('sealScenarioLabel').textContent = '';
+        }
         return;
       }
-      const step = SEAL_STEPS[idx];
+      const step = steps[idx];
       idx++;
 
       if (step.type === 'system') {

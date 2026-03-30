@@ -210,8 +210,9 @@
 </style>
 </head>
 <body>
+<div style="position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(15,23,42,.95);backdrop-filter:blur(8px);text-align:center;padding:6px 16px;font-size:11px;color:#94a3b8;border-bottom:1px solid rgba(255,255,255,.06)">현재 <strong style="color:#67e8f9">USD/KRW</strong> 서비스 중 &nbsp;|&nbsp; 본 데모의 다른 통화쌍·상품(LNG 등)은 예시이며, 현재 FX 헤지에 집중합니다. 다른 통화쌍은 추후 서비스 예정입니다.</div>
 
-<div class="progress-bar" id="progressBar"></div>
+<div class="progress-bar" id="progressBar" style="top:29px"></div>
 <div class="slides-container" id="slidesContainer">
 
 <!-- ====== SLIDE 0: COVER ====== -->
@@ -403,6 +404,13 @@
 <!-- ====== SLIDE 5: INCREMENTAL USD DELTA (CRITICAL) ====== -->
 <div class="slide" data-slide="5">
   <div class="slide-content">
+    <!-- KustodyFi 서비스 범위 구분선 -->
+    <div style="margin-bottom:24px;padding:14px 20px;background:linear-gradient(135deg,rgba(8,145,178,.12),rgba(37,99,235,.12));border:2px solid rgba(8,145,178,.4);border-radius:12px;text-align:center">
+      <div style="font-size:10px;letter-spacing:2px;color:#67e8f9;margin-bottom:4px;font-weight:700">KUSTODYFI SERVICE SCOPE</div>
+      <div style="font-size:14px;color:var(--white);font-weight:700">여기서부터 KustodyFi가 해결합니다</div>
+      <div style="font-size:11px;color:var(--gray-400);margin-top:4px">Commodity 헤지 결정은 고객사 영역 &nbsp;|&nbsp; 그로 인한 <strong style="color:#fcd34d">FX 헤지 실행</strong>이 KustodyFi 서비스 범위입니다</div>
+    </div>
+
     <div class="section-label crisis">USD DELTA</div>
     <div class="section-title">Incremental USD Delta 시각화</div>
     <div class="section-desc">리스크위원회 결정으로 새롭게 발생한 달러 노출 &mdash; 이 금액이 FX Forward의 대상입니다.</div>
