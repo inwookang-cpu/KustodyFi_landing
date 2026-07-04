@@ -269,7 +269,7 @@
   <div class="section-inner">
     <div class="section-label">PROBLEM</div>
     <div class="section-title">외환 손익, <span class="hl">제대로 집계되고 있나요?</span></div>
-    <div class="section-desc">대부분의 중소&middot;중견기업은 외환 관련 손익을 정확히 구분하지 못하고 있습니다. 감사 시즌마다 반복되는 문제입니다.</div>
+    <div class="section-desc">외환 손익을 거래&middot;평가&middot;환산으로 나눠 잡아주는 도구가 없으면 정확한 집계가 어렵습니다. 감사 시즌마다 반복되는 문제입니다.</div>
 
     <div class="problem-grid">
       <div class="problem-card">
@@ -337,7 +337,7 @@
         <div style="position:absolute;left:-48px;top:2px;width:32px;height:32px;border-radius:50%;background:var(--gradient-main);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--white)">5</div>
         <div style="padding:14px 18px;border-radius:12px;background:var(--white);border:1px solid var(--gray-200)">
           <div style="font-size:14px;font-weight:800;color:var(--dark);margin-bottom:4px">Multi-RFQ 체결</div>
-          <div style="font-size:13px;color:var(--gray-600);line-height:1.7">여러 은행에 동시 호가를 요청하고, 최적가로 체결합니다.</div>
+          <div style="font-size:13px;color:var(--gray-600);line-height:1.7">여러 은행에 동시에 견적을 요청하고, 최적가로 체결합니다.</div>
         </div>
       </div>
 
@@ -359,13 +359,13 @@
     </div>
 
     <div class="audit-highlight">
-      <h3>&#128161; 담당자는 Invoice 업로드만 하면 됩니다</h3>
+      <h3>담당자는 Invoice 업로드만 하면 됩니다</h3>
       <p>OCR 추출, 헷지 매칭, 증빙 생성, 은행 제출까지 시스템이 자동으로 처리합니다.</p>
     </div>
 
     <div class="solution-grid">
       <div class="solution-card">
-        <h3>&#128230; 은행 제출 <span class="hl">패키지</span></h3>
+        <h3>은행 제출 <span class="hl">패키지</span></h3>
         <p>선물환 실수요 증빙에 필요한 서류를 자동으로 구성하여 은행에 제출합니다.</p>
         <ul class="solution-features">
           <li>Invoice 원본 (PDF)</li>
@@ -375,7 +375,7 @@
         </ul>
       </div>
       <div class="solution-card">
-        <h3>&#128274; 감사 증적 <span class="hl">보관</span></h3>
+        <h3>감사 증적 <span class="hl">보관</span></h3>
         <p>모든 거래의 실수요 증빙 이력을 변경 불가능한 형태로 영구 보관합니다.</p>
         <ul class="solution-features">
           <li>Invoice ↔ 선물환 거래 연결 기록</li>
@@ -397,7 +397,7 @@
 
     <div class="solution-grid">
       <div class="solution-card">
-        <h3>&#128200; 손익 재분류 점검</h3>
+        <h3>손익 재분류 점검</h3>
         <p>거래손익, 평가손익, 환산손익이 올바르게 구분되어 있는지 확인합니다.</p>
         <ul class="solution-features">
           <li>거래손익: 실제 환전 시 발생한 실현 손익</li>
@@ -407,7 +407,7 @@
         </ul>
       </div>
       <div class="solution-card">
-        <h3>&#128176; 공정가치 평가 검증</h3>
+        <h3>공정가치 평가 검증</h3>
         <p>선물환/스왑 계약의 공정가치 평가가 적절한 방법론으로 이루어지고 있는지 검증합니다.</p>
         <ul class="solution-features">
           <li>할인계수(DF) 기반 공정가치 산출 vs 은행 제시가 비교</li>
@@ -442,21 +442,21 @@
         <div style="font-size: 28px; margin-bottom: 12px;">&#128736;</div>
         <h3 style="font-size: 16px; font-weight: 800; color: var(--white); margin-bottom: 8px;">산출 로직 투명 공개</h3>
         <p style="font-size: 13px; color: var(--gray-400); line-height: 1.7;">
-          CIP(Covered Interest Parity) 기반 공정가치 산출식을 공개합니다. 블랙박스가 아닌, 검증 가능한 금융공학 로직입니다.
+          CIP(Covered Interest Parity) 기반 공정가치 산출식을 공개합니다. 감사법인이 단계별로 검증할 수 있는 금융공학 로직입니다.
         </p>
       </div>
       <div style="padding: 24px; border-radius: 16px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);">
         <div style="font-size: 28px; margin-bottom: 12px;">&#128203;</div>
         <h3 style="font-size: 16px; font-weight: 800; color: var(--white); margin-bottom: 8px;">감사 보고서 자동 생성</h3>
         <p style="font-size: 13px; color: var(--gray-400); line-height: 1.7;">
-          거래별 공정가치 산출 근거 + 은행 호가 대비 분석 + 입력 데이터 일체를 감사용 리포트로 자동 출력합니다.
+          거래별 공정가치 산출 근거 + 은행 제시 환율 대비 분석 + 입력 데이터 일체를 감사용 리포트로 자동 출력합니다.
         </p>
       </div>
     </div>
 
     <!-- Reproducibility Example -->
     <div style="margin-top: 40px; padding: 28px; border-radius: 16px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);">
-      <div style="font-size: 14px; font-weight: 800; color: var(--primary-light); margin-bottom: 16px;">공정가치 산출 근거 예시 &mdash; FWD 3M SELL USD $1M (2025-09-10)</div>
+      <div style="font-size: 14px; font-weight: 800; color: var(--primary-light); margin-bottom: 16px;">공정가치 산출 근거 예시 &mdash; FWD 3M SELL USD $1,000,000 (2025-09-10)</div>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
         <div>
           <div style="font-size: 11px; font-weight: 700; color: var(--gray-400); letter-spacing: 1px; margin-bottom: 12px;">INPUT DATA (ARCHIVED)</div>
@@ -499,8 +499,8 @@
               <span style="font-family: 'Inter', monospace; font-weight: 600; color: var(--white);">0.99295</span>
             </div>
             <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,.06); padding: 4px 0;">
-              <span>DF Ratio (KRW/USD)</span>
-              <span style="font-family: 'Inter', monospace; font-weight: 600; color: var(--white);">1.00437</span>
+              <span>FWD = Spot &times; DF<sub>KRW</sub> / DF<sub>USD</sub></span>
+              <span style="font-family: 'Inter', monospace; font-weight: 600; color: var(--gray-400); font-size: 11px;">1,438.50 &times; 0.99295 / 0.98863</span>
             </div>
             <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,.06); padding: 4px 0;">
               <span>Swap Points (3M)</span>
@@ -518,7 +518,7 @@
         </div>
       </div>
       <div style="margin-top: 16px; padding: 12px 16px; border-radius: 10px; background: rgba(8,145,178,.1); border: 1px solid rgba(8,145,178,.2); font-size: 12px; color: var(--primary-light); line-height: 1.6;">
-        &#128274; 이 데이터는 거래 시점에 자동 저장됩니다. 감사법인이 동일한 입력값으로 공정가치를 재산출하여 검증할 수 있습니다.
+        이 데이터는 거래 시점에 자동 저장됩니다. 감사법인이 동일한 입력값으로 공정가치를 재산출하여 검증할 수 있습니다.
       </div>
     </div>
   </div>
@@ -533,7 +533,7 @@
 
     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 40px;">
       <div class="solution-card">
-        <h3>&#128269; 거래별 <span class="hl">감사 증적</span></h3>
+        <h3>거래별 <span class="hl">감사 증적</span></h3>
         <p>모든 거래의 공정가치 산출에 사용된 시장 데이터와 계산 과정을 거래별로 조회할 수 있습니다.</p>
         <ul class="solution-features">
           <li>거래 시점 Spot Rate, 금리(SOFR/CD), Swap Points</li>
@@ -543,7 +543,7 @@
         </ul>
       </div>
       <div class="solution-card">
-        <h3>&#128203; 감사 보고서 <span class="hl">자동 생성</span></h3>
+        <h3>감사 보고서 <span class="hl">자동 생성</span></h3>
         <p>기간별, 통화별, 거래 유형별 외환 손익 분석 리포트를 감사 기준에 맞춰 자동 생성합니다.</p>
         <ul class="solution-features">
           <li>거래손익 / 평가손익 / 환산손익 분류 리포트</li>
@@ -555,7 +555,7 @@
     </div>
 
     <div class="audit-highlight">
-      <h3>&#128274; 재현성이 핵심입니다</h3>
+      <h3>재현성이 핵심입니다</h3>
       <p>
         KustodyFi의 공정가치 산출은 CIP(Covered Interest Parity) 기반의 금융공학 로직으로,
         동일한 시장 데이터를 입력하면 동일한 결과가 산출됩니다.
@@ -572,7 +572,7 @@
   <div class="section-inner">
     <div class="cta-title">외환 회계,<br><span class="hl">감사 전에 점검하세요.</span></div>
     <div class="cta-desc">
-      과거 거래 기록만 주시면, 거래 패턴 분석 + 외환 손익 재분류 점검을 제공합니다.<br>
+      과거 거래 기록만 보내주시면, 거래 패턴 분석 + 외환 손익 재분류 점검을 제공합니다.<br>
       감사 시즌 전에 미리 준비하세요.
     </div>
     <div class="cta-buttons">

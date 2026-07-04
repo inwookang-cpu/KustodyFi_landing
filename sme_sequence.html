@@ -240,14 +240,15 @@
   <div class="page-label">Fund Flow Sequence</div>
   <div class="page-title">증거금 기반 선물환 &mdash; 자금 흐름도</div>
   <div class="page-desc">
-    중소 수출기업이 KustodyFi를 통해 선물환 거래를 체결하고, 만기에 결제가 이루어지는 전체 자금 흐름입니다.<br>
-    거래금액의 10~15%만 보증금으로 납입하면 환율을 확정할 수 있습니다.
+    중소 수출기업이 금융기관과 선물환 거래를 체결하고 만기에 결제하는 전체 자금 흐름입니다.
+    자금은 고객과 금융기관(증권사&middot;은행) 사이에서 직접 오가며, KustodyFi는 이 과정을 플랫폼에서 지원합니다.<br>
+    거래금액의 10~15%만 보증금으로 납입하면 환율이 확정됩니다.
   </div>
 
   <!-- Entities Legend -->
   <div class="entities">
     <div class="entity"><div class="entity-dot dot-client"></div>고객 (수출기업)</div>
-    <div class="entity"><div class="entity-dot dot-broker"></div>KustodyFi / 증권사</div>
+    <div class="entity"><div class="entity-dot dot-broker"></div>증권사 (KustodyFi 플랫폼 연동)</div>
     <div class="entity"><div class="entity-dot dot-bank"></div>외국환은행 (거래은행)</div>
   </div>
 
@@ -266,7 +267,7 @@
           <div class="step-title">계좌 개설</div>
           <div class="step-desc">
             KustodyFi 플랫폼에서 외국환업무 등록 금융투자업자의 거래계좌를 개설합니다.<br>
-            KYC/AML 심사는 금융기관에서 진행하며, 완료 후 선물환 거래가 가능한 상태가 됩니다.
+            KYC/AML 심사는 금융기관이 직접 진행하며, 심사가 끝나면 선물환 거래 준비가 완료됩니다.
           </div>
           <div class="flow-diagram">
             <div class="flow-box">
@@ -329,13 +330,13 @@
           <div class="step-tag">FORWARD CONTRACT</div>
           <div class="step-title">선물환 거래 체결</div>
           <div class="step-desc">
-            KustodyFi 플랫폼에서 선물환 계약을 체결합니다.<br>
+            KustodyFi 플랫폼에서 금융기관과 선물환 계약을 체결합니다.<br>
             만기일과 환율이 확정되며, 보증금이 담보로 유지됩니다.
           </div>
           <div style="margin-top:16px;padding:16px 20px;border-radius:10px;background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.15);text-align:center">
             <div style="font-size:11px;color:var(--gray-500);margin-bottom:4px">계약 예시</div>
             <div style="font-size:15px;font-weight:800;color:var(--success)">
-              3개월 후 $500,000을 &#8361;1,430/$ 에 환전
+              3개월 후 $500,000을 &#8361;1,430/$에 환전
             </div>
             <div style="font-size:11px;color:var(--gray-500);margin-top:4px">
               보증금: $50,000~$75,000 (10~15%) &middot; 만기: 2026.06.18
@@ -348,7 +349,7 @@
     <!-- STEP 4 & 5: Settlement Date (같은 날) -->
     <div style="margin-left:72px;margin-bottom:16px;padding:10px 20px;border-radius:10px;background:linear-gradient(90deg,rgba(217,119,6,.08),rgba(5,150,105,.08));border:1px dashed rgba(217,119,6,.3);display:flex;align-items:center;gap:10px">
       <div style="font-size:13px;font-weight:800;color:var(--warning)">SETTLEMENT DATE</div>
-      <div style="font-size:12px;color:var(--gray-500)">&mdash; Step 4, 5는 만기일 당일에 동시 진행됩니다</div>
+      <div style="font-size:12px;color:var(--gray-500)">Step 4, 5는 만기일 당일에 동시 진행됩니다</div>
     </div>
 
     <!-- STEP 4: 만기 도래 & Settlement -->
@@ -367,7 +368,7 @@
           <div class="flow-diagram">
             <div class="flow-box">
               <strong>해외 바이어</strong>
-              수출대금 $500K 송금
+              수출대금 $500,000 송금
             </div>
             <div class="flow-arrow">&rarr;</div>
             <div class="flow-box" style="border-color:rgba(217,119,6,.4);border-width:2px">
@@ -390,23 +391,23 @@
           <div class="step-tag">FX SETTLEMENT</div>
           <div class="step-title">USD 이체 &rarr; 약정환율로 원화 환전</div>
           <div class="step-desc">
-            외국환은행에서 받은 달러를 증권사 계좌로 이체하고,<br>
-            선물환 계약에서 약정한 환율(&#8361;1,430/$)로 <strong>원화 환전</strong>이 이루어집니다.
+            외국환은행에 입금된 달러를 증권사 계좌로 이체하면,<br>
+            선물환 계약에서 약정한 환율(&#8361;1,430/$)로 <strong>원화 환전</strong>이 진행됩니다.
           </div>
           <div class="flow-diagram">
             <div class="flow-box" style="background:rgba(217,119,6,.05);border-color:rgba(217,119,6,.15)">
               <strong>외국환은행</strong>
-              $500K
+              $500,000
             </div>
             <div class="flow-arrow" style="color:var(--success)">&rarr;</div>
             <div class="flow-box">
               <strong>증권사 계좌</strong>
-              $500K 입금
+              $500,000 입금
             </div>
             <div class="flow-arrow" style="color:var(--success)">&rarr;</div>
             <div class="flow-box" style="border-color:rgba(5,150,105,.4);border-width:2px">
               <strong>원화 환전</strong>
-              &#8361;1,430/$ &times; $500K<br>
+              &#8361;1,430/$ &times; $500,000<br>
               <span style="color:var(--success);font-weight:800">= &#8361;7.15억</span>
             </div>
           </div>
@@ -425,8 +426,8 @@
           <div class="step-tag">MARGIN RELEASE</div>
           <div class="step-title">보증금 담보 해제 &amp; 인출</div>
           <div class="step-desc">
-            선물환 결제가 완료되면 담보로 잡혀있던 보증금이 해제됩니다.<br>
-            보증금 + 이자를 포함하여 자유롭게 인출할 수 있습니다.
+            선물환 결제가 완료되면 담보로 잡혀 있던 보증금이 해제됩니다.<br>
+            보증금과 이자를 함께 자유롭게 인출하면 됩니다.
           </div>
           <div class="flow-diagram">
             <div class="flow-box">
@@ -462,7 +463,7 @@
     <div class="summary-card">
       <div class="sc-label">만기 수취</div>
       <div class="sc-value" style="color:var(--primary)">&#8361;7.15억</div>
-      <div class="sc-detail">$500K 기준</div>
+      <div class="sc-detail">$500,000 기준</div>
     </div>
     <div class="summary-card">
       <div class="sc-label">보증금 이자</div>
@@ -472,19 +473,19 @@
   </div>
 
   <div class="note">
-    <strong>KustodyFi AI Agent</strong>가 수출 일정과 자금 스케줄을 기반으로 선물환 공정가치를 평가하고, 여러 기관의 호가를 비교하여 가장 유리한 조건을 안내합니다.
-    보증금 규모, 만기 등 자동 계산되며 CFO가 판단 후 승인하면 완료됩니다.
+    <strong>KustodyFi AI Agent</strong>가 수출 일정과 자금 스케줄을 기반으로 선물환 공정가치를 평가하고, 여러 기관의 환율 조건을 비교해 보여드립니다.
+    보증금 규모와 만기는 자동으로 계산되며, CFO가 검토 후 승인하면 체결과 자금 이동은 고객과 금융기관 사이에서 직접 진행됩니다.
   </div>
 
   <div class="note" style="margin-top:16px;background:rgba(217,119,6,.04);border-color:rgba(217,119,6,.15)">
     <strong style="color:var(--warning)">규제 변경 사항 (2026.01~)</strong><br>
     <span style="font-size:12px;line-height:2">
-      &bull; <strong>지정거래외국환은행 제도 부분 폐지</strong> &mdash;
+      &bull; <strong>지정거래외국환은행 제도 부분 폐지</strong>:
       무증빙 소액 해외송금(연 10만 달러)은 복수 금융기관 자유 선택 가능. ORIS(해외송금통합관리시스템) 가동으로 업권 통합 관리.
       <span style="color:var(--gray-400)">(기획재정부 2025.12.09 발표)</span><br>
-      &bull; <strong>자본거래(해외직접투자 등)는 지정거래외국환은행 유지</strong> &mdash;
+      &bull; <strong>자본거래(해외직접투자 등)는 지정거래외국환은행 유지</strong>:
       사후관리가 필요한 거래는 기존 체계 유지.<br>
-      &bull; <strong>수출입대금 신고 축소</strong> &mdash;
+      &bull; <strong>수출입대금 신고 축소</strong>:
       건당 10만 달러 초과 &amp; 선적 후 1년 초과 지급/수령만 신고 대상.
       <span style="color:var(--gray-400)">(외국환거래규정 제2025-4호, 2025.02.10 시행)</span><br>
       &bull; 본 플로우의 수출대금 수령은 외국환업무취급기관(은행/증권사)이면 가능하며, 특정 1개 은행을 지정할 의무는 완화됨.
