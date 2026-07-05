@@ -144,8 +144,8 @@
     <p class="cover-sub">외국계 은행 서울지점의 FX Swap 운영.<br>Wrong-Way Risk 때문에 상대방을 가려야 하는데, 지금은 수작업입니다.<br>시스템이 WWR을 자동 필터링하고, AI Agent가 24시간 운영합니다.</p>
     <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;opacity:0;animation:fadeUp .8s .85s forwards">
       <div class="hbox" style="background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);color:#fca5a5;font-size:13px;font-weight:600">&#9888; Wrong-Way Risk 자동 필터링</div>
-      <div class="hbox" style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.2);color:#6ee7b7;font-size:13px;font-weight:600">시스템이 분석·제시, 담당자가 판단·승인</div>
-      <div class="hbox" style="background:rgba(14,165,233,.08);border:1px solid rgba(14,165,233,.2);color:#7dd3fc;font-size:13px;font-weight:600">AI Agent &mdash; 24시간 운영</div>
+      <div class="hbox" style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.2);color:#6ee7b7;font-size:13px;font-weight:600">&#127919; 시스템이 분석·제시, 담당자가 판단·승인</div>
+      <div class="hbox" style="background:rgba(14,165,233,.08);border:1px solid rgba(14,165,233,.2);color:#7dd3fc;font-size:13px;font-weight:600">&#127760; AI Agent &mdash; 24시간 운영</div>
     </div>
     <div style="display:flex;gap:12px;margin-top:16px;opacity:0;animation:fadeUp .8s 1.0s forwards">
       <div class="hbox" style="background:rgba(110,231,183,.08);border:1px solid rgba(110,231,183,.2);color:#6ee7b7"><strong>Dealer</strong> David Kim</div>
@@ -207,7 +207,7 @@
       </div>
 
       <div class="hbox" style="background:rgba(14,165,233,.06);border:1px solid rgba(14,165,233,.15);color:var(--gray-300);text-align:center;font-size:13px;font-weight:600">
-        <strong style="color:#7dd3fc">결론:</strong> FX Swap Seller(B/S)를 찾을 때, <strong style="color:#6ee7b7">외국계 은행만 필터링</strong>하면 WWR이 구조적으로 제거됩니다.
+        <strong style="color:#7dd3fc">결론:</strong> FX Swap Seller(B/S)를 찾을 때, <strong style="color:#6ee7b7">외국계 은행만 필터링</strong>하면 WWR을 구조적으로 제거할 수 있습니다.
       </div>
     </div>
   </div>
@@ -263,10 +263,10 @@
       </div>
 
       <div style="margin-top:12px">
-        <div class="pain-point" data-delay="500"><span>&#10005;</span> <strong>상대방 필터링이 담당자 기억에 의존.</strong> "이 은행은 한국계인가 외국계인가?" 실수 가능.</div>
-        <div class="pain-point" data-delay="600"><span>&#10005;</span> <strong>본사 승인 대기 30분~2시간.</strong> 시장이 움직이는 동안 대기.</div>
-        <div class="pain-point" data-delay="700"><span>&#10005;</span> <strong>Credit Limit 수기 확인.</strong> 엑셀 파일이 최신이 아닐 수 있음.</div>
-        <div class="pain-point" data-delay="800"><span>&#10005;</span> <strong>감사 증적 부족.</strong> "왜 이 상대방을 선택했는가?"에 대한 기록이 없음.</div>
+        <div class="pain-point" data-delay="500"><span>&#10060;</span> <strong>상대방 필터링이 담당자 기억에 의존.</strong> "이 은행은 한국계인가 외국계인가?" 실수 가능.</div>
+        <div class="pain-point" data-delay="600"><span>&#10060;</span> <strong>본사 승인 대기 30분~2시간.</strong> 시장이 움직이는 동안 대기.</div>
+        <div class="pain-point" data-delay="700"><span>&#10060;</span> <strong>Credit Limit 수기 확인.</strong> 엑셀 파일이 최신이 아닐 수 있음.</div>
+        <div class="pain-point" data-delay="800"><span>&#10060;</span> <strong>감사 증적 부족.</strong> "왜 이 상대방을 선택했는가?"에 대한 기록이 없음.</div>
       </div>
     </div>
   </div>
@@ -346,7 +346,7 @@
     <div class="scroll-area">
       <!-- Filtering summary -->
       <div class="panel" style="border:1px solid rgba(220,38,38,.2);background:rgba(220,38,38,.04);margin-bottom:16px;padding:14px">
-        <div class="panel-title" style="color:#fca5a5;font-size:12px">필터링으로 제외된 상대방</div>
+        <div class="panel-title" style="color:#fca5a5;font-size:12px">&#128683; 필터링으로 제외된 상대방</div>
         <table class="dt danger-header" style="font-size:11px">
           <thead><tr><th>상대방</th><th>유형</th><th>제외 사유</th><th>WWR</th></tr></thead>
           <tbody>
@@ -417,29 +417,29 @@
             <div>&bull; <span style="color:#fca5a5">Korean Bank</span> &rarr; Block / Warn</div>
             <div>&bull; <span style="color:#6ee7b7">Foreign Bank</span> &rarr; Allow</div>
             <div>&bull; <span style="color:#6ee7b7">Sovereign / SSA</span> &rarr; Allow</div>
-            <div style="margin-top:8px;font-size:10px;color:var(--gray-500)">은행이 Block/Warn/Allow 직접 설정<br>CCY별, Product별 차등 적용 가능</div>
+            <div style="margin-top:8px;font-size:10px;color:var(--gray-500)">&#9881; 은행이 Block/Warn/Allow 직접 설정<br>CCY별, Product별 차등 적용 가능</div>
           </div>
         </div>
         <div class="panel" style="border-top:3px solid #0ea5e9">
-          <div class="panel-title" style="color:#7dd3fc">Credit Limit</div>
+          <div class="panel-title" style="color:#7dd3fc">&#128176; Credit Limit</div>
           <div style="font-size:11px;color:var(--gray-300);line-height:1.8">
             <div style="font-weight:700;margin-bottom:4px">실시간 한도 관리:</div>
             <div>&bull; 상대방별 Total Limit 설정</div>
             <div>&bull; Product별 Sub-Limit</div>
             <div>&bull; Tenor별 Limit (1M/3M/6M/1Y)</div>
             <div>&bull; 체결 시 즉시 한도 차감</div>
-            <div style="margin-top:8px;font-size:10px;color:var(--gray-500)">한도 부족 시 자동 제외<br>Limit 사용률 대시보드 제공</div>
+            <div style="margin-top:8px;font-size:10px;color:var(--gray-500)">&#9881; 한도 부족 시 자동 제외<br>Limit 사용률 대시보드 제공</div>
           </div>
         </div>
         <div class="panel" style="border-top:3px solid #8b5cf6">
-          <div class="panel-title" style="color:#c4b5fd">HQ Policy</div>
+          <div class="panel-title" style="color:#c4b5fd">&#127760; HQ Policy</div>
           <div style="font-size:11px;color:var(--gray-300);line-height:1.8">
             <div style="font-weight:700;margin-bottom:4px">본사 정책 연동:</div>
             <div>&bull; Blacklist (거래 불가 상대방)</div>
             <div>&bull; Watchlist (추가 승인 필요)</div>
             <div>&bull; Country Limit (국가별 한도)</div>
             <div>&bull; Concentration Limit</div>
-            <div style="margin-top:8px;font-size:10px;color:var(--gray-500)">본사에서 원격으로 정책 업데이트<br>서울지점 콘솔에 실시간 반영</div>
+            <div style="margin-top:8px;font-size:10px;color:var(--gray-500)">&#9881; 본사에서 원격으로 정책 업데이트<br>서울지점 콘솔에 실시간 반영</div>
           </div>
         </div>
       </div>
@@ -456,11 +456,11 @@
   <div class="slide-content">
     <div class="section-label">AI AGENT</div>
     <div class="section-title">24시간 운영 &mdash; 원하는 시점에 AI Agent ON</div>
-    <div class="section-desc">외국계 은행은 런던/뉴욕/도쿄 본사와 시차가 있습니다. AI Agent가 운영 시간을 확장합니다.</div>
+    <div class="section-desc">외국계 은행은 런던/뉴욕/도쿄 본사와 시차가 있습니다. AI Agent로 운영 시간을 확장.</div>
 
     <div class="scroll-area">
       <div class="panel" style="border:1px solid rgba(14,165,233,.3);background:rgba(14,165,233,.04);margin-bottom:16px">
-        <div class="panel-title" style="color:#7dd3fc">운영 시간 확장</div>
+        <div class="panel-title" style="color:#7dd3fc">&#127760; 운영 시간 확장</div>
         <div style="display:flex;gap:0;margin-bottom:12px;border-radius:10px;overflow:hidden;height:56px">
           <div style="flex:37.5;background:rgba(14,165,233,.15);display:flex;align-items:center;justify-content:center;flex-direction:column;border-right:2px solid rgba(255,255,255,.1)">
             <div style="font-size:11px;font-weight:700;color:#7dd3fc">09:00 ~ 18:00</div>
@@ -558,7 +558,7 @@
           <div style="font-size:10px;color:var(--gray-500);margin-top:4px">WWR 필터 로그 + 체결 근거</div>
         </div>
         <div class="panel" style="text-align:center;padding:24px">
-          <div style="font-size:11px;color:var(--gray-500);margin-bottom:8px">가격 절감 효과</div>
+          <div style="font-size:11px;color:var(--gray-500);margin-bottom:8px">가격 경쟁 절감</div>
           <div style="font-size:36px;font-weight:900;color:#6ee7b7">+30%</div>
           <div style="font-size:10px;color:var(--gray-500);margin-top:4px">다자 견적 비교 효과</div>
         </div>
@@ -578,8 +578,8 @@
       <div><div class="stat-num">0</div><div class="stat-label">정책 위반</div></div>
     </div>
     <div style="margin-top:32px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap;opacity:0;animation:fadeUp .8s .9s forwards">
-      <a href="mailto:inwoo.kang@kustodyfi.com?subject=KustodyFi Foreign Bank FX 데모 요청" style="padding:12px 28px;background:#0ea5e9;color:#fff;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;display:inline-flex;align-items:center;gap:8px">FX Desk 데모 보기</a>
-      <a href="mailto:inwoo.kang@kustodyfi.com?subject=KustodyFi 미팅 요청" style="padding:12px 28px;background:rgba(255,255,255,.1);color:#fff;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;border:1px solid rgba(255,255,255,.2);display:inline-flex;align-items:center;gap:8px">15분 미팅 잡기</a>
+      <a href="mailto:inwoo.kang@kustodyfi.com?subject=KustodyFi Foreign Bank FX 데모 요청" style="padding:12px 28px;background:#0ea5e9;color:#fff;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;display:inline-flex;align-items:center;gap:8px">&#128200; FX Desk 데모 보기</a>
+      <a href="mailto:inwoo.kang@kustodyfi.com?subject=KustodyFi 미팅 요청" style="padding:12px 28px;background:rgba(255,255,255,.1);color:#fff;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;border:1px solid rgba(255,255,255,.2);display:inline-flex;align-items:center;gap:8px">&#128197; 15분 미팅 잡기</a>
     </div>
     <div style="margin-top:20px;font-size:14px;color:var(--gray-500);opacity:0;animation:fadeUp .8s 1.1s forwards">
       KustodyFi Co., Ltd. &nbsp;|&nbsp; inwoo.kang@kustodyfi.com

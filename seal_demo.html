@@ -152,19 +152,19 @@
   <div class="compare-grid anim-up d3">
     <div class="compare-box without">
       <div class="compare-title" style="color:#fca5a5;">SEAL 없이</div>
-      <div class="compare-item"><span class="compare-icon">&#x26A0;</span><div>Agent가 직접 거래 실행 &rarr; 오류 시 <strong style="color:#fca5a5;">즉시 손실</strong></div></div>
-      <div class="compare-item"><span class="compare-icon">&#x26A0;</span><div>한도 초과 거래를 Agent가 스스로 판단 &rarr; <strong style="color:#fca5a5;">정책 위반 가능</strong></div></div>
-      <div class="compare-item"><span class="compare-icon">&#x26A0;</span><div>감사 추적 없음 &rarr; <strong style="color:#fca5a5;">"왜 이 거래를 했는지"</strong> 증빙 불가</div></div>
-      <div class="compare-item"><span class="compare-icon">&#x26A0;</span><div>비정상 Agent 행동을 멈출 <strong style="color:#fca5a5;">Kill Switch 없음</strong></div></div>
-      <div class="compare-item"><span class="compare-icon">&#x26A0;</span><div>외부 API 직접 호출 &rarr; <strong style="color:#fca5a5;">보안 경계 없음</strong></div></div>
+      <div class="compare-item"><span class="compare-icon">&#x26A0;</span><div>Agent가 직접 거래 실행 — 오류 시 <strong style="color:#fca5a5;">즉시 손실</strong></div></div>
+      <div class="compare-item"><span class="compare-icon">&#x26A0;</span><div>한도 초과 거래를 Agent가 스스로 판단 — <strong style="color:#fca5a5;">정책 위반 가능</strong></div></div>
+      <div class="compare-item"><span class="compare-icon">&#x26A0;</span><div>감사 추적 없음 — <strong style="color:#fca5a5;">"왜 이 거래를 했는지"</strong> 증빙 불가</div></div>
+      <div class="compare-item"><span class="compare-icon">&#x26A0;</span><div>비정상 Agent 행동 감지 불가 — <strong style="color:#fca5a5;">Kill Switch 없음</strong></div></div>
+      <div class="compare-item"><span class="compare-icon">&#x26A0;</span><div>외부 API 직접 호출 — <strong style="color:#fca5a5;">보안 경계 없음</strong></div></div>
     </div>
     <div class="compare-box with">
       <div class="compare-title" style="color:var(--seal);">SEAL 적용</div>
       <div class="compare-item"><span class="compare-icon" style="color:#6ee7b7;">&#x2713;</span><div>Agent는 <strong>제안만</strong>, 실행은 SEAL 승인 후</div></div>
       <div class="compare-item"><span class="compare-icon" style="color:#6ee7b7;">&#x2713;</span><div>정책 엔진이 한도/권한/규정을 <strong>자동 검증</strong></div></div>
-      <div class="compare-item"><span class="compare-icon" style="color:#6ee7b7;">&#x2713;</span><div>Hash-Chained Evidence로 <strong>변조 불가능</strong>한 감사 추적</div></div>
-      <div class="compare-item"><span class="compare-icon" style="color:#6ee7b7;">&#x2713;</span><div>Risk Supervisor가 ROI 하락 시 <strong>자동 Kill Switch</strong> 작동</div></div>
-      <div class="compare-item"><span class="compare-icon" style="color:#6ee7b7;">&#x2713;</span><div>Outbound Proxy가 모든 외부 호출을 <strong>중개/감시</strong></div></div>
+      <div class="compare-item"><span class="compare-icon" style="color:#6ee7b7;">&#x2713;</span><div>Hash-Chained Evidence — <strong>변조 불가능</strong> 감사 추적</div></div>
+      <div class="compare-item"><span class="compare-icon" style="color:#6ee7b7;">&#x2713;</span><div>Risk Supervisor — ROI 하락 시 <strong>자동 Kill Switch</strong></div></div>
+      <div class="compare-item"><span class="compare-icon" style="color:#6ee7b7;">&#x2713;</span><div>Outbound Proxy — 모든 외부 호출을 <strong>중개/감시</strong></div></div>
     </div>
   </div>
 
@@ -179,7 +179,7 @@
 <div class="slide-content">
   <div class="section-label anim-up">아키텍처</div>
   <div class="section-title anim-up d1">SEAL 6 Hook Architecture</div>
-  <div class="section-desc anim-up d2">모든 Agent 액션은 6개 Hook을 통과합니다. 하나라도 실패하면 실행이 차단됩니다 (Fail-Closed)</div>
+  <div class="section-desc anim-up d2">모든 Agent 액션은 6개 Hook을 통과합니다 — 하나라도 실패하면 실행이 차단됩니다 (Fail-Closed)</div>
 
   <div class="hook-grid anim-up d3">
     <div class="hook-card" style="border-top:3px solid var(--hook-policy);">
@@ -225,7 +225,7 @@
     <div class="hook-card" style="border-top:3px solid var(--hook-deny);">
       <div class="hook-num" style="color:var(--hook-deny);">HOOK 5</div>
       <div class="hook-name">Deny / Kill-Switch</div>
-      <div class="hook-desc">비정상 감지 시 즉시 차단 (Fail-Closed)</div>
+      <div class="hook-desc">비정상 감지 시 즉시 차단 — Fail-Closed</div>
       <div class="hook-detail">
         sandbox termination path<br>
         budget/rate exceed 차단<br>
@@ -245,7 +245,7 @@
   </div>
 
   <div class="anim-up d5" style="margin-top:12px;padding:10px 16px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);font-size:12px;color:var(--gray-400);text-align:center;">
-    Delegation &rarr; <strong style="color:var(--hook-policy);">Policy</strong> &rarr; Risk &rarr; Simulation &rarr; Mandate &rarr; Signing &rarr; <strong style="color:var(--hook-evidence);">Evidence</strong> &middot; SEAL의 장기 아키텍처 경로
+    Delegation &rarr; <strong style="color:var(--hook-policy);">Policy</strong> &rarr; Risk &rarr; Simulation &rarr; Mandate &rarr; Signing &rarr; <strong style="color:var(--hook-evidence);">Evidence</strong> &mdash; 이것이 SEAL의 장기 아키텍처 경로입니다
   </div>
 </div>
 </div>
@@ -255,7 +255,7 @@
 <div class="slide-content">
   <div class="section-label anim-up">시나리오 1</div>
   <div class="section-title anim-up d1">정상 거래 — <span style="color:#6ee7b7;">APPROVED</span></div>
-  <div class="section-desc anim-up d2">Invoice Agent가 INV-047 인보이스 기반 USDKRW $1,200,000 헤지를 제안합니다. SEAL이 6개 Hook을 순차 검증합니다.</div>
+  <div class="section-desc anim-up d2">Invoice Agent가 INV-047 인보이스 기반 USDKRW $1.2M 헤지를 제안합니다. SEAL이 6개 Hook을 순차 검증합니다.</div>
 
   <div class="sim-container anim-up d3">
     <div class="sim-request">
@@ -267,7 +267,7 @@
         <span style="color:var(--gray-500);">direction:</span> <span style="color:#6ee7b7;">BUY USD</span><br>
         <span style="color:var(--gray-500);">notional:</span> <span style="color:var(--white);">$1,200,000</span><br>
         <span style="color:var(--gray-500);">rate:</span> 1,442.50<br>
-        <span style="color:var(--gray-500);">source:</span> <span style="color:var(--gray-400);">INV-047 결제대금 $1,200,000 (만기 4/17)</span>
+        <span style="color:var(--gray-500);">source:</span> <span style="color:var(--gray-400);">INV-047 결제대금 $1.2M (만기 4/17)</span>
       </div>
       <div style="margin-top:12px;padding:10px;border-radius:8px;background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.12);text-align:center;">
         <div style="font-size:10px;font-weight:700;color:var(--gray-400);margin-bottom:4px;">SEAL VERDICT</div>
@@ -313,7 +313,7 @@
         <div class="sim-dot" style="background:var(--hook-deny);"></div>
         <div class="sim-step-content">
           <div class="sim-step-title" style="color:var(--hook-deny);">Hook 5: Kill-Switch Check</div>
-          <div class="sim-step-detail">$1,200,000 &le; daily_cap $10,000,000<br>risk_assessment: completed &check;</div>
+          <div class="sim-step-detail">$1.2M &le; daily_cap $10M<br>risk_assessment: completed &check;</div>
           <div class="sim-step-badge" style="background:rgba(5,150,105,.15);color:#6ee7b7;">PASS</div>
         </div>
       </div>
@@ -321,7 +321,7 @@
         <div class="sim-dot" style="background:var(--hook-budget);"></div>
         <div class="sim-step-content">
           <div class="sim-step-title" style="color:var(--hook-budget);">Hook 6: Budget Check</div>
-          <div class="sim-step-detail">daily quota: $8,800,000 remaining of $10,000,000<br>$1,200,000 trade &le; $8,800,000 budget</div>
+          <div class="sim-step-detail">daily quota: $8.8M remaining of $10M<br>$1.2M trade &le; $8.8M budget</div>
           <div class="sim-step-badge" style="background:rgba(16,185,129,.15);color:#6ee7b7;">WITHIN BUDGET</div>
         </div>
       </div>
@@ -335,7 +335,7 @@
 <div class="slide-content">
   <div class="section-label anim-up" style="color:#ef4444;">시나리오 2</div>
   <div class="section-title anim-up d1">일일 한도 초과 — <span style="color:#fca5a5;">DENIED</span></div>
-  <div class="section-desc anim-up d2">Hedge Agent가 $12,000,000 일괄 헤지를 시도합니다. 일일 거래 한도 $10,000,000을 초과하여 SEAL이 차단합니다.</div>
+  <div class="section-desc anim-up d2">Hedge Agent가 $12M 일괄 헤지를 시도합니다. 일일 거래 한도 $10M을 초과하여 SEAL이 차단합니다.</div>
 
   <div class="sim-container anim-up d3">
     <div class="sim-request">
@@ -371,7 +371,7 @@
           <div class="sim-step-detail">
             daily_cap: $10,000,000<br>
             requested: <span style="color:#fca5a5;">$12,000,000</span> &gt; daily_cap<br>
-            <span style="color:#fca5a5;">"일일 거래 한도 $10,000,000 초과"</span>
+            <span style="color:#fca5a5;">"일일 거래 한도 $10M 초과"</span>
           </div>
           <div class="sim-step-badge" style="background:rgba(220,38,38,.15);color:#fca5a5;">DENIED — BUDGET EXCEEDED</div>
         </div>
@@ -404,8 +404,8 @@
   <div class="anim-up d5" style="margin-top:16px;padding:14px 16px;border-radius:10px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.1);font-size:12px;">
     <div style="font-weight:800;color:var(--seal);margin-bottom:6px;">SEAL 권장 조치</div>
     <div style="color:var(--gray-400);line-height:1.6;">
-      &bull; $12,000,000을 $10,000,000 이하로 분할해 재제출<br>
-      &bull; 또는 CFO 에스컬레이션으로 임시 한도 상향 승인 요청
+      &bull; $12M → $10M 이하로 분할하여 재제출하거나<br>
+      &bull; CFO 에스컬레이션으로 임시 한도 상향 승인 요청
     </div>
   </div>
 </div>
@@ -416,7 +416,7 @@
 <div class="slide-content">
   <div class="section-label anim-up" style="color:#ef4444;">시나리오 3</div>
   <div class="section-title anim-up d1">사전 조건 미충족 — <span style="color:#fca5a5;">DENIED</span></div>
-  <div class="section-desc anim-up d2">Hedge Agent가 Risk 평가 없이 $3,000,000 헤지를 제출합니다. SEAL이 사전 조건 누락을 감지합니다.</div>
+  <div class="section-desc anim-up d2">Hedge Agent가 Risk 평가 없이 $3M 헤지를 제출합니다. SEAL이 사전 조건 누락을 감지합니다.</div>
 
   <div class="sim-container anim-up d3">
     <div class="sim-request">
@@ -546,9 +546,9 @@
     <div style="padding:14px 16px;border-radius:10px;background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.1);font-size:12px;">
       <div style="font-weight:800;color:#fca5a5;margin-bottom:6px;">SEAL이 차단하는 위반 유형</div>
       <div style="color:var(--gray-400);line-height:1.6;">
-        1. <strong>일일 한도 초과</strong>: $12,000,000 &gt; daily cap $10,000,000<br>
-        2. <strong>사전 조건 누락</strong>: Risk 평가 없이 제출<br>
-        3. <strong>RBAC 권한 위반</strong>: 사원이 승인 시도
+        1. <strong>일일 한도 초과</strong> — $12M &gt; daily cap $10M<br>
+        2. <strong>사전 조건 누락</strong> — Risk 평가 없이 제출<br>
+        3. <strong>RBAC 권한 위반</strong> — 사원이 승인 시도
       </div>
     </div>
     <div style="padding:14px 16px;border-radius:10px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.1);font-size:12px;">
@@ -571,12 +571,12 @@
   <div class="section-desc anim-up d2">모든 SEAL 이벤트는 SHA-256 해시 체인으로 연결됩니다. 한 줄이라도 바뀌면 체인이 깨집니다.</div>
 
   <div class="evidence-log anim-up d3">
-    <div class="ev-line"><span class="ev-seq">#2041</span> <span class="ev-type ev-allow">policy.allow</span> Invoice Agent trade_prepare $1,200,000 USDKRW (INV-047) <span class="ev-hash">[hash:a3f2c91b prev:7d0e4f8a]</span></div>
-    <div class="ev-line"><span class="ev-seq">#2042</span> <span class="ev-type ev-info">outbound.proxy</span> rfq.oo-securities.co.kr RFQ $1,200,000 USDKRW <span class="ev-hash">[hash:9f3b7e42 prev:a3f2c91b]</span></div>
-    <div class="ev-line"><span class="ev-seq">#2043</span> <span class="ev-type ev-deny">budget.deny</span> Hedge Agent $12,000,000 &gt; daily_cap $10,000,000 DENIED <span class="ev-hash">[hash:e7b1d4f9 prev:9f3b7e42]</span></div>
+    <div class="ev-line"><span class="ev-seq">#2041</span> <span class="ev-type ev-allow">policy.allow</span> Invoice Agent trade_prepare $1.2M USDKRW (INV-047) <span class="ev-hash">[hash:a3f2c91b prev:7d0e4f8a]</span></div>
+    <div class="ev-line"><span class="ev-seq">#2042</span> <span class="ev-type ev-info">outbound.proxy</span> rfq.oo-securities.co.kr RFQ $1.2M USDKRW <span class="ev-hash">[hash:9f3b7e42 prev:a3f2c91b]</span></div>
+    <div class="ev-line"><span class="ev-seq">#2043</span> <span class="ev-type ev-deny">budget.deny</span> Hedge Agent $12M &gt; daily_cap $10M DENIED <span class="ev-hash">[hash:e7b1d4f9 prev:9f3b7e42]</span></div>
     <div class="ev-line"><span class="ev-seq">#2044</span> <span class="ev-type ev-deny">policy.deny</span> Hedge Agent trade_submit prerequisite_missing DENIED <span class="ev-hash">[hash:c4a2e71d prev:e7b1d4f9]</span></div>
     <div class="ev-line"><span class="ev-seq">#2045</span> <span class="ev-type ev-deny">rbac.deny</span> 김주임(staff) trade_approve DENIED — role &ne; cfo|treasury_head <span class="ev-hash">[hash:f8d3b21e prev:c4a2e71d]</span></div>
-    <div class="ev-line"><span class="ev-seq">#2046</span> <span class="ev-type ev-allow">trade.prepared</span> TRD-2026-2041 BUY $1,200,000 USDKRW @1,442.50 <span style="color:var(--seal);font-weight:700;">requires_approval: true</span> <span class="ev-hash">[hash:3a7c5e81 prev:f8d3b21e]</span></div>
+    <div class="ev-line"><span class="ev-seq">#2046</span> <span class="ev-type ev-allow">trade.prepared</span> TRD-2026-2041 BUY $1.2M USDKRW @1,442.50 <span style="color:var(--seal);font-weight:700;">requires_approval: true</span> <span class="ev-hash">[hash:3a7c5e81 prev:f8d3b21e]</span></div>
     <div class="ev-line" style="opacity:.5;"><span class="ev-seq">#2047</span> <span class="ev-type" style="color:var(--gray-500);">human.pending</span> CFO 승인 대기 중... proposal_id:TRD-2026-2041 <span class="ev-hash">[hash:d8f1a53e prev:3a7c5e81]</span></div>
   </div>
 
@@ -622,7 +622,7 @@
 <span style="color:var(--gray-500);"># 일일 거래 한도</span>
 - <span style="color:var(--hook-policy);">id:</span> daily_trade_cap
   <span style="color:var(--gray-500);">action:</span> trade_prepare
-  <span style="color:var(--seal);">daily_cap:</span> 10000000  <span style="color:var(--gray-500);"># $10,000,000</span>
+  <span style="color:var(--seal);">daily_cap:</span> 10000000  <span style="color:var(--gray-500);"># $10M</span>
 
 <span style="color:var(--gray-500);"># 사전 조건</span>
 - <span style="color:var(--hook-policy);">id:</span> trade_requires_risk
@@ -644,9 +644,9 @@
       <div style="padding:16px;border-radius:12px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.12);">
         <div style="font-size:13px;font-weight:800;color:var(--seal);margin-bottom:8px;">거래 안전장치</div>
         <div style="font-size:12px;color:var(--gray-400);line-height:1.6;">
-          <strong>일일 $10,000,000 한도</strong>: 초과 시 자동 차단 + 에스컬레이션<br>
-          <strong>사전 조건</strong>: Risk 평가 없이 거래 제출 불가<br>
-          <strong>requires_approval: true</strong> &middot; 모든 거래에 사람 승인 필수
+          <strong>일일 $10M 한도</strong> — 초과 시 자동 차단 + 에스컬레이션<br>
+          <strong>사전 조건</strong> — Risk 평가 없이 거래 제출 불가<br>
+          <strong>requires_approval: true</strong> — 모든 거래에 사람 승인 필수
         </div>
       </div>
       <div style="padding:16px;border-radius:12px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.12);">
@@ -697,7 +697,7 @@
     <div class="pipe-stage" style="background:rgba(168,85,247,.06);border-color:rgba(168,85,247,.12);">
       <div class="icon">&#128176;</div>
       <div class="name" style="color:#c4b5fd;">OO증권 RFQ</div>
-      <div class="sub">견적 요청<br>환율 비교</div>
+      <div class="sub">견적 요청<br>최우대 환율</div>
       <div class="pipe-arrow">&rarr;</div>
     </div>
     <div class="pipe-stage" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.1);">
@@ -709,7 +709,7 @@
 
   <div class="anim-up d4" style="padding:14px;border-radius:12px;background:rgba(245,158,11,.04);border:1px solid rgba(245,158,11,.1);margin-top:12px;">
     <div style="font-size:12px;color:var(--gray-400);line-height:1.7;text-align:center;">
-      <strong style="color:var(--seal);">SEAL은 파이프라인 위에 존재합니다.</strong> 각 Agent가 다음 단계로 넘어갈 때마다 Policy Hook이 검증하고, 모든 데이터는 Evidence Hook에 기록됩니다.<br>
+      <strong style="color:var(--seal);">SEAL은 파이프라인 위에 존재합니다</strong> — 각 Agent가 다음 단계로 넘어갈 때마다 Policy Hook이 검증하고, 모든 데이터는 Evidence Hook에 기록됩니다.<br>
       어떤 Agent도 SEAL을 우회할 수 없습니다. YAML 상속 시에도 Hook은 강제 상속됩니다.
     </div>
   </div>
